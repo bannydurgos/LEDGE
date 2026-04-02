@@ -314,15 +314,11 @@
       <rect x="0" y="39" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
       <rect x="0" y="46" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
     </svg>
-    <span onclick="openQuickLog()" style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#8a6e2e;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;user-select:none;display:none;" class="quick-log-desktop">+ quick log</span>
     </div>
   </div>
   <div class="summary-strip" id="summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;z-index:3"></div>
   <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
   <div id="all-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:400px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>  <div class="header-right">
-    <button class="btn" onclick="document.getElementById('file-input').click()">↑ load save</button>
-    <button class="btn" onclick="exportData()">↓ export</button>
-    <button class="btn danger" onclick="resetToDefaults()">reset</button>
     <div id="userPill" class="user-pill" style="display:none;grid-column:span 2;justify-content:flex-end">
       <img class="user-avatar" id="userAvatar" src="" alt="">
       <span class="user-email" id="userEmail"></span>
@@ -336,7 +332,8 @@
     </select>
     <button class="btn" id="pending-first-btn" onclick="togglePendingFirst()">pending first</button>
     <button class="btn primary" onclick="handleAddCard()">+ add card</button>
-    <input type="file" id="file-input" accept=".json" onchange="importData(event)" />
+    <button class="btn" id="undo-btn" onclick="undo()" disabled>↩ undo</button>
+    <button class="btn danger" onclick="resetToDefaults()">reset</button>
   </div>
 </header>
 
@@ -566,11 +563,37 @@ cards = cards.map((c,i) => ({pending:0, stmtBal:0, autopayMode:'custom', lastAut
 let editingId = null, dragSrcId = null, partialClearId = null;
 let _currentUser = null;
 
+// ── UNDO HISTORY ──────────────────────────────────────────
+let undoStack = [];
+let _lastPersistedCards = null;
+
+function updateUndoBtn() {
+  const btn = document.getElementById('undo-btn');
+  if (btn) btn.disabled = undoStack.length === 0;
+}
+
+async function undo() {
+  if (!undoStack.length) return;
+  _lastPersistedCards = undoStack.pop();
+  cards = JSON.parse(_lastPersistedCards);
+  if (_currentUser) {
+    const ref = window._fbDoc(window._fbDb, 'users', _currentUser.uid);
+    await window._fbSetDoc(ref, { cards: _lastPersistedCards }, { merge: true });
+  }
+  render();
+  updateUndoBtn();
+}
+
 // ── FIREBASE DATA LAYER ───────────────────────────────────
 async function persist() {
   if (!_currentUser) return;
+  if (_lastPersistedCards !== null) {
+    undoStack.push(_lastPersistedCards);
+    updateUndoBtn();
+  }
+  _lastPersistedCards = JSON.stringify(cards);
   const ref = window._fbDoc(window._fbDb, 'users', _currentUser.uid);
-  await window._fbSetDoc(ref, { cards: JSON.stringify(cards) }, { merge: true });
+  await window._fbSetDoc(ref, { cards: _lastPersistedCards }, { merge: true });
 }
 
 async function loadFromFirebase() {
@@ -581,6 +604,7 @@ async function loadFromFirebase() {
     const loaded = JSON.parse(snap.data().cards);
     cards = loaded.map((c,i) => ({pending:0, stmtBal:0, autopayMode:'custom', lastAutoPay:'', lastStmtSnap:'', lastArchive:'', paydown:false, hidden:false, wallet:false, transactions:[], txnArchive:[], color: CARD_COLORS[i % CARD_COLORS.length], ...c}));
   }
+  _lastPersistedCards = JSON.stringify(cards);
 }
 
 // ── AUTH ─────────────────────────────────────────────────
@@ -665,17 +689,8 @@ function setView(mode) {
 function updateTabs() {
   const hasCash = cards.some(c => c.wallet && !c.hidden);
   const hasCredit = cards.some(c => !c.wallet && !c.hidden);
-  const showTabs = hasCash && hasCredit;
   const tabBar = document.getElementById('tab-bar');
-  if (tabBar) tabBar.style.display = showTabs ? 'flex' : 'none';
-  if (!hasCash && (viewMode === 'cash' || viewMode === 'all')) {
-    viewMode = 'all';
-    
-  }
-  if (!showTabs) {
-    viewMode = 'all';
-    
-  }
+  if (tabBar) tabBar.style.display = 'flex';
   const isMobile = window.innerWidth <= 700;
   const logo = document.querySelector('.logo');
   const logoSvg = document.getElementById('logo-svg');
@@ -817,8 +832,8 @@ function importData(e) {
   reader.readAsText(file);
 }
 function resetToDefaults() {
-  if (!confirm('Reset to original Google Sheet data?')) return;
-  cards = JSON.parse(JSON.stringify(DEFAULTS)); persist(); render();
+  if (!confirm('Remove all accounts and reset to zero?')) return;
+  cards = []; persist(); render();
 }
 
 function effectiveAutopay(c) {
@@ -1552,10 +1567,8 @@ function updateAllSummary() {
   if (viewMode !== 'all') { el.style.display = 'none'; return; }
   const creditCards = cards.filter(c => !c.wallet);
   const wallets = cards.filter(c => c.wallet && !c.hidden);
-  const hasCash = wallets.length > 0;
   const totalWorking = parseFloat(creditCards.reduce((s,c)=>s+(c.balance||0)+(c.pending||0),0).toFixed(2));
   const totalCash = wallets.reduce((s,c)=>s+(c.balance||0)+(c.pending||0),0);
-  if (!hasCash) { el.style.display = 'none'; return; }
   el.style.display = 'grid';
   el.innerHTML = `
     <div class="stat" style="border-top:4px solid #4a5e3a"><div class="stat-label">Cash</div><div class="stat-value">${fmt$(totalCash)}</div></div>
@@ -1702,16 +1715,15 @@ function updateCashSummary() {
   const wallets = cards.filter(c => c.wallet && !c.hidden);
   const cashSummary = document.getElementById('cash-summary');
   if (!cashSummary) return;
-  if (wallets.length === 0 || viewMode !== 'cash') {
+  if (viewMode !== 'cash') {
     cashSummary.style.display = 'none';
     return;
   }
   const totalCash = wallets.reduce((s,c) => s+(c.balance||0), 0);
   const totalPendingCash = wallets.reduce((s,c) => s+(c.pending||0), 0);
-  const netCash = totalCash + totalPendingCash;
   cashSummary.style.display = 'grid';
   cashSummary.innerHTML = `
-    <div class="stat" style="border-top:4px solid #4a5e3a"><div class="stat-label">cash on hand</div><div class="stat-value">${fmt$(totalCash + totalPendingCash)}<div class="stat-sub" onclick="openCashCOA()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${wallets.length} account${wallets.length>1?'s':''}</div></div></div>
+    <div class="stat" style="border-top:4px solid #4a5e3a"><div class="stat-label">cash on hand</div><div class="stat-value">${fmt$(totalCash + totalPendingCash)}${wallets.length > 0 ? `<div class="stat-sub" onclick="openCashCOA()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${wallets.length} account${wallets.length>1?'s':''}</div>` : ''}</div></div>
     <div class="stat" style="border-top:4px solid #8a6e2e;border-right:none"><div class="stat-label">pending</div><div class="stat-value">${fmt$(totalPendingCash)}</div></div>
   `;
 }
