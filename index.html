@@ -338,7 +338,7 @@
 </header>
 
 <div id="tab-bar" style="max-width:1400px;margin:0 auto 1rem;display:flex;gap:0;border-bottom:2px solid #1a1714">
-  <button id="tab-all" onclick="setView('all')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid #1a1714;margin-bottom:-2px;background:#1a1714;color:#f4f1ec;cursor:pointer">All</button>
+  <button id="tab-all" onclick="setView('all')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:#6b6358;cursor:pointer">All</button>
   <button id="tab-cash" onclick="setView('cash')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:#6b6358;cursor:pointer">Cash</button>
   <button id="tab-credit" onclick="setView('credit')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:#6b6358;cursor:pointer">Credit</button>
 </div>
@@ -659,7 +659,7 @@ function initAuth() {
 
 let sortMode = 'none';
 let pendingFirst = false;
-let viewMode = 'all';
+let viewMode = localStorage.getItem('viewMode') || 'all';
 
 function togglePendingFirst() {
   pendingFirst = !pendingFirst;
@@ -681,7 +681,7 @@ function setSort(val) {
 
 function setView(mode) {
   viewMode = mode;
-  
+  localStorage.setItem('viewMode', mode);
   updateTabs();
   render();
 }
@@ -1781,6 +1781,7 @@ document.addEventListener('click', () => {
 document.getElementById('partial-modal').addEventListener('click', e => { if(e.target.id==='partial-modal') closePartialModal(); });
 document.getElementById('action-modal-overlay').addEventListener('click', e => { if(e.target.id==='action-modal-overlay') closeActionModal(); });
 document.getElementById('history-modal-overlay').addEventListener('click', e => { if(e.target.id==='history-modal-overlay') document.getElementById('history-modal-overlay').classList.remove('open'); });
+updateTabs();
 initAuth();
 </script>
 <div id="save-confirm-overlay" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
