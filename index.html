@@ -263,6 +263,7 @@
   .small-toggle input:checked + .small-toggle-slider { background: #1a1714; }
   .small-toggle input:checked + .small-toggle-slider:before { transform: translateX(12px); background: #ffffff; }
   @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .no-anim .card { animation: none; }
   .quick-log-fab { position:fixed; bottom:1.5rem; left:1.5rem; width:52px; height:52px; background:#1a1714; border:none; border-radius:0; color:#f4f1ec; font-size:1.8rem; line-height:52px; text-align:center; cursor:pointer; z-index:300; box-shadow:4px 4px 0 #8a6e2e; font-family:'Libre Baskerville',serif; transition:background 0.15s; }
   .quick-log-fab:hover { background:#8a6e2e; }
   @media (min-width:701px) { .quick-log-fab { display:none; } .quick-log-desktop { display:block !important; } }
@@ -314,16 +315,16 @@
       <rect x="0" y="39" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
       <rect x="0" y="46" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
     </svg>
+    <div id="userPill" class="user-pill" onclick="event.stopPropagation()" style="display:none;justify-content:center">
+      <img class="user-avatar" id="userAvatar" src="" alt="">
+      <span class="user-email" id="userEmail"></span>
+      <button id="btnSignOut">Sign out</button>
+    </div>
     </div>
   </div>
   <div class="summary-strip" id="summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;z-index:3"></div>
   <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
   <div id="all-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:400px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>  <div class="header-right">
-    <div id="userPill" class="user-pill" style="display:none;grid-column:span 2;justify-content:flex-end">
-      <img class="user-avatar" id="userAvatar" src="" alt="">
-      <span class="user-email" id="userEmail"></span>
-      <button id="btnSignOut">Sign out</button>
-    </div>
     <select id="sort-select" onchange="setSort(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;font-weight:500;padding:0.45rem 0.8rem;border:1.5px solid #8a6e2e;border-radius:0;background:#ffffff;color:#1a1714;cursor:pointer;outline:none;">
       <option value="none">sort: A → Z</option>
       <option value="closing">sort: closing date</option>
@@ -331,9 +332,9 @@
       <option value="utilization">sort: utilization</option>
     </select>
     <button class="btn" id="pending-first-btn" onclick="togglePendingFirst()">pending first</button>
-    <button class="btn primary" onclick="handleAddCard()">+ add card</button>
     <button class="btn" id="undo-btn" onclick="undo()" disabled>↩ undo</button>
     <button class="btn danger" onclick="resetToDefaults()">reset</button>
+    <button class="btn primary" onclick="handleAddCard()" style="grid-column:span 2;width:100%">ADD</button>
   </div>
 </header>
 
@@ -657,20 +658,21 @@ function initAuth() {
 
 
 
-let sortMode = 'none';
-let pendingFirst = false;
+let sortMode = localStorage.getItem('sortMode') || 'none';
+let pendingFirst = localStorage.getItem('pendingFirst') === 'true';
 let viewMode = localStorage.getItem('viewMode') || 'all';
+let _appReady = false;
 
 function togglePendingFirst() {
   pendingFirst = !pendingFirst;
-  
+  localStorage.setItem('pendingFirst', pendingFirst);
   updateSortBtns();
   render();
 }
 
 function setSort(val) {
   sortMode = val;
-  
+  localStorage.setItem('sortMode', val);
   // A→Z: permanently rewrite the stored card order
   if (val === 'none') {
     cards = [...cards].sort((a,b) => a.name.localeCompare(b.name));
@@ -1292,7 +1294,10 @@ function render() {
   ] : sortedCards;
   updateSummary();
 
-  document.getElementById('cards-grid').innerHTML = displayCards.map((c,idx) => buildCard(c,idx)).join('');
+  const grid = document.getElementById('cards-grid');
+  if (_appReady) grid.classList.add('no-anim');
+  grid.innerHTML = displayCards.map((c,idx) => buildCard(c,idx)).join('');
+  _appReady = true;
   initDrag();
   updateSortBtns();
   updateCOA();
