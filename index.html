@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Ledge">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9IiNmNGYxZWMiLz4KICA8cmVjdCB4PSI0IiB5PSI3IiB3aWR0aD0iMjQiIGhlaWdodD0iMSIgZmlsbD0iIzRhNWUzYSIgb3BhY2l0eT0iMC4yIi8+CiAgPHJlY3QgeD0iNCIgeT0iMTEiIHdpZHRoPSIyNCIgaGVpZ2h0PSIxIiBmaWxsPSIjNGE1ZTNhIiBvcGFjaXR5PSIwLjIiLz4KICA8cmVjdCB4PSI0IiB5PSIxNSIgd2lkdGg9IjI0IiBoZWlnaHQ9IjEiIGZpbGw9IiM0YTVlM2EiIG9wYWNpdHk9IjAuMiIvPgogIDxyZWN0IHg9IjQiIHk9IjE5IiB3aWR0aD0iMjQiIGhlaWdodD0iMSIgZmlsbD0iIzRhNWUzYSIgb3BhY2l0eT0iMC4yIi8+CiAgPHJlY3QgeD0iNCIgeT0iNyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjE2IiBmaWxsPSIjZjRmMWVjIi8+CiAgPHRleHQgeD0iNiIgeT0iMjEiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLCBzZXJpZiIgZm9udC1zaXplPSIyMCIgZmlsbD0iIzRhNWUzYSIgZm9udC1zdHlsZT0iaXRhbGljIj5MPC90ZXh0PgogIDxyZWN0IHg9IjYiIHk9IjIyIiB3aWR0aD0iMTIiIGhlaWdodD0iMyIgZmlsbD0iIzhhNmUyZSIvPgogIDxyZWN0IHg9IjE4IiB5PSIyMiIgd2lkdGg9IjE0IiBoZWlnaHQ9IjEwIiBmaWxsPSIjZjRmMWVjIi8+CiAgPHBvbHlnb24gcG9pbnRzPSIxOCwyMiAxOCwzMCAxMCwzMCIgZmlsbD0iI2Y0ZjFlYyIvPgo8L3N2Zz4=">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAAJCklEQVR4nO3dsWlDVxSA4ShoA/XCs2QAlx4i4BFSZQRDhnDpATKLcC0XAg2Qwq1BjkneeU//901wuMX9OffZaHe9nH8BoOfX6QEAmCEAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABAlAABRAgAQJQAAUQIAECUAAFECABC1nx5gS56eH6dH+A+8vrxNjwCsgg0AIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBqG/8JfPp4nx7hfjhMWMbD4Tg9wg02AIAoAQCIEgCAqG18A1j/U9qGOEzgkw0AIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBqd72cp2e47en5cXoEgB96fXmbHuFrNgCAKAEAiNrGE9BK3MdL1Gq3UWBhNgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIjaTw/wLaeP9+kR7ofDhGU8HI7TI9xgAwCIEgCAKAEAiNrGN4D1P6VtiMMEPtkAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACidtfLeXqG256eH6dHAPih15e36RG+ZgMAiBIAgKhtPAGtxH28RK12GwUWZgMAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAICo/fQA33L6eJ8e4X44TFjGw+E4PcINNgCAKAEAiBIAgKhtfANY/1PahjhM4JMNACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgane9nKdnuO3p+XF6BIAfen15mx7hazYAgCgBAIjaxhPQStzHS9Rqt1FgYTYAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCI2k8P8C2nj/fpEe6Hw4RlPByO0yPcYAMAiBIAgCgBAIjaxjeA9T+lbYjDBD7ZAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAonbXy3l6htuenh+nRwD4odeXt+kRvmYDAIgSAICobTwBrcR9vEStdhsFFmYDAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAqP30AN9y+nifHuF+OExYxsPhOD3CDTYAgCgBAIgSAICobXwDWP9T2oY4TOCTDQAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIGp3vZynZ7jt6flxegSAH3p9eZse4Ws2AIAoAQCI2sYT0Ercx0vUardRYGE2AIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiNpPD/Atp4/36RHuh8OEZTwcjtMj3GADAIgSAIAoAQCI2sY3gPU/pW2IwwQ+2QAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIEoAAKIEACBKAACiBAAgSgAAogQAIGobPwrPf+jp+XF6BP6d15e36RG4TzYAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgCgBAIgSAIAoAQCIEgCAKAEAiBIAgKjd9XKengGAAfvpAbbkrz9+mx6BnN///Ht6BO6WJyBYL7c//ysBgJVy+/N/8wQEq+PqZxk2AFgXtz+LEQBYEbc/SxIAWAu3PwsTAFgFtz/LEwCY5/ZnhL8CgkmufgbZAGCM259ZAgAz3P6MEwAY4PZnDXwDgOW491kVAYAluPpZIb8HABDlGwBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABE7acH+JbTx/v0CAA/9HA4To/wNRsAQJQAAETtrpfz9AwADLABAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAEDUfnqAbzl9vE+PAPBDD4fj9AhfswEARAkAQNTuejlPzwDAABsAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABECQBAlAAARAkAQJQAAEQJAECUAABE/QO9rJibt6pAzQAAAABJRU5ErkJggg==">
+<title>Ledge</title>
+<!-- Firebase SDKs -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+  import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDtZzfvaHmIX2n9oGa9FGlpN685w7zqkjc",
+    authDomain: "ledge-e5b1d.firebaseapp.com",
+    projectId: "ledge-e5b1d",
+    storageBucket: "ledge-e5b1d.firebasestorage.app",
+    messagingSenderId: "948547499354",
+    appId: "1:948547499354:web:579ebae8619d4091e0af63"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  window._fbAuth = auth;
+  window._fbDb = db;
+  window._fbSignIn = () => signInWithPopup(auth, provider);
+  window._fbSignOut = () => signOut(auth);
+  window._fbOnAuthChanged = (cb) => onAuthStateChanged(auth, cb);
+  window._fbDoc = doc;
+  window._fbSetDoc = setDoc;
+  window._fbGetDoc = getDoc;
+  window._firebaseReady = true;
+  window.dispatchEvent(new Event('firebaseReady'));
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    --bg: #1c1a16;
+    --surface: #252219;
+    --surface2: #2e2b22;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.16);
+    --text: #e8e0d0;
+    --muted: #8a7f6a;
+  }
+
+  :root {
+    --bg: #f4f1ec;
+    --surface: #ffffff;
+    --surface2: #f0ece4;
+    --border: rgba(0,0,0,0.1);
+    --border2: rgba(0,0,0,0.2);
+    --text: #1a1714;
+    --muted: #6b6358;
+    --radius: 2px;
+    --accent: #8a6e2e;
+    --accent-l: #f5edd8;
+    --c1: #2d5a42;  --c1l: #e8f0ec;
+    --c2: #1e3a6e;  --c2l: #e8ecf5;
+    --c3: #6e2020;  --c3l: #f5e8e8;
+    --c4: #4a4420;  --c4l: #f5f5e8;
+    --c5: #5a2060;  --c5l: #f5e8f5;
+    --c6: #1a5050;  --c6l: #e8f5f5;
+    --c7: #6e4a10;  --c7l: #f5f0e8;
+    --c8: #1a1a6e;  --c8l: #e8e8f5;
+    --c9: #3a5a1a;  --c9l: #eef5e8;
+    --c10: #6e1a2a; --c10l: #f5e8ec;
+  }
+  body { font-family: 'IBM Plex Mono', monospace; background: #f4f1ec; color: #1a1714; min-height: 100vh; padding: 2rem 1.5rem 5rem; letter-spacing: -0.01em; }
+
+  header { max-width: 1400px; margin: 0 auto 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; position: relative; min-height: 100px; }
+  .logo { font-family: 'Libre Baskerville', serif; font-size: 3.4rem; color: #1a1714; letter-spacing: 0.04em; text-transform: uppercase; }
+  .logo em { color: #4a5e3a; font-style: italic; }
+  .header-right { display: grid; grid-template-columns: repeat(2, auto); gap: 6px; align-items: center; flex:1; justify-content: flex-end; position: relative; z-index: 2; }
+  .user-pill { display: flex; align-items: center; gap: 8px; }
+  .btn { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; font-weight: 500; padding: 0.45rem 1rem; border-radius: 0; border: 1.5px solid #0d0d0d; background: #f4f1ec; color: #1a1714; cursor: pointer; transition: all 0.15s; letter-spacing: 0.03em; }
+  .btn:hover { background: #8a6e2e; color: #ffffff; border-color: #8a6e2e; }
+  .btn.primary { background: #4a5e3a; color: #ffffff; border-color: #4a5e3a; font-weight: 600; }
+  .btn.primary:hover { background: #374830; border-color: #374830; }
+  .btn.danger:hover { background: #8b2020; color: #ffffff; border-color: #8b2020; }
+
+  .summary-strip { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border: 1.5px solid #1a1714; border-top: 4px solid #8a6e2e; }
+  .stat { background: #ffffff; border-radius: 0; padding: 0.45rem 0.75rem; border-right: 1px solid rgba(0,0,0,0.1); border-bottom: 1px solid rgba(0,0,0,0.1); border-top: none; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .stat-label { font-size: 0.55rem; color: #6b6358; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+  .stat-value { font-size: 1rem; font-weight: 700; color: #1a1714; line-height: 1.2; font-family: 'Libre Baskerville', serif; }
+  .stat-sub { font-size: 0.58rem; color: #6b6358; margin-top: 1px; }
+
+  .cards-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .card { background: #ffffff; border-radius: 0; box-shadow: none; overflow: hidden; cursor: grab; user-select: none; transition: box-shadow 0.2s, transform 0.15s; border: 1.5px solid #1a1714; animation: fadeUp 0.3s ease both; display: flex; flex-direction: column; position: relative; }
+  .card:active { cursor: grabbing; }
+  .card:hover { box-shadow: 4px 4px 0 #8a6e2e; border-color: #8a6e2e; }
+  .card.dragging { opacity: 0.35; transform: scale(0.97); }
+  .card.drag-over { border-color: #8a6e2e; box-shadow: 4px 4px 0 #8a6e2e; }
+  .card.closing-alert { border-color: #cc2222 !important; border-width: 2.5px !important; box-shadow: 4px 4px 0 #cc2222 !important; }
+  .card-stripe { display: none; }
+  .card-body { padding: 0.85rem 1.75rem; display: flex; flex-direction: column; }
+
+  .card-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 0.65rem; gap: 0.4rem; }
+  .card-name { font-family: 'Libre Baskerville', serif; font-size: 0.95rem; color: #1a1714; line-height: 1.2; letter-spacing: 0.01em; }
+  .card-meta { font-size: 0.65rem; color: #6b6358; margin-top: 3px; font-weight: 400; letter-spacing: 0.02em; }
+  .card-actions { display: flex; gap: 5px; flex-shrink: 0; }
+  .icon-btn { background: #f0ece4; border: 1px solid #c8bfb0; border-radius: 0; color: #4a4238; cursor: pointer; font-size: 0.65rem; padding: 3px 7px; font-family: 'IBM Plex Mono', monospace; font-weight: 500; transition: all 0.15s; letter-spacing: 0.03em; }
+  .icon-btn:hover { background: #1a1714; color: #ffffff; border-color: #1a1714; }
+  .icon-btn.del:hover { background: #8b2020; color: #ffffff; border-color: #8b2020; }
+
+  .balance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.65rem; margin-left: 0.5rem; margin-right: 0.5rem; }
+  .bal-cell.working { grid-column: 1 / -1; background: #f0f4ed; border: 1.5px solid #4a5e3a; border-radius: 0; }
+  .bal-cell { background: #f0ece4; border-radius: 0; padding: 0.4rem 0.5rem; text-align: center; border: 1px solid #d8d0c4; }
+  .bal-cell.cleared { background: #e8f5ec; border-color: #5a9e72; }
+  .bal-cell.cleared .bal-cell-label { color: #2d6a3f; }
+  .bal-cell.cleared .bal-cell-val { color: #1b4a2d; }
+  .bal-cell-label { font-size: 0.58rem; color: #6b6358; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 2px; }
+  .bal-cell-val { font-size: 0.82rem; font-weight: 600; color: #1a1714; }
+  .bal-cell.working .bal-cell-label { color: #4a5e3a; }
+  .bal-cell.working .bal-cell-val { color: #1a1714; }
+  .bal-cell.pending-cell { background: #f0ece4; border-color: #c4a55a; }
+  .bal-cell.pending-payment { background: #e8f5ec; border-color: #5a9e72; }
+  .bal-cell.pending-payment .bal-cell-label { color: #047857; }
+  .bal-cell.pending-payment .bal-cell-val { color: #047857; }
+  .bal-cell.pending-cell .bal-cell-label { color: #7a7060; }
+  .bal-cell.pending-cell .bal-cell-val { color: #4a4238; }
+
+  .clear-pending-wrap { margin-bottom: 0.65rem; display: flex; gap: 6px; align-items: center; }
+  .clear-pending-btn { flex: 1; background: #f5edd8; border: 1.5px solid #8a6e2e; border-radius: 0; color: #5a4010; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; font-weight: 600; padding: 0.4rem 0.75rem; text-align: center; transition: all 0.15s; letter-spacing: 0.03em; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 52px; }
+  .partial-clear-btn { background: #ffffff; border: 1.5px solid #1a1714; border-radius: 0; color: #1a1714; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; font-weight: 600; padding: 0.4rem 0.75rem; transition: all 0.15s; white-space: nowrap; letter-spacing: 0.03em; min-height: 52px; display: flex; align-items: center; justify-content: center; }
+  .partial-clear-btn:disabled { opacity: 0.3; cursor: default; border-color: #d8d0c4; color: #a09880; }
+
+  .util-wrap { margin-bottom: 0.65rem; }
+  .util-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: #6b6358; margin-bottom: 5px; font-weight: 500; }
+  .util-label strong { color: #1a1714; font-weight: 700; font-size: 0.82rem; }
+  .bar-track { display: none; }
+  .bar-fill { display: none; }
+
+  /* 3-column dates row */
+    .date-cell { background: #ffffff; border-radius: 0; padding: 0.25rem 0.45rem; border: 1px solid #e0e0e0; min-height: 58px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-sizing: border-box; }
+  .date-cell-label { font-size: 0.55rem; color: #6b6358; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
+  .date-cell-val { font-size: 0.72rem; color: #1a1714; font-weight: 500; }
+  .date-cell.stmt { background: #ffffff; border-color: #e0e0e0; }
+  .date-cell.stmt .date-cell-label { color: #6b6358; }
+  .date-cell.stmt .date-cell-val { color: #1a1714; }
+
+  /* Inline statement balance input */
+  .stmt-input-wrap { display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+  .stmt-input { background: transparent; border: none; border-bottom: 1.5px solid #c8bfb0; border-radius: 0; color: #1a1714; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; font-weight: 600; width: 100%; outline: none; padding: 1px 0; text-align: center; }
+  .stmt-input::placeholder { color: #b8a888; font-weight: 400; }
+
+  /* Autopay section */
+  .autopay-section { background: #f0ece4; border-radius: 0; padding: 0.45rem 0.65rem; margin-bottom: 0.65rem; border: 1px solid #d8d0c4; }
+  .autopay-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+  .autopay-label { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .autopay-date { font-size: 0.8rem; color: var(--text); font-weight: 600; }
+  .badge { display: inline-block; font-size: 0.55rem; padding: 2px 6px; border-radius: 99px; font-weight: 600; letter-spacing: 0.04em; margin-top: 3px; }
+  .badge.urgent { background: #fde8e8; color: #8b2020; }
+  .badge.soon { background: #f5edd8; color: #8a6e2e; }
+  .badge.ok { background: #e8f5ec; color: #1b4a2d; }
+
+  /* Autopay mode pill toggle */
+  .autopay-mode-wrap { display: flex; gap: 0; border-radius: 8px; overflow: hidden; border: 1.5px solid var(--border2); margin-bottom: 0.5rem; }
+  .mode-pill { flex: 1; background: none; border: none; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; font-weight: 600; padding: 0.35rem 0.5rem; color: var(--muted); transition: all 0.15s; text-align: center; }
+  .mode-pill.active { background: var(--c1); color: #fff; }
+  .mode-pill:first-child { border-right: 1.5px solid var(--border2); }
+
+  .autopay-custom-input { width: 100%; background: #fff; border: 1.5px solid var(--border2); border-radius: 8px; color: var(--text); font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; font-weight: 600; padding: 0.4rem 0.7rem; outline: none; transition: border-color 0.15s; margin-top: 2px; }
+  .autopay-custom-input:focus { border-color: var(--c1); }
+  .autopay-stmt-display { font-size: 0.78rem; font-weight: 600; color: #1a1714; padding: 0.4rem 0; }
+  .autopay-stmt-display.none { color: #9a9080; font-weight: 400; font-style: italic; }
+
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; padding: 0.4rem 0.65rem; background: #f0ece4; border-radius: 0; border: 1px solid #d8d0c4; }
+  .toggle-label { font-size: 0.7rem; color: #6b6358; font-weight: 500; }
+  .toggle { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: #c8bfb0; border-radius: 2px; cursor: pointer; transition: background 0.2s; }
+  .toggle-slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: #ffffff; border-radius: 1px; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+  .toggle input:checked + .toggle-slider { background: #1a1714; }
+  .toggle input:checked + .toggle-slider:before { transform: translateX(16px); background: #ffffff; }
+
+  .paydown-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; padding: 0.4rem 0.65rem; background: #f5edd8; border-radius: 0; border: 1px solid #c8a85a; }
+  .paydown-label { font-size: 0.65rem; color: #8a6e2e; font-weight: 600; letter-spacing: 0.03em; }
+  .spend-section { padding-top: 0.4rem; margin-left: 0.5rem; margin-right: 0.5rem; }
+  .spend-label { font-size: 0.62rem; color: #6b6358; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 6px; }
+  .spend-input-wrap { display: flex; gap: 7px; }
+  .spend-input-wrap input { flex: 1; background: #ffffff; border: 1.5px solid #c8bfb0; border-radius: 0; color: #1a1714; font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; font-weight: 400; padding: 0.4rem 0.7rem; outline: none; transition: border-color 0.15s; min-width: 0; }
+  .spend-input-wrap input:focus { border-color: #8a6e2e; }
+  .spend-input-wrap button { background: #4a5e3a; border: 1.5px solid #4a5e3a; border-radius: 0; color: #ffffff; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; font-weight: 600; padding: 0 0.85rem; white-space: nowrap; transition: all 0.15s; letter-spacing: 0.03em; }
+  .spend-input-wrap button:hover { background: #374830; border-color: #374830; }
+
+  /* Partial clear modal */
+  .mini-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(4px); }
+  .mini-modal-overlay.open { display: flex; }
+  .mini-modal { background: #ffffff; border-radius: 0; padding: 1.5rem; width: 100%; max-width: 340px; box-shadow: 6px 6px 0 #8a6e2e; border: 2px solid #1a1714; }
+  .mini-modal h3 { font-family: 'Libre Baskerville', serif; font-size: 1rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.03em; color: #1a1714; }
+  .mini-modal p { font-size: 0.78rem; color: #6b6358; margin-bottom: 1rem; }
+  .mini-modal input { width: 100%; background: #ffffff; border: 1.5px solid #c8bfb0; border-radius: 0; color: #1a1714; font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem; font-weight: 400; padding: 0.55rem 0.8rem; outline: none; margin-bottom: 1rem; transition: border-color 0.15s; }
+  .mini-modal input:focus { border-color: #8a6e2e; }
+  .mini-modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .mini-btn-cancel { background: #ffffff; border: 1.5px solid #c8bfb0; border-radius: 0; color: #4a4238; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; font-weight: 500; padding: 0.45rem 1rem; transition: all 0.15s; }
+  .mini-btn-cancel:hover { color: var(--text); }
+  .mini-btn-confirm { background: #1a1714; border: 1.5px solid #1a1714; border-radius: 0; color: #ffffff; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; font-weight: 600; padding: 0.45rem 1rem; transition: all 0.15s; letter-spacing: 0.04em; text-transform: uppercase; }
+  .mini-btn-confirm:hover { opacity: 0.88; }
+
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; padding: 1rem; backdrop-filter: blur(4px); }
+  .modal-overlay.open { display: flex; }
+  .modal { background: #ffffff; border-radius: 0; padding: 2rem; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; box-shadow: 8px 8px 0 #8a6e2e; border: 2px solid #1a1714; }
+  .modal h2 { font-family: 'Libre Baskerville', serif; font-size: 1.3rem; color: #1a1714; margin-bottom: 1.5rem; letter-spacing: 0.02em; text-transform: uppercase; }
+  .form-group { margin-bottom: 0.9rem; }
+  .form-group label { display: block; font-size: 0.68rem; color: #6b6358; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; margin-bottom: 5px; }
+  .form-group input, .form-group select { width: 100%; background: #ffffff; border: 1.5px solid #c8bfb0; border-radius: 0; color: #1a1714; font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; font-weight: 400; padding: 0.55rem 0.8rem; outline: none; transition: border-color 0.15s; }
+  .form-group input:focus, .form-group select:focus { border-color: #8a6e2e; outline: none; }
+  .form-group .hint { font-size: 0.68rem; color: #9a9080; margin-top: 4px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 1.5rem; justify-content: flex-end; }
+  .btn-cancel { background: #ffffff; border: 1.5px solid #c8bfb0; border-radius: 0; color: #4a4238; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 500; padding: 0.5rem 1.2rem; transition: all 0.15s; letter-spacing: 0.03em; }
+  .btn-cancel:hover { background: #f0ece4; color: #1a1714; }
+  .btn-save { background: #1a1714; border: 2px solid #1a1714; border-radius: 0; color: #ffffff; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 600; padding: 0.5rem 1.4rem; transition: all 0.15s; letter-spacing: 0.05em; text-transform: uppercase; }
+  .btn-save:hover { background: #8a6e2e; border-color: #8a6e2e; }
+  #file-input { display: none; }
+  .action-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 300; align-items: center; justify-content: center; padding: 1rem; }
+  .action-modal-overlay.open { display: flex; }
+  .action-modal { background: #ffffff; border: 2px solid #1a1714; border-radius: 0; padding: 1.5rem; width: 100%; max-width: 320px; box-shadow: 6px 6px 0 #8a6e2e; font-family: 'IBM Plex Mono', monospace; }
+  .action-modal h3 { font-family: 'Libre Baskerville', serif; font-size: 1rem; color: #1a1714; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .action-modal p { font-size: 0.75rem; color: #6b6358; margin-bottom: 1.25rem; }
+  .action-modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+  .action-btn { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; font-weight: 600; padding: 0.45rem 1rem; border-radius: 0; cursor: pointer; letter-spacing: 0.03em; transition: all 0.15s; }
+  .action-btn.abort { background: #ffffff; border: 1.5px solid #c8bfb0; color: #6b6358; }
+  .action-btn.abort:hover { background: #f0ece4; }
+  .action-btn.hide { background: #f5edd8; border: 1.5px solid #8a6e2e; color: #5a4010; }
+  .action-btn.hide:hover { background: #8a6e2e; color: #fff; }
+  .action-btn.delete { background: #1a1714; border: 1.5px solid #1a1714; color: #ffffff; }
+  .action-btn.delete:hover { background: #8b2020; border-color: #8b2020; }
+  .txn-list { margin-bottom: 0.65rem; margin-left: 0.5rem; margin-right: 0.5rem; border: 1px solid #c8c0b8; }
+  .txn-list-body { max-height: 120px; overflow-y: auto; }
+  .txn-item { display: flex; align-items: center; justify-content: space-between; padding: 0.3rem 0.5rem; border-bottom: 1px solid #f0ece4; gap: 6px; }
+  .txn-item:last-child { border-bottom: none; }
+  .txn-item.cleared { opacity: 0.35; }
+  .txn-date { font-size: 0.6rem; color: #8a7f6a; min-width: 36px; }
+  .txn-amt { font-size: 0.75rem; font-weight: 600; flex: 1; }
+  .txn-amt.positive { color: #7a3a10; }
+  .txn-amt.negative { color: #1b4a2d; }
+  .txn-actions { display: flex; gap: 4px; }
+  .txn-btn { background: none; border: 1px solid #d8d0c4; border-radius: 0; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; font-weight: 600; padding: 2px 6px; cursor: pointer; color: #6b6358; transition: all 0.15s; }
+  .txn-btn:hover { background: #1a1714; color: #fff; border-color: #1a1714; }
+  .txn-btn.del:hover { background: #8b2020; border-color: #8b2020; color: #fff; }
+  .txn-section-label { font-size: 0.58rem; color: #8a7f6a; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; margin-bottom: 4px; }
+  .pending-badge { display: inline-block; font-size: 0.52rem; font-weight: 700; padding: 1px 6px; background: #fff3cd; border: 1px solid #c4a55a; color: #5a4010; letter-spacing: 0.05em; text-transform: uppercase; }
+  .pending-badge.negative { background: #e8f5ec; border-color: #2d6a3f; color: #1b4a2d; }
+  .util-box { border-radius: 0; padding: 0.55rem 0.75rem; margin-bottom: 0.65rem; border: 1px solid rgba(0,0,0,0.1); transition: background 0.4s; }
+  .util-box .util-title { font-size: 0.62rem; color: rgba(0,0,0,0.45); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; margin-bottom: 3px; }
+  .util-box .util-pct { font-size: 1rem; font-weight: 700; color: rgba(0,0,0,0.75); line-height: 1; margin-bottom: 2px; }
+  .util-box .util-sub { font-size: 0.65rem; color: rgba(0,0,0,0.45); font-weight: 500; margin-top: 2px; }
+
+  .small-toggle { position: relative; width: 28px; height: 16px; flex-shrink: 0; }
+  .small-toggle input { opacity: 0; width: 0; height: 0; }
+  .small-toggle-slider { position: absolute; inset: 0; background: #c8bfb0; border-radius: 2px; cursor: pointer; transition: background 0.2s; }
+  .small-toggle-slider:before { content: ''; position: absolute; width: 11px; height: 11px; left: 2px; top: 2px; background: #ffffff; border-radius: 1px; transition: transform 0.2s; }
+  .small-toggle input:checked + .small-toggle-slider { background: #1a1714; }
+  .small-toggle input:checked + .small-toggle-slider:before { transform: translateX(12px); background: #ffffff; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .quick-log-fab { position:fixed; bottom:1.5rem; left:1.5rem; width:52px; height:52px; background:#1a1714; border:none; border-radius:0; color:#f4f1ec; font-size:1.8rem; line-height:52px; text-align:center; cursor:pointer; z-index:300; box-shadow:4px 4px 0 #8a6e2e; font-family:'Libre Baskerville',serif; transition:background 0.15s; }
+  .quick-log-fab:hover { background:#8a6e2e; }
+  @media (min-width:701px) { .quick-log-fab { display:none; } .quick-log-desktop { display:block !important; } }
+  @media (max-width: 700px) {
+    header { flex-direction: column; align-items: center; gap: 1.25rem; min-height: auto; padding-bottom: 0; margin-bottom: 1.25rem; }
+    .logo { position: static !important; transform: none !important; text-align: center; left: auto !important; }
+    #logo-svg { width: 220px !important; height: 68px !important; }
+    .summary-strip { position: static !important; transform: none !important; width: 100% !important; margin-bottom: 0 !important; }
+    #cash-summary { position: static !important; transform: none !important; width: 100% !important; margin-bottom: 0 !important; }
+    #all-summary { position: static !important; transform: none !important; width: 100% !important; margin-bottom: 0 !important; }
+    .header-right { justify-content: center; flex: none; position: static; }
+    .quick-log-desktop { display: none !important; }
+    #tab-bar { margin-bottom: 1.25rem; margin-top: 0; }
+  }
+/* AUTH */
+#authOverlay{position:fixed;inset:0;background:#f4f1ec;z-index:9999;display:none;align-items:center;justify-content:center}
+#authOverlay.visible{display:flex!important}
+.auth-box{background:#ffffff;border:2px solid #1a1714;padding:40px 36px;width:340px;max-width:calc(100vw - 32px);text-align:center;box-shadow:8px 8px 0 #8a6e2e}
+.auth-logo{font-family:'Libre Baskerville',serif;font-size:2.5rem;color:#1a1714;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:8px}
+.auth-logo em{color:#4a5e3a;font-style:italic}
+.auth-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6b6358;margin-bottom:28px;line-height:1.6}
+.auth-google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:1.5px solid #1a1714;background:#f4f1ec;color:#1a1714;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.15s}
+.auth-google-btn:hover{background:#4a5e3a;color:#ffffff;border-color:#4a5e3a}
+.auth-error{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8b2020;margin-top:12px;min-height:16px}
+.user-pill{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6b6358}
+.user-avatar{width:22px;height:22px;border-radius:50%;border:1px solid #c8bfb0}
+.user-email{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btnSignOut{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;padding:3px 8px;border:1.5px solid #1a1714;background:none;color:#6b6358;cursor:pointer;text-transform:uppercase;letter-spacing:0.03em}
+#btnSignOut:hover{background:#1a1714;color:#f4f1ec}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" style="position:static;flex:1;text-align:center;cursor:pointer" onclick="setView('all')">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+    <svg id="logo-svg" width="320" height="100" viewBox="0 0 160 56" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="4" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+      <rect x="0" y="11" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+      <rect x="0" y="18" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+      <rect x="0" y="25" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+      <rect x="0" y="32" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+      <rect x="0" y="4" width="160" height="32" fill="#f4f1ec"/>
+      <text x="2" y="32" font-family="'Libre Baskerville', serif" font-size="26" fill="#4a5e3a" font-style="italic" letter-spacing="2">LED</text>
+      <text x="72" y="38" font-family="'Libre Baskerville', serif" font-size="26" fill="#8a6e2e" font-style="italic" letter-spacing="2">GE</text>
+      <rect x="0" y="36" width="72" height="3" fill="#8a6e2e"/>
+      <rect x="72" y="36" width="88" height="24" fill="#f4f1ec"/>
+      <polygon points="72,36 72,52 56,52" fill="#f4f1ec"/>
+      <rect x="0" y="39" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+      <rect x="0" y="46" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+    </svg>
+    <span onclick="openQuickLog()" style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:#8a6e2e;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;user-select:none;display:none;" class="quick-log-desktop">+ quick log</span>
+    </div>
+  </div>
+  <div class="summary-strip" id="summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;z-index:3"></div>
+  <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
+  <div id="all-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:400px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>  <div class="header-right">
+    <button class="btn" onclick="document.getElementById('file-input').click()">↑ load save</button>
+    <button class="btn" onclick="exportData()">↓ export</button>
+    <button class="btn danger" onclick="resetToDefaults()">reset</button>
+    <div id="userPill" class="user-pill" style="display:none;grid-column:span 2;justify-content:flex-end">
+      <img class="user-avatar" id="userAvatar" src="" alt="">
+      <span class="user-email" id="userEmail"></span>
+      <button id="btnSignOut">Sign out</button>
+    </div>
+    <select id="sort-select" onchange="setSort(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;font-weight:500;padding:0.45rem 0.8rem;border:1.5px solid #8a6e2e;border-radius:0;background:#ffffff;color:#1a1714;cursor:pointer;outline:none;">
+      <option value="none">sort: A → Z</option>
+      <option value="closing">sort: closing date</option>
+      <option value="autopay">sort: autopay date</option>
+      <option value="utilization">sort: utilization</option>
+    </select>
+    <button class="btn" id="pending-first-btn" onclick="togglePendingFirst()">pending first</button>
+    <button class="btn primary" onclick="handleAddCard()">+ add card</button>
+    <input type="file" id="file-input" accept=".json" onchange="importData(event)" />
+  </div>
+</header>
+
+<div id="tab-bar" style="max-width:1400px;margin:0 auto 1rem;display:flex;gap:0;border-bottom:2px solid #1a1714">
+  <button id="tab-all" onclick="setView('all')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid #1a1714;margin-bottom:-2px;background:#1a1714;color:#f4f1ec;cursor:pointer">All</button>
+  <button id="tab-cash" onclick="setView('cash')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:#6b6358;cursor:pointer">Cash</button>
+  <button id="tab-credit" onclick="setView('credit')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:#6b6358;cursor:pointer">Credit</button>
+</div>
+
+<div class="cards-grid" id="cards-grid"></div>
+
+<div class="mini-modal-overlay" id="partial-modal">
+  <div class="mini-modal">
+    <h3>Clear partial amount</h3>
+    <p id="partial-desc">Enter how much of the pending balance to move to cleared.</p>
+    <input type="number" id="partial-amt" placeholder="0.00" min="0" step="0.01" />
+    <div class="mini-modal-actions">
+      <button class="mini-btn-cancel" onclick="closePartialModal()">cancel</button>
+      <button class="mini-btn-confirm" onclick="confirmPartialClear()">clear it</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2 id="modal-title">add card</h2>
+    <div class="form-group"><label>Card Name</label><input type="text" id="f-name" placeholder="e.g. Sapphire Preferred (5765)" /></div>
+    <div class="form-row">
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:5px">Cleared Balance ($)<button onclick="event.preventDefault();event.stopPropagation();const el=document.getElementById('modal-cl-info');el.style.display=el.style.display==='none'?'block':'none'" style="background:none;border:1px solid #6b6358;border-radius:50%;color:#6b6358;cursor:pointer;font-size:0.48rem;font-weight:700;width:13px;height:13px;padding:0;line-height:13px;text-align:center;font-family:'IBM Plex Mono',monospace">?</button></label>
+        <div id="modal-cl-info" style="display:none;font-size:0.65rem;color:#6b6358;line-height:1.5;margin-bottom:6px;padding:0.35rem 0.5rem;background:#f7f5f0;border-left:2px solid #8a6e2e">Your current balance from your bank or card app — charges that have fully posted, not pending ones.</div>
+        <input type="number" id="f-balance" placeholder="0" min="0" step="0.01" />
+      </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:5px">Pending Balance ($)<button onclick="event.preventDefault();event.stopPropagation();const el=document.getElementById('modal-pend-info');el.style.display=el.style.display==='none'?'block':'none'" style="background:none;border:1px solid #6b6358;border-radius:50%;color:#6b6358;cursor:pointer;font-size:0.48rem;font-weight:700;width:13px;height:13px;padding:0;line-height:13px;text-align:center;font-family:'IBM Plex Mono',monospace">?</button></label>
+        <div id="modal-pend-info" style="display:none;font-size:0.65rem;color:#6b6358;line-height:1.5;margin-bottom:6px;padding:0.35rem 0.5rem;background:#f7f5f0;border-left:2px solid #8a6e2e">Charges or payments you've logged but haven't cleared yet. Usually you won't need to set this manually.</div>
+        <input type="number" id="f-pending" placeholder="0" min="0" step="0.01" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:5px">Statement Balance ($)<button onclick="event.preventDefault();event.stopPropagation();const el=document.getElementById('modal-stmt-info');el.style.display=el.style.display==='none'?'block':'none'" style="background:none;border:1px solid #6b6358;border-radius:50%;color:#6b6358;cursor:pointer;font-size:0.48rem;font-weight:700;width:13px;height:13px;padding:0;line-height:13px;text-align:center;font-family:'IBM Plex Mono',monospace">?</button></label>
+        <div id="modal-stmt-info" style="display:none;font-size:0.65rem;color:#6b6358;line-height:1.5;margin-bottom:6px;padding:0.35rem 0.5rem;background:#f7f5f0;border-left:2px solid #8a6e2e">The balance shown on your most recent statement. Find it on your bank's website or paper statement. This auto-updates at midnight after your closing date.</div>
+        <input type="number" id="f-stmtbal" placeholder="0" min="0" step="0.01" />
+      </div>
+      <div class="form-group"><label>Credit Limit ($)</label><input type="number" id="f-limit" placeholder="0" min="0" /></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Closing Date</label><input type="text" id="f-closing" placeholder="e.g. 3rd or EOM" /></div>
+      <div class="form-group"><label>AutoPay Date</label><input type="text" id="f-autopay" placeholder="e.g. 27th" /></div>
+    </div>
+    <div class="form-group">
+      <label style="display:flex;align-items:center;gap:5px">AutoPay Type<button onclick="event.preventDefault();event.stopPropagation();const el=document.getElementById('modal-ap-info');el.style.display=el.style.display==='none'?'block':'none'" style="background:none;border:1px solid #6b6358;border-radius:50%;color:#6b6358;cursor:pointer;font-size:0.48rem;font-weight:700;width:13px;height:13px;padding:0;line-height:13px;text-align:center;font-family:'IBM Plex Mono',monospace">?</button></label>
+      <div id="modal-ap-info" style="display:none;font-size:0.65rem;color:#6b6358;line-height:1.5;margin-bottom:6px;padding:0.35rem 0.5rem;background:#f7f5f0;border-left:2px solid #8a6e2e"><strong>Custom amount</strong> — autopay pays a fixed amount you set each month, like a minimum payment. <strong>Pay full statement</strong> — autopay pays whatever your statement balance is each month, keeping the card at $0.</div>
+      <select id="f-autopaymode">
+        <option value="custom">Custom amount</option>
+        <option value="statement">Pay full statement</option>
+      </select>
+    </div>
+    <div class="form-group" id="f-autopayamt-group">
+      <label>AutoPay Amount ($)</label>
+      <input type="number" id="f-autopayamt" placeholder="0" min="0" step="0.01" />
+    </div>
+    <div class="form-group"><label>APR (%)</label><input type="number" id="f-apr" placeholder="e.g. 19.49" min="0" step="0.01" /></div>
+    <div class="form-group"><label>Notes</label><input type="text" id="f-notes" placeholder="e.g. 0% APR until 09/2026" /></div>
+    <div class="form-group"><label>No Preset Spending Limit (NPSL)?</label>
+      <select id="f-npsl"><option value="no">No</option><option value="yes">Yes — AMEX-style</option></select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:0.9rem">
+      <div style="background:var(--surface2);border-radius:10px;overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0.85rem;">
+          <div style="display:flex;align-items:center;gap:6px">
+            <label style="font-size:0.72rem;color:var(--muted);font-weight:600;margin:0">Include in totals</label>
+            <button onclick="event.preventDefault();event.stopPropagation();const el=document.getElementById('include-info');el.style.display=el.style.display==='none'?'block':'none'" style="background:none;border:1px solid #6b6358;border-radius:50%;color:#6b6358;cursor:pointer;font-size:0.55rem;font-weight:700;width:14px;height:14px;padding:0;line-height:14px;text-align:center;font-family:'IBM Plex Mono',monospace">?</button>
+          </div>
+          <label class="toggle" style="margin:0">
+            <input type="checkbox" id="f-includeintotals" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div id="include-info" style="display:none;padding:0 0.85rem 0.65rem;font-size:0.68rem;color:#6b6358;line-height:1.5">
+          When enabled, this card's cleared balance and credit limit count toward your total utilization and available credit in the summary strip. Disable for cards you don't want factored in — like NPSL cards or ones you're tracking separately.
+        </div>
+      </div>
+      <div style="background:#fff7ed;border-radius:10px;border:1px solid #fed7aa;overflow:hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0.85rem;">
+          <div style="display:flex;align-items:center;gap:6px">
+            <label style="font-size:0.72rem;color:#c2410c;font-weight:600;margin:0">Paydown mode</label>
+            <button onclick="event.preventDefault();event.stopPropagation();const el=document.getElementById('paydown-info');el.style.display=el.style.display==='none'?'block':'none'" style="background:none;border:1px solid #c2410c;border-radius:50%;color:#c2410c;cursor:pointer;font-size:0.55rem;font-weight:700;width:14px;height:14px;padding:0;line-height:14px;text-align:center;font-family:'IBM Plex Mono',monospace">?</button>
+          </div>
+          <label class="toggle" style="margin:0">
+            <input type="checkbox" id="f-paydown" onchange="handlePaydownChange()" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div id="paydown-info" style="display:none;padding:0 0.85rem 0.65rem;font-size:0.68rem;color:#92400e;line-height:1.5">
+          Use this for cards you're actively paying down and not spending on. Paydown cards contribute zero to new spending, show a flag on the card, and keep their autopay amount manual so you can enter your minimum payment each month.
+        </div>
+      </div>
+    </div>
+    <div id="hidden-cards-section" style="display:none;margin-top:1rem;border-top:1.5px solid #d8d0c4;padding-top:1rem">
+      <div style="font-size:0.68rem;color:#6b6358;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;margin-bottom:0.75rem">Hidden Cards</div>
+      <div id="hidden-cards-list"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">cancel</button>
+      <button class="btn-save" onclick="saveCard()">save card</button>
+    </div>
+  </div>
+</div>
+
+<div class="action-modal-overlay" id="action-modal-overlay">
+  <div class="action-modal">
+    <h3>Remove Card</h3>
+    <p id="action-modal-name">What would you like to do with this card?</p>
+    <div class="action-modal-btns">
+      <button class="action-btn abort" onclick="closeActionModal()">cancel</button>
+      <button class="action-btn hide" onclick="confirmHide()">hide</button>
+      <button class="action-btn delete" onclick="confirmDelete()">delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="history-modal-overlay">
+  <div class="modal" style="max-width:500px">
+    <h2 id="history-modal-title">Transaction History</h2>
+    <div id="history-modal-body" style="max-height:60vh;overflow-y:auto"></div>
+    <div class="modal-actions" style="margin-top:1rem">
+      <button class="btn-cancel" onclick="document.getElementById('history-modal-overlay').classList.remove('open')">close</button>
+    </div>
+  </div>
+</div>
+
+<div id="add-card-choice" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+  <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:360px;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
+    <h2 style="font-family:'Libre Baskerville',serif;font-size:1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0 0 1rem">Add Card</h2>
+    <button onclick="document.getElementById('add-card-choice').style.display='none';openModal()" class="btn primary" style="width:100%;margin-bottom:8px;text-align:center">+ add new card</button>
+    <button onclick="document.getElementById('add-card-choice').style.display='none';openAddWallet()" class="btn" style="width:100%;margin-bottom:8px;text-align:center">💵 add cash account</button>
+    <button onclick="document.getElementById('add-card-choice').style.display='none';openRestorePanel()" class="btn" style="width:100%;text-align:center">↩ restore a hidden card</button>
+  </div>
+</div>
+
+<div id="restore-panel" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+  <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:360px;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1rem">
+      <h2 style="font-family:'Libre Baskerville',serif;font-size:1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0">Restore Card</h2>
+      <button onclick="document.getElementById('restore-panel').style.display='none'" style="background:none;border:none;font-size:1rem;color:#6b6358;cursor:pointer">✕</button>
+    </div>
+    <div id="restore-panel-list"></div>
+  </div>
+</div>
+
+<div id="cash-chart-of-accounts" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+  <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem">
+      <h2 style="font-family:'Libre Baskerville',serif;font-size:1.1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0">Cash Accounts</h2>
+      <button onclick="document.getElementById('cash-chart-of-accounts').style.display='none'" style="background:none;border:none;font-size:1rem;color:#6b6358;cursor:pointer">✕</button>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:0.72rem">
+      <thead>
+        <tr style="border-bottom:2px solid #1a1714">
+          <th style="text-align:left;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Account</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Confirmed</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Pending</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">On Hand</th>
+        </tr>
+      </thead>
+      <tbody id="cash-coa-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="chart-of-accounts" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+  <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:680px;max-height:85vh;overflow-y:auto;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem">
+      <h2 style="font-family:'Libre Baskerville',serif;font-size:1.1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0">Chart of Accounts</h2>
+      <button onclick="document.getElementById('chart-of-accounts').style.display='none'" style="background:none;border:none;font-size:1rem;color:#6b6358;cursor:pointer">✕</button>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:0.72rem">
+      <thead>
+        <tr style="border-bottom:2px solid #1a1714">
+          <th style="text-align:left;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Card</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Working</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Pending</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Cleared</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Limit</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Util</th>
+        </tr>
+      </thead>
+      <tbody id="coa-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="authOverlay">
+  <div class="auth-box">
+    <div class="auth-logo"><em>L</em>edge</div>
+    <div class="auth-sub">Sign in to access your<br>financial tracker from any device.</div>
+    <button class="auth-google-btn" id="btnGoogleSignIn">
+      <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Sign in with Google
+    </button>
+    <div class="auth-error" id="authError"></div>
+  </div>
+</div>
+
+<script>
+const CARD_COLORS = ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10'];
+
+const DEFAULTS = [
+  {id:'1',name:'AMEX Platinum (75006)',balance:230.67,pending:0,stmtBal:0,limit:0,npsl:true,closing:'23rd',autopay:'16th',autopayAmt:0,autopayMode:'custom',apr:21.74,notes:'',includeInTotals:false,color:'c1',paydown:false},
+  {id:'2',name:'BoA Platinum (1581)',balance:4411.00,pending:0,stmtBal:4411.00,limit:20000,npsl:false,closing:'24th',autopay:'21st',autopayAmt:44.00,autopayMode:'custom',apr:21.74,notes:'0% APR until 09/2026',includeInTotals:true,color:'c2',paydown:true},
+  {id:'3',name:'AAdvantage Platinum (9751)',balance:1244.47,pending:0,stmtBal:78.87,limit:14300,npsl:false,closing:'27th',autopay:'21st',autopayAmt:78.87,autopayMode:'statement',apr:23.49,notes:'',includeInTotals:true,color:'c3',paydown:false},
+  {id:'4',name:'Apple Card (0519)',balance:1520.22,pending:0,stmtBal:0,limit:14000,npsl:false,closing:'EOM',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:20.74,notes:'',includeInTotals:true,color:'c4',paydown:false},
+  {id:'5',name:'Freedom (4507)',balance:279.15,pending:0,stmtBal:0,limit:10200,npsl:false,closing:'3rd',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:21.49,notes:'',includeInTotals:true,color:'c5',paydown:false},
+  {id:'6',name:'Freedom Unlimited (9595)',balance:0,pending:0,stmtBal:0,limit:14000,npsl:false,closing:'3rd',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:18.49,notes:'',includeInTotals:true,color:'c6',paydown:false},
+  {id:'7',name:'Sapphire Preferred (5765)',balance:3379.34,pending:0,stmtBal:0,limit:20000,npsl:false,closing:'3rd',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:19.49,notes:'',includeInTotals:true,color:'c7',paydown:false},
+  {id:'8',name:'Citi Double Cash (4000)',balance:173.65,pending:0,stmtBal:0,limit:22000,npsl:false,closing:'4th',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:20.49,notes:'',includeInTotals:true,color:'c8',paydown:false},
+  {id:'9',name:'Citi Strata (1488)',balance:53.23,pending:0,stmtBal:0,limit:10700,npsl:false,closing:'5th',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:19.99,notes:'',includeInTotals:true,color:'c9',paydown:false},
+  {id:'10',name:'Chase Ink Business (7023)',balance:171.59,pending:0,stmtBal:0,limit:11000,npsl:false,closing:'6th',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:16.74,notes:'',includeInTotals:false,color:'c10',paydown:false},
+  {id:'11',name:'Wallet',balance:108,pending:0,stmtBal:0,limit:0,npsl:false,closing:'',autopay:'',autopayAmt:0,autopayMode:'custom',apr:0,notes:'',includeInTotals:false,color:'c1',paydown:false,wallet:true},
+];
+
+let cards = JSON.parse(JSON.stringify(DEFAULTS));
+cards = cards.map((c,i) => ({pending:0, stmtBal:0, autopayMode:'custom', lastAutoPay:'', lastStmtSnap:'', lastArchive:'', paydown:false, hidden:false, wallet:false, transactions:[], txnArchive:[], color: CARD_COLORS[i % CARD_COLORS.length], ...c}));
+
+let editingId = null, dragSrcId = null, partialClearId = null;
+let _currentUser = null;
+
+// ── FIREBASE DATA LAYER ───────────────────────────────────
+async function persist() {
+  if (!_currentUser) return;
+  const ref = window._fbDoc(window._fbDb, 'users', _currentUser.uid);
+  await window._fbSetDoc(ref, { cards: JSON.stringify(cards) }, { merge: true });
+}
+
+async function loadFromFirebase() {
+  if (!_currentUser) return;
+  const ref = window._fbDoc(window._fbDb, 'users', _currentUser.uid);
+  const snap = await window._fbGetDoc(ref);
+  if (snap.exists() && snap.data().cards) {
+    const loaded = JSON.parse(snap.data().cards);
+    cards = loaded.map((c,i) => ({pending:0, stmtBal:0, autopayMode:'custom', lastAutoPay:'', lastStmtSnap:'', lastArchive:'', paydown:false, hidden:false, wallet:false, transactions:[], txnArchive:[], color: CARD_COLORS[i % CARD_COLORS.length], ...c}));
+  }
+}
+
+// ── AUTH ─────────────────────────────────────────────────
+function initAuth() {
+  function waitForFirebase(cb) {
+    if (window._firebaseReady) cb();
+    else window.addEventListener('firebaseReady', cb, { once: true });
+  }
+  waitForFirebase(() => {
+    window._fbOnAuthChanged(async (user) => {
+      if (user) {
+        _currentUser = user;
+        document.getElementById('authOverlay').classList.remove('visible');
+        const pill = document.getElementById('userPill');
+        if (pill) pill.style.display = 'flex';
+        const emailEl = document.getElementById('userEmail');
+        if (emailEl) emailEl.textContent = user.email;
+        const avatarEl = document.getElementById('userAvatar');
+        if (avatarEl && user.photoURL) avatarEl.src = user.photoURL;
+        await loadFromFirebase();
+        checkAutoPayments();
+        archiveOldTransactions();
+        render();
+        updateTabs();
+      } else {
+        _currentUser = null;
+        cards = JSON.parse(JSON.stringify(DEFAULTS));
+        cards = cards.map((c,i) => ({pending:0, stmtBal:0, autopayMode:'custom', lastAutoPay:'', lastStmtSnap:'', lastArchive:'', paydown:false, hidden:false, wallet:false, transactions:[], txnArchive:[], color: CARD_COLORS[i % CARD_COLORS.length], ...c}));
+        const pill = document.getElementById('userPill');
+        if (pill) pill.style.display = 'none';
+        document.getElementById('authOverlay').classList.add('visible');
+      }
+    });
+
+    document.getElementById('btnGoogleSignIn').addEventListener('click', async () => {
+      document.getElementById('authError').textContent = '';
+      try { await window._fbSignIn(); }
+      catch(e) { document.getElementById('authError').textContent = e.message; }
+    });
+
+    document.getElementById('btnSignOut').addEventListener('click', async () => {
+      await window._fbSignOut();
+      cards = JSON.parse(JSON.stringify(DEFAULTS));
+      render();
+    });
+
+    document.getElementById('authOverlay').classList.add('visible');
+  });
+}
+
+
+
+let sortMode = 'none';
+let pendingFirst = false;
+let viewMode = 'all';
+
+function togglePendingFirst() {
+  pendingFirst = !pendingFirst;
+  
+  updateSortBtns();
+  render();
+}
+
+function setSort(val) {
+  sortMode = val;
+  
+  // A→Z: permanently rewrite the stored card order
+  if (val === 'none') {
+    cards = [...cards].sort((a,b) => a.name.localeCompare(b.name));
+    persist();
+  }
+  render();
+}
+
+function setView(mode) {
+  viewMode = mode;
+  
+  updateTabs();
+  render();
+}
+
+function updateTabs() {
+  const hasCash = cards.some(c => c.wallet && !c.hidden);
+  const hasCredit = cards.some(c => !c.wallet && !c.hidden);
+  const showTabs = hasCash && hasCredit;
+  const tabBar = document.getElementById('tab-bar');
+  if (tabBar) tabBar.style.display = showTabs ? 'flex' : 'none';
+  if (!hasCash && (viewMode === 'cash' || viewMode === 'all')) {
+    viewMode = 'all';
+    
+  }
+  if (!showTabs) {
+    viewMode = 'all';
+    
+  }
+  const isMobile = window.innerWidth <= 700;
+  const logo = document.querySelector('.logo');
+  const logoSvg = document.getElementById('logo-svg');
+  if (logo && !isMobile) {
+    logo.style.position = 'absolute';
+    logo.style.left = '12.5%';
+    logo.style.transform = 'translateX(-50%)';
+    logo.style.flex = '';
+    if (logoSvg) { logoSvg.setAttribute('width', '320'); logoSvg.setAttribute('height', '100'); }
+  }
+  ['all','credit','cash'].forEach(m => {
+    const btn = document.getElementById('tab-' + m);
+    if (!btn) return;
+    if (m === viewMode) {
+      btn.style.background = '#1a1714';
+      btn.style.color = '#f4f1ec';
+      btn.style.borderBottomColor = '#1a1714';
+    } else {
+      btn.style.background = 'transparent';
+      btn.style.color = '#6b6358';
+      btn.style.borderBottomColor = 'transparent';
+    }
+  });
+}
+
+function updateSortBtns() {
+  const sel = document.getElementById('sort-select');
+  if (sel) sel.value = sortMode;
+  const pb = document.getElementById('pending-first-btn');
+  if (pb) {
+    pb.style.borderColor = pendingFirst ? '#4a5e3a' : '';
+    pb.style.color = pendingFirst ? '#ffffff' : '';
+    pb.style.background = pendingFirst ? '#4a5e3a' : '';
+  }
+}
+
+function closingDayNum(c) {
+  if (!c.closing) return 999;
+  const today = new Date().getDate();
+  const n = c.closing.toLowerCase() === 'eom'
+    ? new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate()
+    : parseInt(c.closing);
+  if (isNaN(n)) return 999;
+  // Wrap around so today = 0, tomorrow = 1, yesterday = 30
+  return n >= today ? n - today : n - today + 31;
+}
+
+function checkAutoPayments() {
+  const now = new Date();
+  const today = new Date(now); today.setHours(0,0,0,0);
+  const todayKey = today.toISOString().split('T')[0];
+  const isMidnight = now.getHours() === 0;
+  let changed = false;
+
+  cards = cards.map(c => {
+    let updated = {...c};
+
+    // ── Statement snapshot at midnight on the day after closing ──────────────
+    if (c.closing && isMidnight) {
+      const closingDay = c.closing.toLowerCase() === 'eom'
+        ? new Date(today.getFullYear(), today.getMonth()+1, 0).getDate()
+        : parseInt(c.closing);
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      if (!isNaN(closingDay) && yesterday.getDate() === closingDay) {
+        const lastSnapKey = c.lastStmtSnap || '';
+        if (lastSnapKey !== todayKey) {
+          const clearedBal = +(updated.balance||0).toFixed(2);
+          updated.stmtBal = clearedBal;
+          // For non-paydown cards, autopay also becomes the cleared balance
+          if (!updated.paydown) {
+            updated.autopayAmt = clearedBal;
+          }
+          updated.lastStmtSnap = todayKey;
+          changed = true;
+        }
+      }
+    }
+
+    // ── AutoPay pending payment on autopay date ────────────────────
+    if (!updated.autopay) return updated;
+    const autopayDay = parseInt(updated.autopay);
+    if (isNaN(autopayDay)) return updated;
+    if (today.getDate() !== autopayDay) return updated;
+    const lastAutoKey = updated.lastAutoPay || '';
+    if (lastAutoKey === todayKey) return updated;
+    let payAmt = 0;
+    if (updated.autopayMode === 'statement' && updated.stmtBal > 0) payAmt = updated.stmtBal;
+    else if (updated.autopayMode === 'custom' && updated.autopayAmt > 0) payAmt = updated.autopayAmt;
+    if (payAmt <= 0) return updated;
+    updated.pending = +((updated.pending||0) - payAmt).toFixed(2);
+    updated.lastAutoPay = todayKey;
+    changed = true;
+    return updated;
+  });
+
+  if (changed) persist();
+}
+
+checkAutoPayments();
+archiveOldTransactions();
+
+function archiveOldTransactions() {
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  let changed = false;
+  cards = cards.map(c => {
+    if (c.lastArchive === thisMonth) return c;
+    const toArchive = (c.transactions||[]).filter(t => t.cleared && t.month && t.month !== thisMonth);
+    if (toArchive.length === 0) {
+      return {...c, lastArchive: thisMonth};
+    }
+    const archive = [...(c.txnArchive||[]), ...toArchive];
+    const remaining = (c.transactions||[]).filter(t => !toArchive.includes(t));
+    changed = true;
+    return {...c, transactions: remaining, txnArchive: archive, lastArchive: thisMonth};
+  });
+  if (changed) persist();
+}
+
+
+function exportData() {
+  const blob = new Blob([JSON.stringify({version:4,cards},null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'card-tracker-save.json'; a.click();
+}
+function importData(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.cards && Array.isArray(data.cards)) {
+        cards = data.cards.map((c,i) => ({pending:0,stmtBal:0,autopayMode:'custom',color:CARD_COLORS[i%CARD_COLORS.length],...c}));
+        persist(); render(); alert('Loaded!');
+      } else alert('Invalid save file.');
+    } catch { alert('Could not read file.'); }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+function resetToDefaults() {
+  if (!confirm('Reset to original Google Sheet data?')) return;
+  cards = JSON.parse(JSON.stringify(DEFAULTS)); persist(); render();
+}
+
+function effectiveAutopay(c) {
+  const amt = c.autopayMode === 'statement' ? (c.stmtBal||0) : (c.autopayAmt||0);
+  return parseFloat(amt.toFixed(2));
+}
+
+function updateStmtBal(id, val) {
+  const amt = parseFloat(val);
+  if (isNaN(amt)) return;
+  cards = cards.map(c => c.id === id ? {...c, stmtBal: +amt.toFixed(2)} : c);
+  persist(); renderCard(id);
+}
+
+function setAutopayMode(id, mode) {
+  cards = cards.map(c => c.id === id ? {...c, autopayMode: mode} : c);
+  persist(); renderCard(id);
+}
+
+function updateCustomAutopay(id, val) {
+  const amt = parseFloat(val);
+  if (isNaN(amt) || amt < 0) return;
+  cards = cards.map(c => c.id === id ? {...c, autopayAmt: +amt.toFixed(2)} : c);
+  persist(); renderCard(id);
+}
+
+function addCharge(id) {
+  const inp = document.getElementById('sinp-' + id);
+  const noteInp = document.getElementById('snote-' + id);
+  const amt = parseFloat(inp.value);
+  if (!isNaN(amt) && amt !== 0) {
+    const now = new Date();
+    const txn = {
+      id: Date.now().toString(),
+      amt: +amt.toFixed(2),
+      date: now.toLocaleDateString('en-US', {month:'short', day:'numeric'}),
+      month: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,
+      note: noteInp ? noteInp.value.trim() : '',
+      cleared: false
+    };
+    cards = cards.map(c => {
+      if (c.id !== id) return c;
+      const txns = [...(c.transactions||[]), txn];
+      const newPending = parseFloat(txns.filter(t=>!t.cleared).reduce((s,t)=>s+t.amt,0).toFixed(2));
+      return {...c, transactions: txns, pending: newPending};
+    });
+    persist(); renderCard(id);
+  }
+  inp.value = '';
+  if (noteInp) noteInp.value = '';
+}
+
+function clearTxn(cardId, txnId) {
+  cards = cards.map(c => {
+    if (c.id !== cardId) return c;
+    const txns = c.transactions.map(t => t.id === txnId ? {...t, cleared: true} : t);
+    const newPending = parseFloat(txns.filter(t=>!t.cleared).reduce((s,t)=>s+t.amt,0).toFixed(2));
+    const cleared = c.transactions.find(t=>t.id===txnId);
+    const newBalance = +((c.balance||0) + (cleared ? cleared.amt : 0)).toFixed(2);
+    return {...c, transactions: txns, pending: newPending, balance: newBalance};
+  });
+  persist(); renderCard(cardId);
+}
+
+function unclearTxn(cardId, txnId) {
+  cards = cards.map(c => {
+    if (c.id !== cardId) return c;
+    const txn = c.transactions.find(t => t.id === txnId);
+    if (!txn || !txn.cleared) return c;
+    const txns = c.transactions.map(t => t.id === txnId ? {...t, cleared: false} : t);
+    const newPending = parseFloat(txns.filter(t=>!t.cleared).reduce((s,t)=>s+t.amt,0).toFixed(2));
+    const newBalance = +((c.balance||0) - txn.amt).toFixed(2);
+    return {...c, transactions: txns, pending: newPending, balance: newBalance};
+  });
+  persist(); renderCard(cardId);
+}
+
+function deleteTxn(cardId, txnId) {
+  // Find the transaction to check if it's part of a transfer
+  const card = cards.find(c => c.id === cardId);
+  const txn = card ? (card.transactions||[]).find(t => t.id === txnId) : null;
+  const peerId = txn?.transferPeer;
+
+  cards = cards.map(c => {
+    // Delete from the target card
+    if (c.id === cardId) {
+      const txns = c.transactions.filter(t => t.id !== txnId);
+      const newPending = parseFloat(txns.filter(t=>!t.cleared).reduce((s,t)=>s+t.amt,0).toFixed(2));
+      const newBalance = txn?.cleared ? +((c.balance||0) - txn.amt).toFixed(2) : c.balance;
+      return {...c, transactions: txns, pending: newPending, balance: newBalance};
+    }
+    // Also delete peer transfer transaction from the other card
+    if (peerId && c.id === peerId && txn?.transferId) {
+      const peerTxn = (c.transactions||[]).find(t => t.transferId === txn.transferId);
+      if (peerTxn) {
+        const txns = c.transactions.filter(t => t.transferId !== txn.transferId);
+        const newPending = parseFloat(txns.filter(t=>!t.cleared).reduce((s,t)=>s+t.amt,0).toFixed(2));
+        const newBalance = peerTxn.cleared ? +((c.balance||0) - peerTxn.amt).toFixed(2) : c.balance;
+        return {...c, transactions: txns, pending: newPending, balance: newBalance};
+      }
+    }
+    return c;
+  });
+  persist();
+  if (peerId) render(); else renderCard(cardId);
+}
+
+function confirmClearPending(id) {
+  const c = cards.find(x => x.id === id);
+  if (!c) return;
+  const amt = fmt$(Math.abs(c.pending||0));
+  const label = (c.pending||0) < 0 ? `Clear pending payment of ${amt}?` : `Clear pending charges of ${amt}?`;
+  if (confirm(label)) clearAllPending(id);
+}
+
+function clearAllPending(id) {
+  cards = cards.map(c => {
+    if (c.id !== id) return c;
+    const pendingAmt = (c.transactions||[]).filter(t=>!t.cleared).reduce((s,t)=>s+t.amt,0);
+    const txns = (c.transactions||[]).map(t => ({...t, cleared: true}));
+    return {...c, transactions: txns, balance: +((c.balance||0)+pendingAmt).toFixed(2), pending: 0};
+  });
+  persist(); renderCard(id);
+}
+function openPartialClear(id) {
+  partialClearId = id;
+  const c = cards.find(x => x.id === id);
+  const p = c.pending||0; document.getElementById('partial-desc').textContent = `Pending: $${p.toFixed(2)} — enter amount to move to cleared (negative to clear a payment).`;
+  document.getElementById('partial-amt').value = '';
+  document.getElementById('partial-modal').classList.add('open');
+}
+function closePartialModal() { document.getElementById('partial-modal').classList.remove('open'); partialClearId = null; }
+function confirmPartialClear() {
+  const amt = parseFloat(document.getElementById('partial-amt').value);
+  if (isNaN(amt) || amt === 0) { alert('Enter a valid amount.'); return; }
+  cards = cards.map(c => {
+    if (c.id !== partialClearId) return c;
+    const move = Math.min(amt, c.pending||0);
+    return {...c, balance: +((c.balance||0)+move).toFixed(2), pending: +((c.pending||0)-move).toFixed(2)};
+  });
+  persist(); renderCard(partialClearId); closePartialModal();
+}
+
+function toggleInclude(id) {
+  cards = cards.map(c => c.id === id ? {...c, includeInTotals: !c.includeInTotals} : c);
+  persist(); renderCard(id);
+}
+
+function handlePaydownChange() {
+  const isPaydown = document.getElementById('f-paydown').checked;
+  if (isPaydown) {
+    document.getElementById('f-autopaymode').value = 'custom';
+    document.getElementById('f-autopayamt-group').style.display = '';
+  }
+}
+
+function togglePaydown(id) {
+  cards = cards.map(c => {
+    if (c.id !== id) return c;
+    const newPaydown = !c.paydown;
+    // When enabling paydown, force autopay to custom mode
+    return {...c, paydown: newPaydown, autopayMode: newPaydown ? 'custom' : c.autopayMode};
+  });
+  persist(); render();
+}
+
+// Show/hide custom amount field in modal based on mode select
+document.addEventListener('change', e => {
+  if (e.target.id === 'f-autopaymode') {
+    document.getElementById('f-autopayamt-group').style.display = e.target.value === 'custom' ? '' : 'none';
+  }
+});
+
+function openModal(id) {
+  editingId = id || null;
+  document.getElementById('modal-title').textContent = id ? 'edit card' : 'add card';
+  if (id) {
+    const c = cards.find(x => x.id === id);
+    document.getElementById('f-name').value = c.name;
+    document.getElementById('f-balance').value = c.balance;
+    document.getElementById('f-pending').value = c.pending||0;
+    document.getElementById('f-stmtbal').value = c.stmtBal||0;
+    document.getElementById('f-limit').value = c.limit;
+    document.getElementById('f-closing').value = c.closing;
+    document.getElementById('f-autopay').value = c.autopay;
+    document.getElementById('f-autopaymode').value = c.autopayMode||'custom';
+    document.getElementById('f-autopayamt').value = c.autopayAmt||0;
+    document.getElementById('f-apr').value = c.apr;
+    document.getElementById('f-notes').value = c.notes||'';
+    document.getElementById('f-npsl').value = c.npsl?'yes':'no';
+    document.getElementById('f-includeintotals').checked = c.includeInTotals !== false;
+    document.getElementById('f-paydown').checked = c.paydown || false;
+  } else {
+    ['f-name','f-balance','f-pending','f-stmtbal','f-limit','f-closing','f-autopay','f-autopayamt','f-apr','f-notes'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('f-autopaymode').value = 'custom';
+    document.getElementById('f-npsl').value = 'no';
+    document.getElementById('f-includeintotals').checked = true;
+    document.getElementById('f-paydown').checked = false;
+  }
+  const mode = document.getElementById('f-autopaymode').value;
+  document.getElementById('f-autopayamt-group').style.display = mode === 'custom' ? '' : 'none';
+
+  // Show hidden cards section only when adding a new card
+  const hiddenSection = document.getElementById('hidden-cards-section');
+  const hiddenList = document.getElementById('hidden-cards-list');
+  const hiddenCards = cards.filter(c => c.hidden);
+  if (!editingId && hiddenCards.length > 0) {
+    hiddenSection.style.display = 'block';
+    hiddenList.innerHTML = hiddenCards.map(c => `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.75rem;background:#f0ece4;border:1px solid #d8d0c4;margin-bottom:6px">
+        <span style="font-size:0.8rem;font-weight:500;color:#1a1714">${c.name}</span>
+        <button onclick="restoreCard('${c.id}');closeModal()" style="background:#1a1714;border:none;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:600;padding:3px 10px;cursor:pointer;letter-spacing:0.03em">restore</button>
+      </div>
+    `).join('');
+  } else {
+    hiddenSection.style.display = 'none';
+  }
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+function saveCard() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Card name is required.'); return; }
+  const existing = editingId ? cards.find(c => c.id === editingId) : null;
+  const card = {
+    id: editingId || Date.now().toString(), name,
+    balance: parseFloat(document.getElementById('f-balance').value)||0,
+    pending: parseFloat(document.getElementById('f-pending').value)||0,
+    stmtBal: parseFloat(document.getElementById('f-stmtbal').value)||0,
+    limit: parseFloat(document.getElementById('f-limit').value)||0,
+    npsl: document.getElementById('f-npsl').value==='yes',
+    closing: document.getElementById('f-closing').value.trim(),
+    autopay: document.getElementById('f-autopay').value.trim(),
+    autopayMode: document.getElementById('f-autopaymode').value,
+    autopayAmt: parseFloat(document.getElementById('f-autopayamt').value)||0,
+    apr: parseFloat(document.getElementById('f-apr').value)||0,
+    notes: document.getElementById('f-notes').value.trim(),
+    includeInTotals: document.getElementById('f-includeintotals').checked,
+    paydown: document.getElementById('f-paydown').checked,
+    hidden: existing ? existing.hidden : false,
+    transactions: existing ? existing.transactions : [],
+    txnArchive: existing ? existing.txnArchive : [],
+    lastArchive: existing ? existing.lastArchive : '',
+    color: existing ? existing.color : CARD_COLORS[cards.length % CARD_COLORS.length],
+  };
+  cards = editingId ? cards.map(c => c.id===editingId ? card : c) : [...cards, card];
+  persist(); closeModal(); render();
+}
+
+function deleteCard(id) {
+  if (!confirm('Remove this card?')) return;
+  cards = cards.filter(c => c.id!==id); persist(); render();
+}
+
+function openHistory(id) {
+  const c = cards.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('history-modal-title').textContent = c.name + ' · History';
+  const archive = [...(c.txnArchive||[])].reverse();
+  const byMonth = {};
+  archive.forEach(t => {
+    const m = t.month || 'Unknown';
+    if (!byMonth[m]) byMonth[m] = [];
+    byMonth[m].push(t);
+  });
+  const months = Object.keys(byMonth).sort().reverse();
+  document.getElementById('history-modal-body').innerHTML = months.map(m => {
+    const label = new Date(m + '-01').toLocaleDateString('en-US', {month:'long', year:'numeric'});
+    const txns = byMonth[m];
+    const total = txns.reduce((s,t) => s+t.amt, 0);
+    return `<div style="margin-bottom:1rem">
+      <div style="font-size:0.65rem;font-weight:700;color:#1a1714;text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid #e0e0e0;padding-bottom:4px;margin-bottom:6px;display:flex;justify-content:space-between">
+        <span>${label}</span><span style="color:${total>=0?'#7a3a10':'#1b4a2d'}">${total>=0?'+':''}${fmt$(total)}</span>
+      </div>
+      ${txns.map(t => `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:0.75rem;border-bottom:1px solid #f0ece4">
+        <span style="color:#8a7f6a">${t.date}</span>
+        <span style="font-weight:600;color:${t.amt>0?'#7a3a10':'#1b4a2d'}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+  document.getElementById('history-modal-overlay').classList.add('open');
+}
+
+function hideCard(id) {
+  cards = cards.map(c => c.id === id ? {...c, hidden: true} : c);
+  persist(); render();
+}
+
+let actionCardId = null;
+
+function cardAction(id) {
+  actionCardId = id;
+  const c = cards.find(x => x.id === id);
+  document.getElementById('action-modal-name').textContent = c ? c.name : 'this card';
+  document.getElementById('action-modal-overlay').classList.add('open');
+}
+
+function closeActionModal() {
+  document.getElementById('action-modal-overlay').classList.remove('open');
+  actionCardId = null;
+}
+
+function confirmHide() {
+  if (actionCardId) hideCard(actionCardId);
+  closeActionModal();
+}
+
+function confirmDelete() {
+  if (actionCardId) {
+    cards = cards.filter(c => c.id !== actionCardId);
+    persist(); render();
+  }
+  closeActionModal();
+}
+
+function openEditWallet(id) {
+  const c = cards.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('edit-wallet-id').value = id;
+  document.getElementById('edit-wallet-name').value = c.name;
+  document.getElementById('edit-wallet-balance').value = (c.balance||0).toFixed(2);
+  document.getElementById('edit-wallet-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('edit-wallet-name').focus(), 100);
+}
+
+function saveEditWallet() {
+  const id = document.getElementById('edit-wallet-id').value;
+  const name = document.getElementById('edit-wallet-name').value.trim();
+  const balance = parseFloat(document.getElementById('edit-wallet-balance').value);
+  if (!name) return;
+  cards = cards.map(c => c.id === id ? {...c, name, balance: isNaN(balance) ? c.balance : +balance.toFixed(2)} : c);
+  persist(); renderCard(id);
+  document.getElementById('edit-wallet-overlay').style.display = 'none';
+}
+
+function openAddWallet() {
+  document.getElementById('wallet-name').value = '';
+  document.getElementById('wallet-balance').value = '';
+  document.getElementById('add-wallet-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('wallet-name').focus(), 100);
+}
+
+function saveWalletAccount() {
+  const name = document.getElementById('wallet-name').value.trim() || 'Wallet';
+  const balance = parseFloat(document.getElementById('wallet-balance').value) || 0;
+  const newCard = {
+    id: Date.now().toString(),
+    name,
+    balance: +balance.toFixed(2),
+    pending: 0,
+    stmtBal: 0,
+    limit: 0,
+    npsl: false,
+    closing: '',
+    autopay: '',
+    autopayAmt: 0,
+    autopayMode: 'custom',
+    apr: 0,
+    notes: '',
+    includeInTotals: false,
+    color: CARD_COLORS[cards.length % CARD_COLORS.length],
+    paydown: false,
+    wallet: true,
+    hidden: false,
+    transactions: [],
+    txnArchive: [],
+    lastAutoPay: '',
+    lastStmtSnap: '',
+    lastArchive: ''
+  };
+  cards = [...cards, newCard];
+  persist(); render();
+  document.getElementById('add-wallet-overlay').style.display = 'none';
+}
+
+function handleAddCard() {
+  document.getElementById('add-card-choice').style.display = 'flex';
+}
+
+function openRestorePanel() {
+  const hiddenCards = cards.filter(c => c.hidden);
+  const list = document.getElementById('restore-panel-list');
+  list.innerHTML = hiddenCards.map(c => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.75rem;background:#f0ece4;border:1px solid #d8d0c4;margin-bottom:6px">
+      <span style="font-size:0.8rem;font-weight:500;color:#1a1714">${c.name}</span>
+      <button onclick="restoreCard('${c.id}');document.getElementById('restore-panel').style.display='none'" style="background:#1a1714;border:none;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;font-weight:600;padding:3px 10px;cursor:pointer;letter-spacing:0.03em">restore</button>
+    </div>
+  `).join('');
+  document.getElementById('restore-panel').style.display = 'flex';
+}
+
+function restoreCard(id) {
+  cards = cards.map(c => c.id === id ? {...c, hidden: false} : c);
+  persist(); render();
+}
+
+function fmt$(n) { return '$'+(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtK(n) { return '$'+(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+function daysUntilDay(str) {
+  if (!str) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  // Handle EOM — resolve to last day of current month
+  const num = str.toLowerCase() === 'eom'
+    ? new Date(today.getFullYear(), today.getMonth()+1, 0).getDate()
+    : parseInt(str);
+  if (isNaN(num)) return null;
+  const t = new Date(today.getFullYear(), today.getMonth(), num);
+  const n = new Date(today.getFullYear(), today.getMonth()+1, num);
+  const d = Math.round((t-today)/86400000);
+  return d>=0 ? d : Math.round((n-today)/86400000);
+}
+
+function initDrag() {
+  const grid = document.getElementById('cards-grid');
+  grid.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('dragstart', e => { dragSrcId = card.dataset.id; setTimeout(()=>card.classList.add('dragging'),0); e.dataTransfer.effectAllowed='move'; });
+    card.addEventListener('dragend', () => { card.classList.remove('dragging'); grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over')); });
+    card.addEventListener('dragover', e => { e.preventDefault(); grid.querySelectorAll('.card').forEach(c=>c.classList.remove('drag-over')); if(card.dataset.id!==dragSrcId) card.classList.add('drag-over'); });
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!dragSrcId||dragSrcId===card.dataset.id) return;
+      const si=cards.findIndex(c=>c.id===dragSrcId), ti=cards.findIndex(c=>c.id===card.dataset.id);
+      const moved=cards.splice(si,1)[0]; cards.splice(ti,0,moved);
+      persist(); render();
+    });
+  });
+}
+
+function render() {
+  const visibleCards = cards.filter(c => {
+    if (c.hidden) return false;
+    if (viewMode === 'credit') return !c.wallet;
+    if (viewMode === 'cash') return !!c.wallet;
+    return true;
+  });
+  const sortedCards = sortMode === 'closing'
+    ? [...visibleCards].sort((a, b) => closingDayNum(a) - closingDayNum(b))
+    : sortMode === 'autopay'
+    ? [...visibleCards].sort((a, b) => closingDayNum({closing: a.autopay}) - closingDayNum({closing: b.autopay}))
+    : sortMode === 'utilization'
+    ? [...visibleCards].sort((a, b) => {
+        if (a.npsl && !b.npsl) return 1;
+        if (!a.npsl && b.npsl) return -1;
+        const pctA = !a.limit ? 0 : (a.balance || 0) / a.limit * 100;
+        const pctB = !b.limit ? 0 : (b.balance || 0) / b.limit * 100;
+        return pctB - pctA;
+      })
+    : [...visibleCards];
+  // Float cards with pending to front only if toggle is on
+  const displayCards = pendingFirst ? [
+    ...sortedCards.filter(c => (c.pending||0) !== 0),
+    ...sortedCards.filter(c => (c.pending||0) === 0),
+  ] : sortedCards;
+  updateSummary();
+
+  document.getElementById('cards-grid').innerHTML = displayCards.map((c,idx) => buildCard(c,idx)).join('');
+  initDrag();
+  updateSortBtns();
+  updateCOA();
+  updateTabs();
+  updateCashSummary();
+  updateAllSummary();
+}
+
+function buildCard(c, idx) {
+  if (c.wallet) return buildWalletCard(c, idx);
+    const working = (c.balance||0)+(c.pending||0);
+    const pct = (!c.npsl&&c.limit) ? parseFloat((c.balance/c.limit*100).toFixed(2)) : 0;
+    const color = c.color||CARD_COLORS[idx%CARD_COLORS.length];
+    const barColor = c.npsl?'var(--c2)':pct>75?'var(--c5)':pct>40?'var(--c4)':`var(--${color})`;
+    const apDays = daysUntilDay(c.autopay);
+    const closingDays = daysUntilDay(c.closing);
+    // Red: day before closing (closingDays===1) AND closing day itself (closingDays===0)
+    // Also stays red the day after closing until midnight (handled by lastStmtSnap not yet set for today)
+    const closingAlert = closingDays !== null && closingDays <= 1 && closingDays >= 0;
+    const cardClass = closingAlert ? 'closing-alert' : '';
+    const badgeClass = apDays===null?'':apDays<=3?'urgent':apDays<=7?'soon':'ok';
+    const badgeText = apDays===null?'':apDays===0?'autopay today':`in ${apDays}d`;
+    const utilLabel = c.npsl?'No preset limit':c.limit?`${pct.toFixed(2)}% of ${fmtK(c.limit)}`:'no limit set';
+    const hasPending = (c.pending||0) !== 0;
+    const isStmt = c.autopayMode==='statement';
+    const effAP = effectiveAutopay(c);
+
+    const utilBg = c.npsl ? '' : !c.limit ? '' : pct >= 30 ? 'rgba(204,34,34,0.08)' : pct >= 20 ? 'rgba(196,100,20,0.12)' : pct >= 10 ? 'rgba(196,165,20,0.1)' : 'rgba(30,120,60,0.1)';
+    const utilStripe = c.npsl ? 'rgba(0,0,0,0.04)' : !c.limit ? 'rgba(0,0,0,0.04)' : pct >= 30 ? 'rgba(204,34,34,0.12)' : pct >= 20 ? 'rgba(196,100,20,0.15)' : pct >= 10 ? 'rgba(196,165,20,0.15)' : 'rgba(30,120,60,0.12)';
+    const alertStripe = 'rgba(204,34,34,0.12)';
+    const paydownBg = closingAlert
+      ? `repeating-linear-gradient(45deg, rgba(255,240,240,1), rgba(255,240,240,1) 6px, rgba(204,34,34,0.15) 6px, rgba(204,34,34,0.15) 12px)`
+      : `repeating-linear-gradient(45deg, transparent, transparent 6px, ${utilStripe} 6px, ${utilStripe} 12px)`;
+    const solidBg = closingAlert ? '#fff0f0' : utilBg;
+    return `<div class="card ${cardClass}" draggable="true" data-id="${c.id}" style="animation-delay:${idx*0.04}s;${c.paydown?`background:${paydownBg};`:solidBg?`background:${solidBg};`:''}">
+      <div class="card-stripe" style="background:var(--${color})"></div>
+      <div class="card-body">
+
+        ${!c.npsl && c.limit ? `<span style="position:absolute;top:9px;left:10px;font-size:0.62rem;font-weight:700;z-index:2;color:${pct>=30?'#cc2222':pct>=20?'#c47a2e':pct>=10?'#8a6e2e':'#2d6a3f'}">${pct.toFixed(1)}%</span>` : c.npsl ? `<span style="position:absolute;top:9px;left:10px;font-size:0.62rem;font-weight:700;z-index:2;color:#a09880">N/A</span>` : ''}
+        <button class="icon-btn del" style="position:absolute;top:10px;right:10px;z-index:2" onclick="event.stopPropagation();cardAction('${c.id}')">✕</button>
+        <div class="card-header" style="flex-direction:column;align-items:center;gap:0.5rem">
+          <div style="text-align:center;width:100%">
+            <div class="card-name" style="display:flex;align-items:center;justify-content:center;gap:5px">
+              ${c.name}
+              <button onclick="event.stopPropagation();const el=document.getElementById('card-info-${c.id}');el.style.display=el.style.display==='none'?'block':'none'" style="background:none;border:1px solid #6b6358;border-radius:50%;color:#6b6358;cursor:pointer;font-size:0.48rem;font-weight:700;width:12px;height:12px;padding:0;line-height:12px;text-align:center;font-family:'IBM Plex Mono',monospace;flex-shrink:0">?</button>
+            </div>
+            <div id="card-info-${c.id}" onclick="event.stopPropagation()" style="display:none;position:absolute;top:38px;left:50%;transform:translateX(-50%);width:200px;background:#ffffff;border:1.5px solid #1a1714;padding:0.5rem 0.65rem;font-size:0.65rem;color:#6b6358;line-height:1.8;z-index:50;box-shadow:4px 4px 0 #8a6e2e">
+              <div style="display:flex;justify-content:space-between"><span style="color:#a09880">Limit</span><span style="font-weight:600;color:#1a1714">${c.npsl ? 'NPSL' : c.limit ? '$'+c.limit.toLocaleString() : '—'}</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:#a09880">APR</span><span style="font-weight:600;color:#1a1714">${c.apr ? c.apr+'%' : '—'}</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:#a09880">Closes</span><span style="font-weight:600;color:#1a1714">${c.closing || '—'}</span></div>
+              ${c.notes ? `<div style="margin-top:4px;padding-top:4px;border-top:1px solid #e0e0e0;color:#6b6358;font-style:italic">${c.notes}</div>` : ''}
+            </div>
+          </div>
+          <div class="card-actions" style="align-items:center;width:100%;justify-content:flex-end">
+            <div style="display:flex;align-items:center;gap:5px" onclick="event.stopPropagation()">
+              <span style="font-size:0.58rem;color:#6b6358;font-weight:600;letter-spacing:0.05em;text-transform:uppercase">Include?</span>
+              <button onclick="event.stopPropagation();const el=document.getElementById('inc-info-${c.id}');el.style.display=el.style.display==='none'?'block':'none';event.target.closest('.card').style.zIndex=el.style.display==='block'?'10':''" style="background:none;border:1px solid #6b6358;border-radius:50%;color:#6b6358;cursor:pointer;font-size:0.48rem;font-weight:700;width:12px;height:12px;padding:0;line-height:12px;text-align:center;font-family:'IBM Plex Mono',monospace;flex-shrink:0">?</button>
+              <label class="small-toggle" style="margin:0">
+                <input type="checkbox" ${c.includeInTotals?'checked':''} onchange="toggleInclude('${c.id}')" />
+                <span class="small-toggle-slider"></span>
+              </label>
+            </div>
+            <div id="inc-info-${c.id}" onclick="event.stopPropagation()" style="display:none;position:absolute;top:38px;right:8px;width:220px;background:#ffffff;border:1.5px solid #1a1714;padding:0.5rem 0.65rem;font-size:0.65rem;color:#6b6358;line-height:1.5;z-index:50;box-shadow:4px 4px 0 #8a6e2e">
+              When on, this card's cleared balance and credit limit count toward your summary totals and utilization. Turn off for cards you don't want factored in.
+            </div>
+            <button class="icon-btn" onclick="event.stopPropagation();openModal('${c.id}')">edit</button>
+            ${(c.txnArchive||[]).length > 0 ? `<button class="icon-btn" onclick="event.stopPropagation();openHistory('${c.id}')">history</button>` : ''}
+          </div>
+          </div>
+        </div>
+
+        <div class="balance-grid">
+          <div class="bal-cell cleared">
+            <div class="bal-cell-label">Cleared</div>
+            <div class="bal-cell-val">${fmt$(c.balance)}</div>
+          </div>
+          <div class="bal-cell ${(c.pending||0) < 0 ? 'pending-payment' : 'pending-cell'}" 
+            style="${hasPending ? 'cursor:pointer;' : ''}"
+            onclick="event.stopPropagation();${hasPending ? `confirmClearPending('${c.id}')` : ''}"
+            title="${hasPending ? 'Click to clear pending' : ''}">
+            <div class="bal-cell-label">${(c.pending||0) < 0 ? 'Pending Pmt' : 'Pending'}</div>
+            <div class="bal-cell-val">${fmt$(c.pending||0)}</div>
+          </div>
+          <div class="bal-cell working" style="position:relative">
+            <div class="bal-cell-label">Working Balance</div>
+            <div class="bal-cell-val">${fmt$(working)}</div>
+
+          </div>
+        </div>
+
+
+
+        <div style="border:1px solid #c8c0b8;margin-bottom:0.35rem;margin-left:0.5rem;margin-right:0.5rem">
+          <div onclick="event.stopPropagation();(function(el){el.style.display=el.style.display==='none'?'block':'none'})(document.getElementById('details-${c.id}'))" 
+            style="display:flex;align-items:center;justify-content:space-between;padding:0.1rem 0.55rem;cursor:pointer;user-select:none;">
+            <span style="font-size:0.52rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Details</span>
+            <span style="font-size:0.55rem;color:#a09880" id="chevron-${c.id}">▾</span>
+          </div>
+          <div id="details-${c.id}" style="display:${
+            (closingDays!==null && closingDays>=0 && closingDays<=5) ||
+            (apDays!==null && apDays>=0 && apDays<=7 && parseFloat((c.autopayAmt||0).toFixed(2))>0)
+            ? 'block' : 'none'
+          }">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0.08rem 0.55rem;">
+              <span style="font-size:0.5rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Closing${c.closing ? `<span style="font-size:0.52rem;color:#a09880;margin-left:4px;font-weight:400">${c.closing}</span>` : ''}</span>
+              <div style="text-align:center">${closingDays!==null ? `<span class="badge ${closingDays<=3?'urgent':closingDays<=5?'soon':'ok'}">${closingDays===0?'today':'in '+closingDays+'d'}</span>` : ''}</div>
+              <div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0.08rem 0.55rem;">
+              <span style="font-size:0.5rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Stmt bal</span>
+              <div></div>
+              <div style="text-align:right"><input class="stmt-input" type="number" value="${(c.stmtBal||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
+                style="width:70px;text-align:right"
+                onclick="event.stopPropagation()"
+                onchange="updateStmtBal('${c.id}', this.value)"
+                onblur="updateStmtBal('${c.id}', this.value)" /></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0.08rem 0.55rem;">
+              <span style="font-size:0.52rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">AutoPay${c.autopay ? `<span style="font-size:0.52rem;color:#a09880;margin-left:4px;font-weight:400">${c.autopay}</span>` : ''}</span>
+              <div style="text-align:center">${badgeText ? `<span class="badge ${badgeClass}">${badgeText}</span>` : ''}</div>
+              <div style="text-align:right"><input type="number" class="stmt-input" style="width:70px;text-align:right" value="${(c.autopayAmt||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
+                onclick="event.stopPropagation()"
+                onchange="updateCustomAutopay('${c.id}', this.value)"
+                onblur="updateCustomAutopay('${c.id}', this.value)"
+                onkeydown="if(event.key==='Enter'){updateCustomAutopay('${c.id}', this.value);render();this.blur();}" /></div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="spend-section">
+          <div class="spend-label">log new charge or payment</div>
+          <div class="spend-input-wrap">
+            <input type="number" id="sinp-${c.id}" placeholder="" step="0.01"
+              onclick="event.stopPropagation()"
+              onkeydown="if(event.key==='Enter')addCharge('${c.id}')" />
+            <button onclick="event.stopPropagation();addCharge('${c.id}')">+ log</button>
+          </div>
+          <input type="text" id="snote-${c.id}" placeholder="note (optional)" maxlength="60"
+            onclick="event.stopPropagation()"
+            onkeydown="if(event.key==='Enter')addCharge('${c.id}')"
+            style="width:100%;margin-top:5px;background:#ffffff;border:1.5px solid #c8bfb0;border-radius:0;color:#1a1714;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;padding:0.3rem 0.7rem;outline:none;box-sizing:border-box;" />
+        </div>
+
+        <div class="txn-list">
+          <div class="txn-section-label" onclick="event.stopPropagation();(function(){const el=document.getElementById('txn-body-${c.id}');const ch=document.getElementById('txn-ch-${c.id}');const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})()" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;padding:2px 0">
+            <span>Transactions</span>
+            <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880;transition:color 0.15s">${(c.transactions||[]).some(t=>!t.cleared)?'▾':'▸'}</span>
+          </div>
+          <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${(c.transactions||[]).some(t=>!t.cleared)?'block':'none'}">
+          ${(c.transactions||[]).length === 0 ? `<div style="font-size:0.65rem;color:#b0a898;padding:0.4rem 0.5rem;font-style:italic">no transactions yet</div>` : ''}
+          ${(c.transactions||[]).slice().reverse().map(t => `
+            <div class="txn-item ${t.cleared?'cleared':''}" style="flex-wrap:wrap">
+              <span class="txn-date">${t.date}</span>
+              ${t.transferId ? `<span style="font-size:0.58rem;color:#8a6e2e;background:#f5ecd7;border:1px solid #d4b97a;padding:1px 5px;border-radius:0;white-space:nowrap">⇄ transfer</span>` : ''}
+              ${t.note ? `<span style="font-size:0.62rem;color:#8a7f6a;flex:1;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.note}</span>` : '<span style="flex:1"></span>'}
+              <span class="txn-amt ${t.amt>0?'positive':'negative'}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
+              <div class="txn-actions">
+                ${!t.cleared ? `<button class="txn-btn" onclick="event.stopPropagation();clearTxn('${c.id}','${t.id}')">clear</button>` : `<button class="txn-btn" onclick="event.stopPropagation();unclearTxn('${c.id}','${t.id}')" style="color:#8a7f6a">unclear</button>`}
+                <button class="txn-btn del" onclick="event.stopPropagation();deleteTxn('${c.id}','${t.id}')">✕</button>
+              </div>
+            </div>
+          `).join('')}
+          </div>
+        </div>
+
+      </div>
+    </div>`;
+
+}
+
+function buildWalletCard(c, idx) {
+  const balance = +(c.balance||0).toFixed(2);
+  const pending = +(c.pending||0).toFixed(2);
+  const net = +(balance + pending).toFixed(2);
+  const hasPending = pending !== 0;
+  const txns = c.transactions||[];
+  const hasUncleared = txns.some(t=>!t.cleared);
+  return `<div class="card" draggable="true" data-id="${c.id}" style="animation-delay:${idx*0.04}s;background:#f4f1ec;border:1.5px solid #1a1714;">
+    <div style="height:6px;width:100%;background:#8a6e2e"></div>
+    <div class="card-body">
+      <button class="icon-btn del" style="position:absolute;top:10px;right:10px;z-index:2" onclick="event.stopPropagation();cardAction('${c.id}')">✕</button>
+      <button class="icon-btn" style="position:absolute;top:10px;right:36px;z-index:2" onclick="event.stopPropagation();openEditWallet('${c.id}')">edit</button>
+        <div style="font-family:'Libre Baskerville',serif;font-size:0.95rem;color:#1a1714;letter-spacing:0.01em">💵 ${c.name}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:0.65rem;margin-left:0.5rem;margin-right:0.5rem">
+        <div class="bal-cell cleared" style="text-align:center">
+          <div class="bal-cell-label">Cash on Hand</div>
+          <div class="bal-cell-val">${fmt$(balance)}</div>
+        </div>
+        <div class="bal-cell" style="text-align:center;background:${pending < 0 ? 'rgba(204,34,34,0.07)' : pending > 0 ? 'rgba(27,74,45,0.07)' : '#f0ece4'};border-color:${pending < 0 ? 'rgba(204,34,34,0.2)' : pending > 0 ? 'rgba(27,74,45,0.2)' : '#d8d0c4'}">
+          <div class="bal-cell-label" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : '#6b6358'}">${pending < 0 ? 'Spent' : 'Added'}</div>
+          <div class="bal-cell-val" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : '#6b6358'}">${fmt$(pending)}</div>
+        </div>
+        <div class="bal-cell working" style="grid-column:1/-1;position:relative">
+          <div class="bal-cell-label">Net Balance</div>
+          <div class="bal-cell-val">${fmt$(net)}</div>
+        </div>
+      </div>
+      ${hasPending ? `<div style="margin:0 0.5rem 0.5rem;display:flex;gap:6px">
+        <button class="clear-pending-btn" onclick="event.stopPropagation();clearWalletPending('${c.id}')">✓ confirm ${pending < 0 ? 'spending' : 'deposit'} ${fmt$(Math.abs(pending))}</button>
+      </div>` : ''}
+      <div class="spend-section" style="margin-left:0.5rem;margin-right:0.5rem">
+        <div class="spend-label">log cash ${''}</div>
+        <div class="spend-input-wrap">
+          <input type="number" id="sinp-${c.id}" placeholder="-12.00" step="0.01"
+            onclick="event.stopPropagation()"
+            onkeydown="if(event.key==='Enter')addCharge('${c.id}')" />
+          <button onclick="event.stopPropagation();addCharge('${c.id}')">+ log</button>
+        </div>
+        <input type="text" id="snote-${c.id}" placeholder="note (optional)" maxlength="60"
+          onclick="event.stopPropagation()"
+          onkeydown="if(event.key==='Enter')addCharge('${c.id}')"
+          style="width:100%;margin-top:5px;background:#ffffff;border:1.5px solid #c8bfb0;border-radius:0;color:#1a1714;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;padding:0.3rem 0.7rem;outline:none;box-sizing:border-box;" />
+        <div class="spend-hint" style="font-size:0.6rem;color:#a09880;margin-top:4px">negative = spending · positive = deposit</div>
+        ${cards.filter(x=>x.wallet&&!x.hidden).length >= 1 ? `<button onclick="event.stopPropagation();openTransfer('${c.id}')" class="btn" style="width:100%;margin-top:0.5rem;text-align:center">⇄ transfer</button>` : ''}
+      </div>
+      <div class="txn-list" style="margin-left:0.5rem;margin-right:0.5rem">
+        <div class="txn-section-label" onclick="event.stopPropagation();(function(){const el=document.getElementById('txn-body-${c.id}');const ch=document.getElementById('txn-ch-${c.id}');const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})()\" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;padding:2px 0">
+          <span>Transactions</span>
+          <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880">${hasUncleared?'▾':'▸'}</span>
+        </div>
+        <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${hasUncleared?'block':'none'}">
+        ${txns.length === 0 ? `<div style="font-size:0.65rem;color:#b0a898;padding:0.4rem 0.5rem;font-style:italic">no transactions yet</div>` : ''}
+        ${txns.slice().reverse().map(t => `
+          <div class="txn-item ${t.cleared?'cleared':''}" style="flex-wrap:wrap">
+            <span class="txn-date">${t.date}</span>
+            ${t.transferId ? `<span style="font-size:0.58rem;color:#8a6e2e;background:#f5ecd7;border:1px solid #d4b97a;padding:1px 5px;border-radius:0;white-space:nowrap">⇄ transfer</span>` : ''}
+            ${t.note ? `<span style="font-size:0.62rem;color:#8a7f6a;flex:1;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.note}</span>` : '<span style="flex:1"></span>'}
+              <span style="font-size:0.75rem;font-weight:600;flex:1;color:${t.amt<0?'#cc2222':'#1b4a2d'}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
+            <div class="txn-actions">
+              ${!t.cleared ? `<button class="txn-btn" onclick="event.stopPropagation();clearTxn('${c.id}','${t.id}')">confirm</button>` : `<button class="txn-btn" onclick="event.stopPropagation();unclearTxn('${c.id}','${t.id}')" style="color:#8a7f6a">unclear</button>`}
+              <button class="txn-btn del" onclick="event.stopPropagation();deleteTxn('${c.id}','${t.id}')">✕</button>
+            </div>
+          </div>`).join('')}
+        </div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function clearWalletPending(id) {
+  cards = cards.map(c => {
+    if (c.id !== id) return c;
+    const txns = (c.transactions||[]).map(t => ({...t, cleared: true}));
+    const newBalance = +((c.balance||0) + (c.pending||0)).toFixed(2);
+    return {...c, transactions: txns, balance: newBalance, pending: 0};
+  });
+  persist(); renderCard(id);
+}
+
+function renderCard(id) {
+  const visibleCards = cards.filter(c => !c.hidden);
+  const idx = visibleCards.findIndex(c => c.id === id);
+  if (idx === -1) { render(); return; }
+  const el = document.querySelector(`[data-id="${id}"]`);
+  if (!el) { render(); return; }
+  const c = cards.find(c => c.id === id);
+  el.outerHTML = buildCard(c, idx);
+  updateSummary();
+  updateCashSummary();
+  updateAllSummary();
+  updateCOA();
+  const inp = document.getElementById('sinp-' + id);
+  if (inp) inp.focus();
+}
+
+function updateAllSummary() {
+  const el = document.getElementById('all-summary');
+  if (!el) return;
+  if (viewMode !== 'all') { el.style.display = 'none'; return; }
+  const creditCards = cards.filter(c => !c.wallet);
+  const wallets = cards.filter(c => c.wallet && !c.hidden);
+  const hasCash = wallets.length > 0;
+  const totalWorking = parseFloat(creditCards.reduce((s,c)=>s+(c.balance||0)+(c.pending||0),0).toFixed(2));
+  const totalCash = wallets.reduce((s,c)=>s+(c.balance||0)+(c.pending||0),0);
+  if (!hasCash) { el.style.display = 'none'; return; }
+  el.style.display = 'grid';
+  el.innerHTML = `
+    <div class="stat" style="border-top:4px solid #4a5e3a"><div class="stat-label">Cash</div><div class="stat-value">${fmt$(totalCash)}</div></div>
+    <div class="stat" style="border-top:4px solid #8a6e2e;border-right:none"><div class="stat-label">Credit</div><div class="stat-value">${fmt$(totalWorking)}</div></div>
+  `;
+}
+
+function updateSummary() {
+  const summaryEl = document.getElementById('summary');
+  if (!summaryEl) return;
+  if (viewMode !== 'credit') { summaryEl.style.display = 'none'; return; }
+  summaryEl.style.display = 'grid';
+  const included = cards.filter(c => c.includeInTotals && !c.hidden && !c.wallet);
+  const totalCleared = parseFloat(included.reduce((s,c)=>s+(c.balance||0),0).toFixed(2));
+  const includedForLimit = cards.filter(c => c.includeInTotals && !c.wallet);
+  const totalLimit = includedForLimit.filter(c=>!c.npsl).reduce((s,c)=>s+(c.limit||0),0);
+  const util = totalLimit ? (totalCleared/totalLimit*100).toFixed(2) : '—';
+  const creditCards = cards.filter(c => !c.wallet);
+  const totalWorking = parseFloat(creditCards.reduce((s,c)=>s+(c.balance||0)+(c.pending||0),0).toFixed(2));
+  const totalPending = parseFloat(creditCards.reduce((s,c)=>s+(c.pending||0),0).toFixed(2));
+  const totalAP = parseFloat(creditCards.reduce((s,c)=>s+effectiveAutopay(c),0).toFixed(2));
+  const totalNewSpending = parseFloat(creditCards.filter(c=>!c.paydown).reduce((s,c)=>s+Math.max(0,(c.balance||0)-(c.stmtBal||0)),0).toFixed(2));
+  const excludedNames = cards.filter(c=>(!c.includeInTotals||c.npsl)&&!c.wallet).map(c=>c.name.split(' ').slice(0,2).join(' '));
+  const fmtK = v => Math.abs(v)>=1000?`$${(v/1000).toFixed(1)}k`:`$${v.toFixed(2)}`;
+  document.getElementById('summary').innerHTML = `
+    <div class="stat"><div class="stat-label">working balance</div><div class="stat-value">${fmt$(totalWorking)}<div class="stat-sub" onclick="event.stopPropagation();document.getElementById('chart-of-accounts').style.display='flex'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} cards</div></div></div>
+    <div class="stat"><div class="stat-label">total limit</div><div class="stat-value">
+      <div class="stat-label" style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:0">
+        <span onclick="(function(){const v=document.getElementById('limit-val');const h=document.getElementById('limit-hidden');v.style.display=v.style.display==='none'?'block':'none';h.style.display=h.style.display==='none'?'block':'none';})()\" style="cursor:pointer;color:#8a7f6a;user-select:none;line-height:1">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </span>
+      </div>
+      <span id="limit-val" style="display:none">${fmt$(totalLimit)}</span>
+      <span id="limit-hidden" style="letter-spacing:0.15em;color:#c8bfb0">••••</span>
+      <div class="stat-sub" style="position:relative">${excludedNames.length ? `<span onclick="event.stopPropagation();const el=document.getElementById('excl-info');el.style.display=el.style.display==='none'?'block':'none'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${excludedNames.length} excl.</span><div id="excl-info" onclick="event.stopPropagation()" style="display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);white-space:nowrap;background:#ffffff;border:1.5px solid #1a1714;padding:0.4rem 0.6rem;font-size:0.62rem;color:#6b6358;line-height:1.8;z-index:50;box-shadow:4px 4px 0 #8a6e2e">${excludedNames.join('<br>')}</div>` : 'all included'}</div>
+    </div></div>
+    <div class="stat" style="border-right:none"><div class="stat-label">utilization</div><div class="stat-value">${util}%</div></div>
+    <div class="stat" style="border-bottom:none"><div class="stat-label">pending</div><div class="stat-value">${fmt$(totalPending)}</div></div>
+    <div class="stat" style="border-bottom:none"><div class="stat-label">autopay due</div><div class="stat-value">${fmt$(totalAP)}<div class="stat-sub">this cycle</div></div></div>
+    <div class="stat" style="border-right:none;border-bottom:none"><div class="stat-label">new spending</div><div class="stat-value">${fmt$(totalNewSpending)}<div class="stat-sub">since last statement</div></div></div>
+  `;
+}
+
+function updateCOA() {
+  // Populate chart of accounts
+  const tbody = document.getElementById('coa-tbody');
+  if (tbody) {
+    tbody.innerHTML = cards.filter(c => !c.wallet).map(c => {
+      const pct = !c.npsl && c.limit ? (c.balance||0) / c.limit * 100 : null;
+      const utilColor = pct === null ? '#a09880' : pct >= 30 ? '#cc2222' : pct >= 20 ? '#c47a2e' : pct >= 10 ? '#8a6e2e' : '#2d6a3f';
+      const working = (c.balance||0) + (c.pending||0);
+      return `<tr style="border-bottom:1px solid #e8e4dc">
+        <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">${c.name}${c.paydown?'<span style="font-size:0.55rem;color:#8a6e2e;margin-left:5px">↓</span>':''}${!c.includeInTotals?'<span style="font-size:0.55rem;color:#a09880;margin-left:5px">excl.</span>':''}${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714;font-weight:600">${fmt$(working)}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)!==0?'#c47a2e':'#6b6358'}">${fmt$(c.pending||0)}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714">${fmt$(c.balance||0)}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;color:#6b6358">${c.npsl?'NPSL':c.limit?'$'+c.limit.toLocaleString():'—'}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:${utilColor}">${pct===null?'N/A':pct.toFixed(1)+'%'}</td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+function openCashCOA() {
+  const wallets = cards.filter(c => c.wallet && !c.hidden);
+  const tbody = document.getElementById('cash-coa-tbody');
+  tbody.innerHTML = wallets.map(c => {
+    const confirmed = c.balance || 0;
+    const pending = c.pending || 0;
+    const onHand = confirmed + pending;
+    return `<tr style="border-bottom:1px solid #e8e4dc">
+      <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">💵 ${c.name}${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
+      <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714">${fmt$(confirmed)}</td>
+      <td style="text-align:right;padding:0.35rem 0.5rem;color:${pending<0?'#cc2222':pending>0?'#2d6a3f':'#6b6358'}">${fmt$(pending)}</td>
+      <td style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:#1a1714">${fmt$(onHand)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('cash-chart-of-accounts').style.display = 'flex';
+}
+
+function openTransfer(fromId) {
+  const wallets = cards.filter(c => c.wallet && !c.hidden);
+  if (wallets.length < 1) return;
+  const fromSel = document.getElementById('transfer-from');
+  const toSel = document.getElementById('transfer-to');
+  // From: only cash accounts
+  fromSel.innerHTML = wallets.map(c => `<option value="${c.id}" ${c.id===fromId?'selected':''}>${c.name}</option>`).join('');
+  // To: all accounts (cash + credit)
+  const allVisible = cards.filter(c => !c.hidden);
+  toSel.innerHTML = allVisible.map(c => `<option value="${c.id}" ${c.id!==fromId?'':''}>${c.wallet ? '💵 ' : '💳 '}${c.name}</option>`).join('');
+  // Default to first non-from option
+  const firstOther = allVisible.find(c => c.id !== fromId);
+  if (firstOther) toSel.value = firstOther.id;
+  document.getElementById('transfer-amount').value = '';
+  document.getElementById('transfer-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('transfer-amount').focus(), 100);
+}
+
+function submitTransfer() {
+  const fromId = document.getElementById('transfer-from').value;
+  const toId = document.getElementById('transfer-to').value;
+  const amt = parseFloat(document.getElementById('transfer-amount').value);
+  if (!fromId || !toId || fromId === toId || isNaN(amt) || amt <= 0) return;
+  const now = new Date();
+  const date = now.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+  const month = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const transferId = Date.now().toString();
+  const toCard = cards.find(c => c.id === toId);
+  const isCreditPayment = toCard && !toCard.wallet;
+
+  cards = cards.map(c => {
+    if (c.id === fromId) {
+      // Cash going out — always negative
+      const toCardName = toCard ? toCard.name.split(' ')[0] : '';
+      const txn = {id: transferId + '_from', amt: -amt, date, month, cleared: false, transferId, transferPeer: toId,
+        note: isCreditPayment ? `Payment → ${toCard.name.split(' ')[0]}` : `to ${toCard?.name || ''}`};
+      const txns = [...(c.transactions||[]), txn];
+      return {...c, transactions: txns, pending: +((c.pending||0) - amt).toFixed(2)};
+    }
+    if (c.id === toId) {
+      if (isCreditPayment) {
+        // Credit card payment — negative reduces balance
+        const fromCard = cards.find(c => c.id === fromId);
+        const txn = {id: transferId + '_to', amt: -amt, date, month, cleared: false, transferId, transferPeer: fromId,
+          note: `Cash payment${fromCard ? ` from ${fromCard.name.split(' ')[0]}` : ''}`};
+        const txns = [...(c.transactions||[]), txn];
+        return {...c, transactions: txns, pending: +((c.pending||0) - amt).toFixed(2)};
+      } else {
+        // Cash-to-cash — positive deposit
+        const fromCard = cards.find(c => c.id === fromId);
+        const txn = {id: transferId + '_to', amt: +amt, date, month, cleared: false, transferId, transferPeer: fromId,
+          note: fromCard ? `from ${fromCard.name}` : ''};
+        const txns = [...(c.transactions||[]), txn];
+        return {...c, transactions: txns, pending: +((c.pending||0) + amt).toFixed(2)};
+      }
+    }
+    return c;
+  });
+  persist(); render();
+  document.getElementById('transfer-overlay').style.display = 'none';
+}
+
+function updateCashSummary() {
+  const wallets = cards.filter(c => c.wallet && !c.hidden);
+  const cashSummary = document.getElementById('cash-summary');
+  if (!cashSummary) return;
+  if (wallets.length === 0 || viewMode !== 'cash') {
+    cashSummary.style.display = 'none';
+    return;
+  }
+  const totalCash = wallets.reduce((s,c) => s+(c.balance||0), 0);
+  const totalPendingCash = wallets.reduce((s,c) => s+(c.pending||0), 0);
+  const netCash = totalCash + totalPendingCash;
+  cashSummary.style.display = 'grid';
+  cashSummary.innerHTML = `
+    <div class="stat" style="border-top:4px solid #4a5e3a"><div class="stat-label">cash on hand</div><div class="stat-value">${fmt$(totalCash + totalPendingCash)}<div class="stat-sub" onclick="openCashCOA()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${wallets.length} account${wallets.length>1?'s':''}</div></div></div>
+    <div class="stat" style="border-top:4px solid #8a6e2e;border-right:none"><div class="stat-label">pending</div><div class="stat-value">${fmt$(totalPendingCash)}</div></div>
+  `;
+}
+
+function openQuickLog() {
+  const wallets = cards.filter(c => c.wallet && !c.hidden);
+  const sel = document.getElementById('ql-card');
+  sel.innerHTML = cards.filter(c => !c.hidden).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  document.getElementById('ql-amount').value = '';
+  const transferBtn = document.getElementById('ql-transfer-btn');
+  if (transferBtn) transferBtn.style.display = wallets.length >= 1 ? 'inline-block' : 'none';
+  document.getElementById('quick-log-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('ql-amount').focus(), 100);
+}
+
+function submitQuickLog() {
+  const id = document.getElementById('ql-card').value;
+  const amt = parseFloat(document.getElementById('ql-amount').value);
+  const note = document.getElementById('ql-note')?.value.trim() || '';
+  if (!id || isNaN(amt) || amt === 0) return;
+  const now = new Date();
+  const txn = {
+    id: Date.now().toString(),
+    amt: +amt.toFixed(2),
+    date: now.toLocaleDateString('en-US', {month:'short', day:'numeric'}),
+    month: `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`,
+    note,
+    cleared: false
+  };
+  cards = cards.map(c => {
+    if (c.id !== id) return c;
+    const txns = [...(c.transactions||[]), txn];
+    const newPending = parseFloat(txns.filter(t=>!t.cleared).reduce((s,t)=>s+t.amt,0).toFixed(2));
+    return {...c, transactions: txns, pending: newPending};
+  });
+  persist();
+  renderCard(id);
+  document.getElementById('quick-log-overlay').style.display = 'none';
+}
+
+document.getElementById('modal-overlay').addEventListener('click', e => { if(e.target.id==='modal-overlay') closeModal(); });
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey && document.getElementById('modal-overlay').classList.contains('open')) {
+    const tag = document.activeElement.tagName;
+    if (tag === 'SELECT' || tag === 'TEXTAREA') return;
+    e.preventDefault();
+    document.getElementById('save-confirm-overlay').style.display = 'flex';
+  }
+});
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('[id^="inc-info-"],[id^="card-info-"],#excl-info').forEach(el => el.style.display = 'none');
+});
+document.getElementById('partial-modal').addEventListener('click', e => { if(e.target.id==='partial-modal') closePartialModal(); });
+document.getElementById('action-modal-overlay').addEventListener('click', e => { if(e.target.id==='action-modal-overlay') closeActionModal(); });
+document.getElementById('history-modal-overlay').addEventListener('click', e => { if(e.target.id==='history-modal-overlay') document.getElementById('history-modal-overlay').classList.remove('open'); });
+initAuth();
+</script>
+<div id="save-confirm-overlay" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+  <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:300px;box-shadow:6px 6px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
+    <h3 style="font-family:'Libre Baskerville',serif;font-size:1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0 0 0.5rem">Save changes?</h3>
+    <p style="font-size:0.75rem;color:#6b6358;margin:0 0 1.25rem">This will update the card with your changes.</p>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="document.getElementById('save-confirm-overlay').style.display='none'" class="btn-cancel">cancel</button>
+      <button onclick="document.getElementById('save-confirm-overlay').style.display='none';saveCard()" class="btn-save">save</button>
+    </div>
+  </div>
+</div>
+<div id="edit-wallet-overlay" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+  <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:340px;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem">
+      <h2 style="font-family:'Libre Baskerville',serif;font-size:1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0">Edit Cash Account</h2>
+      <button onclick="document.getElementById('edit-wallet-overlay').style.display='none'" style="background:none;border:none;font-size:1rem;color:#6b6358;cursor:pointer">✕</button>
+    </div>
+    <input type="hidden" id="edit-wallet-id" />
+    <div style="margin-bottom:0.85rem">
+      <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">Name</label>
+      <input id="edit-wallet-name" type="text" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;outline:none;box-sizing:border-box" />
+    </div>
+    <div style="margin-bottom:1.25rem">
+      <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">Current Balance ($)</label>
+      <input id="edit-wallet-balance" type="number" step="0.01" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;outline:none;box-sizing:border-box" />
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="document.getElementById('edit-wallet-overlay').style.display='none'" class="btn-cancel">cancel</button>
+      <button onclick="saveEditWallet()" class="btn-save">save</button>
+    </div>
+  </div>
+</div>
+
+<div id="transfer-overlay" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+  <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:360px;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem">
+      <h2 style="font-family:'Libre Baskerville',serif;font-size:1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0">Transfer Cash</h2>
+      <button onclick="document.getElementById('transfer-overlay').style.display='none'" style="background:none;border:none;font-size:1rem;color:#6b6358;cursor:pointer">✕</button>
+    </div>
+    <div style="margin-bottom:0.85rem">
+      <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">From</label>
+      <select id="transfer-from" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;background:#ffffff;color:#1a1714;outline:none"></select>
+    </div>
+    <div style="margin-bottom:0.85rem">
+      <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">To</label>
+      <select id="transfer-to" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;background:#ffffff;color:#1a1714;outline:none"></select>
+    </div>
+    <div style="margin-bottom:1.25rem">
+      <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">Amount ($)</label>
+      <input id="transfer-amount" type="number" step="0.01" placeholder="0.00" onkeydown="if(event.key==='Enter')submitTransfer()" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.9rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;outline:none;box-sizing:border-box" />
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="document.getElementById('transfer-overlay').style.display='none'" class="btn-cancel">cancel</button>
+      <button onclick="submitTransfer()" class="btn-save">transfer</button>
+    </div>
+  </div>
+</div>
+
+<div id="add-wallet-overlay" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+  <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:340px;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem">
+      <h2 style="font-family:'Libre Baskerville',serif;font-size:1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0">Cash Account</h2>
+      <button onclick="document.getElementById('add-wallet-overlay').style.display='none'" style="background:none;border:none;font-size:1rem;color:#6b6358;cursor:pointer">✕</button>
+    </div>
+    <div style="margin-bottom:0.85rem">
+      <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">Name</label>
+      <input id="wallet-name" type="text" placeholder="e.g. Wallet, Cash, Petty Cash" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;outline:none;box-sizing:border-box" />
+    </div>
+    <div style="margin-bottom:1.25rem">
+      <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">Starting Balance ($)</label>
+      <input id="wallet-balance" type="number" step="0.01" placeholder="0.00" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;outline:none;box-sizing:border-box" />
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="document.getElementById('add-wallet-overlay').style.display='none'" class="btn-cancel">cancel</button>
+      <button onclick="saveWalletAccount()" class="btn-save">add</button>
+    </div>
+  </div>
+</div>
+
+<button class="quick-log-fab" onclick="openQuickLog()">+</button>
+
+<div id="quick-log-overlay" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+  <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:360px;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem">
+      <h2 style="font-family:'Libre Baskerville',serif;font-size:1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0">Quick Log</h2>
+      <button onclick="document.getElementById('quick-log-overlay').style.display='none'" style="background:none;border:none;font-size:1rem;color:#6b6358;cursor:pointer">✕</button>
+    </div>
+    <div style="margin-bottom:0.85rem">
+      <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">Card</label>
+      <select id="ql-card" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;background:#ffffff;color:#1a1714;outline:none"></select>
+    </div>
+    <div style="margin-bottom:0.85rem">
+      <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">Amount <span style="font-weight:400;text-transform:none;letter-spacing:0">(+ charge, − payment)</span></label>
+      <input id="ql-amount" type="number" step="0.01" placeholder="0.00" onkeydown="if(event.key==='Enter')submitQuickLog()" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.9rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;outline:none;box-sizing:border-box" />
+    </div>
+    <div style="margin-bottom:1.25rem">
+      <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">Note <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+      <input id="ql-note" type="text" placeholder="payee, description..." maxlength="60" onkeydown="if(event.key==='Enter')submitQuickLog()" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;outline:none;box-sizing:border-box" />
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="document.getElementById('quick-log-overlay').style.display='none'" class="btn-cancel">cancel</button>
+      <button id="ql-transfer-btn" onclick="document.getElementById('quick-log-overlay').style.display='none';openTransfer()" class="btn" style="display:none">⇄ transfer</button>
+      <button onclick="submitQuickLog()" class="btn-save">log</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
