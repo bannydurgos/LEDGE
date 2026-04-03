@@ -237,14 +237,17 @@
   .action-btn.delete:hover { background: #8b2020; border-color: #8b2020; }
   .txn-list { margin-bottom: 0.65rem; margin-left: 0.5rem; margin-right: 0.5rem; border: 1px solid #c8c0b8; }
   .txn-list-body { max-height: 120px; overflow-y: auto; }
-  .txn-item { display: flex; align-items: center; justify-content: space-between; padding: 0.3rem 0.5rem; border-bottom: 1px solid #f0ece4; gap: 6px; }
+  .txn-item { display: grid; grid-template-columns: 38px 1fr 65px auto; align-items: center; padding: 0.3rem 0.5rem; border-bottom: 1px solid #f0ece4; gap: 6px; }
   .txn-item:last-child { border-bottom: none; }
   .txn-item.cleared { opacity: 0.35; }
-  .txn-date { font-size: 0.6rem; color: #8a7f6a; min-width: 36px; }
-  .txn-amt { font-size: 0.75rem; font-weight: 600; flex: 1; }
+  .txn-note-cell { display: flex; align-items: center; gap: 4px; min-width: 0; overflow: hidden; }
+  .txn-date { font-size: 0.6rem; color: #8a7f6a; min-width: 36px; cursor: pointer; text-decoration: underline dotted; text-underline-offset: 2px; }
+  .txn-date:hover { color: #1a1714; }
+  #txn-popup { position: fixed; background: #ffffff; border: 1.5px solid #1a1714; box-shadow: 4px 4px 0 #8a6e2e; padding: 0.6rem 0.75rem; font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: #1a1714; z-index: 999; min-width: 160px; max-width: 220px; display: none; line-height: 1.7; pointer-events: none; }
+  .txn-amt { font-size: 0.75rem; font-weight: 600; text-align: right; }
   .txn-amt.positive { color: #7a3a10; }
   .txn-amt.negative { color: #1b4a2d; }
-  .txn-actions { display: flex; gap: 4px; }
+  .txn-actions { display: flex; gap: 4px; flex-shrink: 0; }
   .txn-btn { background: none; border: 1px solid #d8d0c4; border-radius: 0; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; font-weight: 600; padding: 2px 6px; cursor: pointer; color: #6b6358; transition: all 0.15s; }
   .txn-btn:hover { background: #1a1714; color: #fff; border-color: #1a1714; }
   .txn-btn.del:hover { background: #8b2020; border-color: #8b2020; color: #fff; }
@@ -323,7 +326,7 @@
     </div>
   </div>
   <div class="summary-strip" id="summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;z-index:3"></div>
-  <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
+  <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;display:none;grid-template-columns:1fr 1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
   <div id="all-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:400px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>  <div class="header-right">
     <select id="sort-select" onchange="setSort(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;font-weight:500;padding:0.45rem 0.8rem;border:1.5px solid #8a6e2e;border-radius:0;background:#ffffff;color:#1a1714;cursor:pointer;outline:none;">
       <option value="none">sort: A → Z</option>
@@ -497,9 +500,9 @@
       <thead>
         <tr style="border-bottom:2px solid #1a1714">
           <th style="text-align:left;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Account</th>
-          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Confirmed</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Working</th>
           <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Pending</th>
-          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">On Hand</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Cleared</th>
         </tr>
       </thead>
       <tbody id="cash-coa-tbody"></tbody>
@@ -942,6 +945,41 @@ function deleteTxn(cardId, txnId) {
   persist();
   if (peerId) render(); else renderCard(cardId);
 }
+
+function showTxnPopup(event, cardId, txnId) {
+  event.stopPropagation();
+  const popup = document.getElementById('txn-popup');
+  if (popup.style.display === 'block' && popup.dataset.txnId === txnId) {
+    popup.style.display = 'none';
+    popup.dataset.txnId = '';
+    return;
+  }
+  popup.dataset.txnId = txnId;
+  const card = cards.find(c => c.id === cardId);
+  const t = card ? (card.transactions||[]).find(t => t.id === txnId) : null;
+  if (!t) return;
+  const lines = [];
+  lines.push(`<span style="color:#6b6358;font-size:0.58rem">DATE</span><br>${t.date}`);
+  lines.push(`<span style="color:#6b6358;font-size:0.58rem">AMOUNT</span><br><span style="color:${t.amt<0?'#cc2222':'#1b4a2d'};font-weight:600">${t.amt>0?'+':''}${fmt$(t.amt)}</span>`);
+  if (t.transferPeer) {
+    const peer = cards.find(c => c.id === t.transferPeer);
+    const peerName = peer ? peer.name : 'unknown';
+    lines.push(`<span style="color:#6b6358;font-size:0.58rem">TRANSFER</span><br>${t.amt < 0 ? '→' : '←'} ${peerName}`);
+  } else if (t.note) {
+    lines.push(`<span style="color:#6b6358;font-size:0.58rem">NOTE</span><br>${t.note}`);
+  }
+  lines.push(`<span style="color:#6b6358;font-size:0.58rem">STATUS</span><br>${t.cleared ? 'Cleared' : 'Pending'}`);
+  popup.innerHTML = lines.join('<div style="margin-top:0.35rem">') + '</div>'.repeat(lines.length - 1);
+  const r = event.target.getBoundingClientRect();
+  popup.style.display = 'block';
+  const pw = popup.offsetWidth, ph = popup.offsetHeight;
+  let top = r.bottom + 4, left = r.left;
+  if (top + ph > window.innerHeight - 8) top = r.top - ph - 4;
+  if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+  popup.style.top = top + 'px';
+  popup.style.left = left + 'px';
+}
+document.addEventListener('click', () => { const p = document.getElementById('txn-popup'); p.style.display = 'none'; p.dataset.txnId = ''; });
 
 function openEditTxn(cardId, txnId) {
   const card = cards.find(c => c.id === cardId);
@@ -1494,14 +1532,16 @@ function buildCard(c, idx) {
           <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${(c.transactions||[]).some(t=>!t.cleared)?'block':'none'}">
           ${(c.transactions||[]).length === 0 ? `<div style="font-size:0.65rem;color:#b0a898;padding:0.4rem 0.5rem;font-style:italic">no transactions yet</div>` : ''}
           ${(c.transactions||[]).slice().reverse().map(t => `
-            <div class="txn-item ${t.cleared?'cleared':''}" style="flex-wrap:wrap">
-              <span class="txn-date">${t.date}</span>
-              ${t.transferId ? `<span style="font-size:0.58rem;color:#8a6e2e;background:#f5ecd7;border:1px solid #d4b97a;padding:1px 5px;border-radius:0;white-space:nowrap">⇄ transfer</span>` : ''}
-              ${t.note ? `<span style="font-size:0.62rem;color:#8a7f6a;flex:1;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.note}</span>` : '<span style="flex:1"></span>'}
+            <div class="txn-item ${t.cleared?'cleared':''}">
+              <span class="txn-date" onclick="showTxnPopup(event,'${c.id}','${t.id}')">${t.date}</span>
+              <div class="txn-note-cell">
+                ${t.transferId ? `<span style="font-size:0.58rem;color:#8a6e2e;background:#f5ecd7;border:1px solid #d4b97a;padding:1px 5px;border-radius:0;white-space:nowrap;flex-shrink:0">⇄ transfer</span>` : ''}
+                ${t.note ? `<span style="font-size:0.62rem;color:#8a7f6a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.note}</span>` : ''}
+              </div>
               <span class="txn-amt ${t.amt>0?'positive':'negative'}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
               <div class="txn-actions">
-                ${!t.cleared ? `<button class="txn-btn" onclick="event.stopPropagation();clearTxn('${c.id}','${t.id}')">clear</button>` : `<button class="txn-btn" onclick="event.stopPropagation();unclearTxn('${c.id}','${t.id}')" style="color:#8a7f6a">unclear</button>`}
-                <button class="txn-btn" onclick="event.stopPropagation();openEditTxn('${c.id}','${t.id}')">edit</button>
+                ${!t.cleared ? `<button class="txn-btn" onclick="event.stopPropagation();clearTxn('${c.id}','${t.id}')">C</button>` : `<button class="txn-btn" onclick="event.stopPropagation();unclearTxn('${c.id}','${t.id}')" style="color:#8a7f6a">C</button>`}
+                <button class="txn-btn" onclick="event.stopPropagation();openEditTxn('${c.id}','${t.id}')" style="line-height:1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
                 <button class="txn-btn del" onclick="event.stopPropagation();deleteTxn('${c.id}','${t.id}')">✕</button>
               </div>
             </div>
@@ -1530,15 +1570,15 @@ function buildWalletCard(c, idx) {
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:0.65rem;margin-left:0.5rem;margin-right:0.5rem">
         <div class="bal-cell cleared" style="text-align:center">
-          <div class="bal-cell-label">Cash on Hand</div>
+          <div class="bal-cell-label">Cleared</div>
           <div class="bal-cell-val">${fmt$(balance)}</div>
         </div>
         <div class="bal-cell" style="text-align:center;background:${pending < 0 ? 'rgba(204,34,34,0.07)' : pending > 0 ? 'rgba(27,74,45,0.07)' : '#f0ece4'};border-color:${pending < 0 ? 'rgba(204,34,34,0.2)' : pending > 0 ? 'rgba(27,74,45,0.2)' : '#d8d0c4'}">
-          <div class="bal-cell-label" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : '#6b6358'}">${pending < 0 ? 'Spent' : 'Added'}</div>
+          <div class="bal-cell-label" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : '#6b6358'}">${pending < 0 ? 'Spent' : 'Pending'}</div>
           <div class="bal-cell-val" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : '#6b6358'}">${fmt$(pending)}</div>
         </div>
         <div class="bal-cell working" style="grid-column:1/-1;position:relative">
-          <div class="bal-cell-label">Net Balance</div>
+          <div class="bal-cell-label">Working Balance</div>
           <div class="bal-cell-val">${fmt$(net)}</div>
         </div>
       </div>
@@ -1568,14 +1608,16 @@ function buildWalletCard(c, idx) {
         <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${hasUncleared?'block':'none'}">
         ${txns.length === 0 ? `<div style="font-size:0.65rem;color:#b0a898;padding:0.4rem 0.5rem;font-style:italic">no transactions yet</div>` : ''}
         ${txns.slice().reverse().map(t => `
-          <div class="txn-item ${t.cleared?'cleared':''}" style="flex-wrap:wrap">
-            <span class="txn-date">${t.date}</span>
-            ${t.transferId ? `<span style="font-size:0.58rem;color:#8a6e2e;background:#f5ecd7;border:1px solid #d4b97a;padding:1px 5px;border-radius:0;white-space:nowrap">⇄ transfer</span>` : ''}
-            ${t.note ? `<span style="font-size:0.62rem;color:#8a7f6a;flex:1;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.note}</span>` : '<span style="flex:1"></span>'}
-              <span style="font-size:0.75rem;font-weight:600;flex:1;color:${t.amt<0?'#cc2222':'#1b4a2d'}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
+          <div class="txn-item ${t.cleared?'cleared':''}">
+            <span class="txn-date" onclick="showTxnPopup(event,'${c.id}','${t.id}')">${t.date}</span>
+            <div class="txn-note-cell">
+              ${t.transferId ? `<span style="font-size:0.58rem;color:#8a6e2e;background:#f5ecd7;border:1px solid #d4b97a;padding:1px 5px;border-radius:0;white-space:nowrap;flex-shrink:0">⇄ transfer</span>` : ''}
+              ${t.note ? `<span style="font-size:0.62rem;color:#8a7f6a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.note}</span>` : ''}
+            </div>
+            <span class="txn-amt ${t.amt>0?'positive':'negative'}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
             <div class="txn-actions">
-              ${!t.cleared ? `<button class="txn-btn" onclick="event.stopPropagation();clearTxn('${c.id}','${t.id}')">confirm</button>` : `<button class="txn-btn" onclick="event.stopPropagation();unclearTxn('${c.id}','${t.id}')" style="color:#8a7f6a">unclear</button>`}
-              <button class="txn-btn" onclick="event.stopPropagation();openEditTxn('${c.id}','${t.id}')">edit</button>
+              ${!t.cleared ? `<button class="txn-btn" onclick="event.stopPropagation();clearTxn('${c.id}','${t.id}')">C</button>` : `<button class="txn-btn" onclick="event.stopPropagation();unclearTxn('${c.id}','${t.id}')" style="color:#8a7f6a">C</button>`}
+              <button class="txn-btn" onclick="event.stopPropagation();openEditTxn('${c.id}','${t.id}')" style="line-height:1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
               <button class="txn-btn del" onclick="event.stopPropagation();deleteTxn('${c.id}','${t.id}')">✕</button>
             </div>
           </div>`).join('')}
@@ -1691,9 +1733,9 @@ function openCashCOA() {
     const onHand = confirmed + pending;
     return `<tr style="border-bottom:1px solid #e8e4dc">
       <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">💵 ${c.name}${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
-      <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714">${fmt$(confirmed)}</td>
-      <td style="text-align:right;padding:0.35rem 0.5rem;color:${pending<0?'#cc2222':pending>0?'#2d6a3f':'#6b6358'}">${fmt$(pending)}</td>
       <td style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:#1a1714">${fmt$(onHand)}</td>
+      <td style="text-align:right;padding:0.35rem 0.5rem;color:${pending<0?'#cc2222':pending>0?'#2d6a3f':'#6b6358'}">${fmt$(pending)}</td>
+      <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714">${fmt$(confirmed)}</td>
     </tr>`;
   }).join('');
   document.getElementById('cash-chart-of-accounts').style.display = 'flex';
@@ -1773,8 +1815,9 @@ function updateCashSummary() {
   const totalPendingCash = wallets.reduce((s,c) => s+(c.pending||0), 0);
   cashSummary.style.display = 'grid';
   cashSummary.innerHTML = `
-    <div class="stat" style="border-top:4px solid #4a5e3a"><div class="stat-label">cash on hand</div><div class="stat-value">${fmt$(totalCash + totalPendingCash)}${wallets.length > 0 ? `<div class="stat-sub" onclick="openCashCOA()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${wallets.length} account${wallets.length>1?'s':''}</div>` : ''}</div></div>
-    <div class="stat" style="border-top:4px solid #8a6e2e;border-right:none"><div class="stat-label">pending</div><div class="stat-value">${fmt$(totalPendingCash)}</div></div>
+    <div class="stat" style="border-top:4px solid #4a5e3a"><div class="stat-label">working balance</div><div class="stat-value">${fmt$(totalCash + totalPendingCash)}${wallets.length > 0 ? `<div class="stat-sub" onclick="openCashCOA()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${wallets.length} account${wallets.length>1?'s':''}</div>` : ''}</div></div>
+    <div class="stat" style="border-top:4px solid #8a6e2e"><div class="stat-label">pending</div><div class="stat-value">${fmt$(totalPendingCash)}</div></div>
+    <div class="stat" style="border-top:4px solid #6b6358;border-right:none"><div class="stat-label">cleared</div><div class="stat-value">${fmt$(totalCash)}</div></div>
   `;
 }
 
@@ -1966,6 +2009,8 @@ initAuth();
     </div>
   </div>
 </div>
+
+<div id="txn-popup"></div>
 
 </body>
 </html>
