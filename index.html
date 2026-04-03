@@ -1535,7 +1535,7 @@ function buildCard(c, idx) {
             <div class="txn-item ${t.cleared?'cleared':''}">
               <span class="txn-date" onclick="showTxnPopup(event,'${c.id}','${t.id}')">${t.date}</span>
               <div class="txn-note-cell">
-                ${t.transferId ? `<span style="font-size:0.58rem;color:#8a6e2e;background:#f5ecd7;border:1px solid #d4b97a;padding:1px 5px;border-radius:0;white-space:nowrap;flex-shrink:0">⇄ transfer</span>` : ''}
+                ${t.transferId ? `<span style="font-size:0.58rem;color:#1a6b3a;background:#d8f3dc;border:1px solid #74c69d;padding:1px 5px;border-radius:0;white-space:nowrap;flex-shrink:0">↑ payment</span>` : ''}
                 ${t.note ? `<span style="font-size:0.62rem;color:#8a7f6a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.note}</span>` : ''}
               </div>
               <span class="txn-amt ${t.amt>0?'positive':'negative'}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
@@ -1611,7 +1611,7 @@ function buildWalletCard(c, idx) {
           <div class="txn-item ${t.cleared?'cleared':''}">
             <span class="txn-date" onclick="showTxnPopup(event,'${c.id}','${t.id}')">${t.date}</span>
             <div class="txn-note-cell">
-              ${t.transferId ? `<span style="font-size:0.58rem;color:#8a6e2e;background:#f5ecd7;border:1px solid #d4b97a;padding:1px 5px;border-radius:0;white-space:nowrap;flex-shrink:0">⇄ transfer</span>` : ''}
+              ${t.transferId ? (()=>{const peer=cards.find(x=>x.id===t.transferPeer);return peer&&!peer.wallet?`<span style="font-size:0.58rem;color:#1a6b3a;background:#d8f3dc;border:1px solid #74c69d;padding:1px 5px;border-radius:0;white-space:nowrap;flex-shrink:0">↑ payment</span>`:`<span style="font-size:0.58rem;color:#8a6e2e;background:#f5ecd7;border:1px solid #d4b97a;padding:1px 5px;border-radius:0;white-space:nowrap;flex-shrink:0">⇄ transfer</span>`;})() : ''}
               ${t.note ? `<span style="font-size:0.62rem;color:#8a7f6a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.note}</span>` : ''}
             </div>
             <span class="txn-amt ${t.amt>0?'positive':'negative'}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
