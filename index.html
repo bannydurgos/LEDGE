@@ -500,9 +500,9 @@
       <thead>
         <tr style="border-bottom:2px solid #1a1714">
           <th style="text-align:left;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Account</th>
-          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Working</th>
-          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Pending</th>
           <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Cleared</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Pending</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Working</th>
         </tr>
       </thead>
       <tbody id="cash-coa-tbody"></tbody>
@@ -520,9 +520,9 @@
       <thead>
         <tr style="border-bottom:2px solid #1a1714">
           <th style="text-align:left;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Card</th>
-          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Working</th>
-          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Pending</th>
           <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Cleared</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Pending</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Working</th>
           <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Limit</th>
           <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Util</th>
         </tr>
@@ -1757,9 +1757,9 @@ function updateCOA() {
       const working = (c.balance||0) + (c.pending||0);
       return `<tr style="border-bottom:1px solid #e8e4dc">
         <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">${c.name}${c.paydown?'<span style="font-size:0.55rem;color:#8a6e2e;margin-left:5px">↓</span>':''}${!c.includeInTotals?'<span style="font-size:0.55rem;color:#a09880;margin-left:5px">excl.</span>':''}${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
-        <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714;font-weight:600">${fmt$(working)}</td>
-        <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)!==0?'#c47a2e':'#6b6358'}">${fmt$(c.pending||0)}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714">${fmt$(c.balance||0)}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)!==0?'#c47a2e':'#6b6358'}">${fmt$(c.pending||0)}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714;font-weight:600">${fmt$(working)}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;color:#6b6358">${c.npsl?'NPSL':c.limit?'$'+c.limit.toLocaleString():'—'}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:${utilColor}">${pct===null?'N/A':pct.toFixed(1)+'%'}</td>
       </tr>`;
@@ -1776,9 +1776,9 @@ function openCashCOA() {
     const onHand = confirmed + pending;
     return `<tr style="border-bottom:1px solid #e8e4dc">
       <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">💵 ${c.name}${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
-      <td style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:#1a1714">${fmt$(onHand)}</td>
-      <td style="text-align:right;padding:0.35rem 0.5rem;color:${pending<0?'#cc2222':pending>0?'#2d6a3f':'#6b6358'}">${fmt$(pending)}</td>
       <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714">${fmt$(confirmed)}</td>
+      <td style="text-align:right;padding:0.35rem 0.5rem;color:${pending<0?'#cc2222':pending>0?'#2d6a3f':'#6b6358'}">${fmt$(pending)}</td>
+      <td style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:#1a1714">${fmt$(onHand)}</td>
     </tr>`;
   }).join('');
   document.getElementById('cash-chart-of-accounts').style.display = 'flex';
