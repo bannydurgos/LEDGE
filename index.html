@@ -342,10 +342,14 @@
   </div>
 </header>
 
-<div id="tab-bar" style="max-width:1400px;margin:0 auto 1rem;display:flex;gap:0;border-bottom:2px solid #1a1714">
+<div id="tab-bar" style="max-width:1400px;margin:0 auto 1rem;display:flex;align-items:center;gap:0;border-bottom:2px solid #1a1714">
   <button id="tab-all" onclick="setView('all')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:#6b6358;cursor:pointer">All</button>
   <button id="tab-cash" onclick="setView('cash')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:#6b6358;cursor:pointer">Cash</button>
   <button id="tab-credit" onclick="setView('credit')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:#6b6358;cursor:pointer">Credit</button>
+  <div style="position:relative;margin-left:1rem;margin-bottom:4px;">
+    <input id="search-bar" type="text" placeholder="search..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;padding:0.3rem 1.6rem 0.3rem 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;letter-spacing:0.01em;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
+    <button id="search-clear" onclick="clearSearch()" style="display:none;position:absolute;right:0.4rem;top:50%;transform:translateY(-50%);background:none;border:none;font-size:0.8rem;color:#6b6358;cursor:pointer;line-height:1;padding:0">✕</button>
+  </div>
 </div>
 
 <div class="cards-grid" id="cards-grid"></div>
@@ -708,6 +712,7 @@ function initAuth() {
 let sortMode = localStorage.getItem('sortMode') || 'none';
 let pendingFirst = localStorage.getItem('pendingFirst') === 'true';
 let viewMode = localStorage.getItem('viewMode') || 'all';
+let searchQuery = '';
 let _appReady = false;
 
 function togglePendingFirst() {
@@ -732,6 +737,22 @@ function setView(mode) {
   viewMode = mode;
   localStorage.setItem('viewMode', mode);
   updateTabs();
+  render();
+}
+
+function setSearch(val) {
+  searchQuery = val.trim().toLowerCase();
+  const clearBtn = document.getElementById('search-clear');
+  if (clearBtn) clearBtn.style.display = searchQuery ? 'block' : 'none';
+  render();
+}
+
+function clearSearch() {
+  searchQuery = '';
+  const input = document.getElementById('search-bar');
+  if (input) input.value = '';
+  const clearBtn = document.getElementById('search-clear');
+  if (clearBtn) clearBtn.style.display = 'none';
   render();
 }
 
@@ -1398,7 +1419,7 @@ function render() {
     if (viewMode === 'credit') return !c.wallet;
     if (viewMode === 'cash') return !!c.wallet;
     return true;
-  });
+  }).filter(c => !searchQuery || (c.name || '').toLowerCase().includes(searchQuery));
   const sortedCards = sortMode === 'closing'
     ? [...visibleCards].sort((a, b) => closingDayNum(a) - closingDayNum(b))
     : sortMode === 'autopay'
