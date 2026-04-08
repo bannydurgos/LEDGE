@@ -1282,8 +1282,8 @@ function openHistory(id) {
       <div style="font-size:0.65rem;font-weight:700;color:#1a1714;text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid #e0e0e0;padding-bottom:4px;margin-bottom:6px;display:flex;justify-content:space-between">
         <span>${label}</span><span style="color:${c.wallet?(total>=0?'#1b4a2d':'#cc2222'):(total>=0?'#cc2222':'#1b4a2d')}">${total>=0?'+':''}${fmt$(total)}</span>
       </div>
-      ${txns.map(t => `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:0.75rem;border-bottom:1px solid #f0ece4">
-        <span style="color:#8a7f6a">${t.date}</span>
+      ${txns.map(t => `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:3px 0;font-size:0.75rem;border-bottom:1px solid #f0ece4">
+        <span style="color:#8a7f6a">${t.date}${t.note ? `<span style="color:#b0a898;font-style:italic;margin-left:6px">${t.note}</span>` : ''}</span>
         <span style="font-weight:600;color:${c.wallet?(t.amt>0?'#1b4a2d':'#cc2222'):(t.amt>0?'#cc2222':'#1b4a2d')}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
       </div>`).join('')}
     </div>`;
@@ -1654,27 +1654,34 @@ function buildWalletCard(c, idx) {
     <div style="height:6px;width:100%;background:#8a6e2e"></div>
     <div class="card-body">
       <button class="icon-btn del" style="position:absolute;top:10px;right:10px;z-index:2" onclick="event.stopPropagation();cardAction('${c.id}')">✕</button>
-      <button class="icon-btn" style="position:absolute;top:10px;right:36px;z-index:2" onclick="event.stopPropagation();openEditWallet('${c.id}')">edit</button>
-        <div style="font-family:'Libre Baskerville',serif;font-size:0.95rem;color:#1a1714;letter-spacing:0.01em">💵 ${c.name}</div>
+      <div class="card-header" style="flex-direction:column;align-items:center;gap:0.5rem">
+        <div style="text-align:center;width:100%">
+          <div style="font-family:'Libre Baskerville',serif;font-size:0.95rem;color:#1a1714;letter-spacing:0.01em">💵 ${c.name}</div>
+        </div>
+        <div class="card-actions" style="align-items:center;width:100%;justify-content:flex-end">
+          <button class="icon-btn" onclick="event.stopPropagation();openEditWallet('${c.id}')">edit</button>
+          ${(c.txnArchive||[]).length > 0 ? `<button class="icon-btn" onclick="event.stopPropagation();openHistory('${c.id}')">history</button>` : ''}
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:0.65rem;margin-left:0.5rem;margin-right:0.5rem">
-        <div class="bal-cell cleared" style="text-align:center">
+    </div>
+      <div class="balance-grid">
+        <div class="bal-cell cleared">
           <div class="bal-cell-label">Cleared</div>
           <div class="bal-cell-val">${fmt$(balance)}</div>
         </div>
-        <div class="bal-cell" style="text-align:center;background:${pending < 0 ? 'rgba(204,34,34,0.07)' : pending > 0 ? 'rgba(27,74,45,0.07)' : '#f0ece4'};border-color:${pending < 0 ? 'rgba(204,34,34,0.2)' : pending > 0 ? 'rgba(27,74,45,0.2)' : '#d8d0c4'}">
-          <div class="bal-cell-label" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : '#6b6358'}">${pending < 0 ? 'Spent' : 'Pending'}</div>
-          <div class="bal-cell-val" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : '#6b6358'}">${fmt$(pending)}</div>
+        <div class="bal-cell ${pending < 0 ? 'pending-payment' : 'pending-cell'}" style="background:${pending < 0 ? 'rgba(204,34,34,0.07)' : pending > 0 ? 'rgba(27,74,45,0.07)' : ''};border-color:${pending < 0 ? 'rgba(204,34,34,0.2)' : pending > 0 ? 'rgba(27,74,45,0.2)' : ''}">
+          <div class="bal-cell-label" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : ''}">${pending < 0 ? 'Spent' : 'Pending'}</div>
+          <div class="bal-cell-val" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : ''}">${fmt$(pending)}</div>
         </div>
-        <div class="bal-cell working" style="grid-column:1/-1;position:relative">
+        <div class="bal-cell working" style="position:relative">
           <div class="bal-cell-label">Working Balance</div>
           <div class="bal-cell-val">${fmt$(net)}</div>
         </div>
       </div>
-      ${hasPending ? `<div style="margin:0 0.5rem 0.5rem;display:flex;gap:6px">
+      ${hasPending ? `<div style="margin:0 0 0.5rem;display:flex;gap:6px">
         <button class="clear-pending-btn" onclick="event.stopPropagation();clearWalletPending('${c.id}')">✓ confirm ${pending < 0 ? 'spending' : 'deposit'} ${fmt$(Math.abs(pending))}</button>
       </div>` : ''}
-      <div class="spend-section" style="margin-left:0.5rem;margin-right:0.5rem">
+      <div class="spend-section">
         <div class="spend-label">log cash ${''}</div>
         <div class="spend-input-wrap">
           <input type="number" id="sinp-${c.id}" placeholder="-12.00" step="0.01"
@@ -1689,7 +1696,7 @@ function buildWalletCard(c, idx) {
         <div class="spend-hint" style="font-size:0.6rem;color:#a09880;margin-top:4px">negative = spending · positive = deposit</div>
         ${cards.filter(x=>x.wallet&&!x.hidden).length >= 1 ? `<button onclick="event.stopPropagation();openTransfer('${c.id}')" class="btn" style="width:100%;margin-top:0.5rem;text-align:center">⇄ transfer</button>` : ''}
       </div>
-      <div class="txn-list" style="margin-left:0.5rem;margin-right:0.5rem">
+      <div class="txn-list">
         <div class="txn-section-label" onclick="event.stopPropagation();(function(){const el=document.getElementById('txn-body-${c.id}');const ch=document.getElementById('txn-ch-${c.id}');const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})()\" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;padding:2px 0">
           <span>Transactions</span>
           <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880">${hasUncleared?'▾':'▸'}</span>
