@@ -678,6 +678,7 @@ function initAuth() {
         await loadFromFirebase();
         checkAutoPayments();
         archiveOldTransactions();
+        backfillClearedToArchive();
         render();
         updateTabs();
       } else {
@@ -863,18 +864,36 @@ function checkAutoPayments() {
 checkAutoPayments();
 archiveOldTransactions();
 
+function backfillClearedToArchive() {
+  let changed = false;
+  cards = cards.map(c => {
+    const clearedTxns = (c.transactions||[]).filter(t => t.cleared);
+    if (clearedTxns.length === 0) return c;
+    const existingIds = new Set((c.txnArchive||[]).map(t => t.id));
+    const newEntries = clearedTxns.filter(t => !existingIds.has(t.id));
+    if (newEntries.length === 0) return c;
+    changed = true;
+    return {...c, txnArchive: [...(c.txnArchive||[]), ...newEntries]};
+  });
+  if (changed) persist();
+}
+
 function archiveOldTransactions() {
   const now = new Date();
   const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   let changed = false;
   cards = cards.map(c => {
     if (c.lastArchive === thisMonth) return c;
-    const toArchive = (c.transactions||[]).filter(t => t.cleared && t.month && t.month !== thisMonth);
-    if (toArchive.length === 0) {
+    const oldMonthTxns = (c.transactions||[]).filter(t => t.month && t.month !== thisMonth);
+    if (oldMonthTxns.length === 0) {
       return {...c, lastArchive: thisMonth};
     }
-    const archive = [...(c.txnArchive||[]), ...toArchive];
-    const remaining = (c.transactions||[]).filter(t => !toArchive.includes(t));
+    // Add all old-month transactions to history, deduplicating by id (cleared ones may already be there)
+    const existingIds = new Set((c.txnArchive||[]).map(t => t.id));
+    const newEntries = oldMonthTxns.filter(t => !existingIds.has(t.id));
+    const archive = [...(c.txnArchive||[]), ...newEntries];
+    // Keep cleared old-month transactions on the card; remove uncleared ones
+    const remaining = (c.transactions||[]).filter(t => !t.month || t.month === thisMonth || t.cleared);
     changed = true;
     return {...c, transactions: remaining, txnArchive: archive, lastArchive: thisMonth};
   });
@@ -963,7 +982,11 @@ function clearTxn(cardId, txnId) {
     const newPending = parseFloat(txns.filter(t=>!t.cleared).reduce((s,t)=>s+t.amt,0).toFixed(2));
     const cleared = c.transactions.find(t=>t.id===txnId);
     const newBalance = +((c.balance||0) + (cleared ? cleared.amt : 0)).toFixed(2);
-    return {...c, transactions: txns, pending: newPending, balance: newBalance};
+    const existingIds = new Set((c.txnArchive||[]).map(t => t.id));
+    const newArchive = cleared && !existingIds.has(cleared.id)
+      ? [...(c.txnArchive||[]), {...cleared, cleared: true}]
+      : (c.txnArchive||[]);
+    return {...c, transactions: txns, pending: newPending, balance: newBalance, txnArchive: newArchive};
   });
   persist(); renderCard(cardId);
 }
@@ -1251,7 +1274,8 @@ function openHistory(id) {
   });
   const months = Object.keys(byMonth).sort().reverse();
   document.getElementById('history-modal-body').innerHTML = months.map(m => {
-    const label = new Date(m + '-01').toLocaleDateString('en-US', {month:'long', year:'numeric'});
+    const [mYear, mMon] = m.split('-').map(Number);
+    const label = new Date(mYear, mMon - 1, 1).toLocaleDateString('en-US', {month:'long', year:'numeric'});
     const txns = byMonth[m];
     const total = txns.reduce((s,t) => s+t.amt, 0);
     return `<div style="margin-bottom:1rem">
