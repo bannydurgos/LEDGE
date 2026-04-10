@@ -1804,7 +1804,7 @@ function updateCOA() {
   // Populate chart of accounts
   const tbody = document.getElementById('coa-tbody');
   if (tbody) {
-    tbody.innerHTML = cards.filter(c => !c.wallet).map(c => {
+    tbody.innerHTML = cards.filter(c => !c.wallet && !c.hidden).map(c => {
       const pct = !c.npsl && c.limit ? (c.balance||0) / c.limit * 100 : null;
       const utilColor = pct === null ? '#a09880' : pct >= 30 ? '#cc2222' : pct >= 20 ? '#c47a2e' : pct >= 10 ? '#8a6e2e' : '#2d6a3f';
       const working = (c.balance||0) + (c.pending||0);
