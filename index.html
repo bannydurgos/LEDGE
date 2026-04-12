@@ -280,7 +280,9 @@
     #all-summary { position: static !important; transform: none !important; width: 100% !important; margin-bottom: 0 !important; }
     .header-right { justify-content: center; flex: none; position: static; }
     .quick-log-desktop { display: none !important; }
-    #tab-bar { margin-bottom: 1.25rem; margin-top: 0; }
+    #tab-bar { margin-bottom: 1.25rem; margin-top: 0; flex-wrap: wrap; }
+    #tab-bar > div { flex: 1 1 100%; margin-left: 0 !important; padding: 4px 0 6px; }
+    #search-bar { width: 100% !important; box-sizing: border-box; }
   }
 /* AUTH */
 #authOverlay{position:fixed;inset:0;background:#f4f1ec;z-index:9999;display:none;align-items:center;justify-content:center}
