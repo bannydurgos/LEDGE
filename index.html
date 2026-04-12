@@ -283,6 +283,8 @@
     #tab-bar { margin-bottom: 1.25rem; margin-top: 0; flex-wrap: wrap; }
     #tab-bar > div { flex: 1 1 100%; margin-left: 0 !important; padding: 4px 0 6px; }
     #search-bar { width: 100% !important; box-sizing: border-box; }
+    .coa-limit-util { display: none !important; }
+    #chart-of-accounts > div { max-height: none !important; overflow-y: visible !important; }
   }
 /* AUTH */
 #authOverlay{position:fixed;inset:0;background:#f4f1ec;z-index:9999;display:none;align-items:center;justify-content:center}
@@ -530,8 +532,8 @@
           <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Cleared</th>
           <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Pending</th>
           <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Working</th>
-          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Limit</th>
-          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Util</th>
+          <th class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Limit</th>
+          <th class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Util</th>
         </tr>
       </thead>
       <tbody id="coa-tbody"></tbody>
@@ -1815,8 +1817,8 @@ function updateCOA() {
         <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714">${fmt$(c.balance||0)}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)!==0?'#c47a2e':'#6b6358'}">${fmt$(c.pending||0)}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714;font-weight:600">${fmt$(working)}</td>
-        <td style="text-align:right;padding:0.35rem 0.5rem;color:#6b6358">${c.npsl?'NPSL':c.limit?'$'+c.limit.toLocaleString():'—'}</td>
-        <td style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:${utilColor}">${pct===null?'N/A':pct.toFixed(1)+'%'}</td>
+        <td class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;color:#6b6358">${c.npsl?'NPSL':c.limit?'$'+c.limit.toLocaleString():'—'}</td>
+        <td class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:${utilColor}">${pct===null?'N/A':pct.toFixed(1)+'%'}</td>
       </tr>`;
     }).join('');
   }
