@@ -1071,7 +1071,9 @@ function showTxnPopup(event, cardId, txnId) {
   popup.style.top = top + 'px';
   popup.style.left = left + 'px';
 }
-document.addEventListener('click', () => { const p = document.getElementById('txn-popup'); p.style.display = 'none'; p.dataset.txnId = ''; });
+function dismissTxnPopup(e) { if (e && e.target && e.target.classList.contains('txn-date')) return; const p = document.getElementById('txn-popup'); p.style.display = 'none'; p.dataset.txnId = ''; }
+document.addEventListener('click', dismissTxnPopup);
+document.addEventListener('touchstart', dismissTxnPopup);
 
 function openEditTxn(cardId, txnId) {
   const card = cards.find(c => c.id === cardId);
