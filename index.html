@@ -284,6 +284,7 @@
     #tab-bar > div { flex: 1 1 100%; margin-left: 0 !important; padding: 4px 0 6px; }
     #search-bar { width: 100% !important; box-sizing: border-box; }
     .coa-limit-util { display: none !important; }
+    .spend-input-wrap input, .spend-section input[type="text"] { font-size: 16px !important; }
     #chart-of-accounts > div { max-height: none !important; overflow-y: visible !important; }
   }
 /* AUTH */
@@ -1746,13 +1747,15 @@ function renderCard(id) {
   const el = document.querySelector(`[data-id="${id}"]`);
   if (!el) { render(); return; }
   const c = cards.find(c => c.id === id);
+  const txnListBody = el.querySelector('.txn-list-body');
+  const savedScroll = txnListBody ? txnListBody.scrollTop : 0;
   el.outerHTML = buildCard(c, idx);
   updateSummary();
   updateCashSummary();
   updateAllSummary();
   updateCOA();
-  const inp = document.getElementById('sinp-' + id);
-  if (inp) inp.focus();
+  const newTxnListBody = document.querySelector(`[data-id="${id}"] .txn-list-body`);
+  if (newTxnListBody && savedScroll) newTxnListBody.scrollTop = savedScroll;
 }
 
 function updateAllSummary() {
