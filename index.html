@@ -1573,11 +1573,7 @@ function buildCard(c, idx) {
             <span style="font-size:0.52rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Details</span>
             <span style="font-size:0.55rem;color:#a09880" id="chevron-${c.id}">▾</span>
           </div>
-          <div id="details-${c.id}" style="display:${
-            (closingDays!==null && closingDays>=0 && closingDays<=5) ||
-            (apDays!==null && apDays>=0 && apDays<=7 && parseFloat((c.autopayAmt||0).toFixed(2))>0)
-            ? 'block' : 'none'
-          }">
+          <div id="details-${c.id}" style="display:block">
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0.08rem 0.55rem;">
               <span style="font-size:0.5rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Closing${c.closing ? `<span style="font-size:0.52rem;color:#a09880;margin-left:4px;font-weight:400">${c.closing}</span>` : ''}</span>
               <div style="text-align:center">${closingDays!==null ? `<span class="badge ${closingDays<=3?'urgent':closingDays<=5?'soon':'ok'}">${closingDays===0?'today':'in '+closingDays+'d'}</span>` : ''}</div>
