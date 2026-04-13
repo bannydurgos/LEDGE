@@ -1788,14 +1788,11 @@ function updateSummary() {
   const fmtK = v => Math.abs(v)>=1000?`$${(v/1000).toFixed(1)}k`:`$${v.toFixed(2)}`;
   document.getElementById('summary').innerHTML = `
     <div class="stat"><div class="stat-label">working balance</div><div class="stat-value">${fmt$(totalWorking)}<div class="stat-sub" onclick="event.stopPropagation();document.getElementById('chart-of-accounts').style.display='flex'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} cards</div></div></div>
-    <div class="stat"><div class="stat-label">total limit</div><div class="stat-value">
-      <div class="stat-label" style="display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:0">
-        <span onclick="(function(){const v=document.getElementById('limit-val');const h=document.getElementById('limit-hidden');v.style.display=v.style.display==='none'?'block':'none';h.style.display=h.style.display==='none'?'block':'none';})()\" style="cursor:pointer;color:#8a7f6a;user-select:none;line-height:1">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        </span>
-      </div>
-      <span id="limit-val" style="display:none">${fmt$(totalLimit)}</span>
-      <span id="limit-hidden" style="letter-spacing:0.15em;color:#c8bfb0">••••</span>
+    <div class="stat"><div class="stat-label">total limit</div><div class="stat-value" style="display:flex;flex-direction:column;align-items:center">
+      <span id="limit-eye" onclick="(function(){document.getElementById('limit-eye').style.display='none';document.getElementById('limit-val').style.display='inline';})()\" style="cursor:pointer;color:#8a7f6a;user-select:none;line-height:1">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </span>
+      <span id="limit-val" onclick="(function(){document.getElementById('limit-val').style.display='none';document.getElementById('limit-eye').style.display='inline';})()\" style="display:none;cursor:pointer">${fmt$(totalLimit)}</span>
       <div class="stat-sub" style="position:relative">${excludedNames.length ? `<span onclick="event.stopPropagation();const el=document.getElementById('excl-info');el.style.display=el.style.display==='none'?'block':'none'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${excludedNames.length} excl.</span><div id="excl-info" onclick="event.stopPropagation()" style="display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);white-space:nowrap;background:#ffffff;border:1.5px solid #1a1714;padding:0.4rem 0.6rem;font-size:0.62rem;color:#6b6358;line-height:1.8;z-index:50;box-shadow:4px 4px 0 #8a6e2e">${excludedNames.join('<br>')}</div>` : 'all included'}</div>
     </div></div>
     <div class="stat" style="border-right:none"><div class="stat-label">utilization</div><div class="stat-value">${util}%</div></div>
