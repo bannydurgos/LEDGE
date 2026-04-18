@@ -12,7 +12,7 @@
 <!-- Firebase SDKs -->
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
   import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
   const firebaseConfig = {
@@ -35,6 +35,8 @@
   window._fbSignIn = () => signInWithPopup(auth, provider);
   window._fbSignOut = () => signOut(auth);
   window._fbOnAuthChanged = (cb) => onAuthStateChanged(auth, cb);
+  window._fbEmailSignIn = (email, password) => signInWithEmailAndPassword(auth, email, password);
+  window._fbEmailSignUp = (email, password) => createUserWithEmailAndPassword(auth, email, password);
   window._fbDoc = doc;
   window._fbSetDoc = setDoc;
   window._fbGetDoc = getDoc;
@@ -297,6 +299,14 @@
 .auth-google-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border:1.5px solid #1a1714;background:#f4f1ec;color:#1a1714;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.15s}
 .auth-google-btn:hover{background:#4a5e3a;color:#ffffff;border-color:#4a5e3a}
 .auth-error{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#8b2020;margin-top:12px;min-height:16px}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#9a8f85;text-transform:uppercase;letter-spacing:0.06em}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:#d8d0c6}
+.auth-input{width:100%;padding:10px 12px;border:1.5px solid #c8bfb0;background:#f9f7f4;color:#1a1714;font-family:'IBM Plex Mono',monospace;font-size:12px;box-sizing:border-box;margin-bottom:8px;outline:none;transition:border-color 0.15s}
+.auth-input:focus{border-color:#4a5e3a}
+.auth-email-btn{width:100%;padding:12px;border:1.5px solid #1a1714;background:#1a1714;color:#ffffff;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.15s;margin-top:4px}
+.auth-email-btn:hover{background:#4a5e3a;border-color:#4a5e3a}
+.auth-toggle{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6b6358;margin-top:10px;cursor:pointer}
+.auth-toggle span{color:#4a5e3a;text-decoration:underline;cursor:pointer}
 .user-pill{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6b6358}
 .user-avatar{width:22px;height:22px;border-radius:50%;border:1px solid #c8bfb0}
 .user-email{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -550,6 +560,11 @@
       <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Sign in with Google
     </button>
+    <div class="auth-divider">or</div>
+    <input class="auth-input" type="email" id="authEmail" placeholder="Email" autocomplete="email">
+    <input class="auth-input" type="password" id="authPassword" placeholder="Password" autocomplete="current-password">
+    <button class="auth-email-btn" id="btnEmailSignIn">Sign in</button>
+    <div class="auth-toggle">No account? <span id="authToggleLink">Create one</span></div>
     <div class="auth-error" id="authError"></div>
   </div>
 </div>
@@ -701,6 +716,29 @@ function initAuth() {
       document.getElementById('authError').textContent = '';
       try { await window._fbSignIn(); }
       catch(e) { document.getElementById('authError').textContent = e.message; }
+    });
+
+    let emailAuthMode = 'signin';
+    document.getElementById('authToggleLink').addEventListener('click', () => {
+      emailAuthMode = emailAuthMode === 'signin' ? 'signup' : 'signin';
+      document.getElementById('btnEmailSignIn').textContent = emailAuthMode === 'signin' ? 'Sign in' : 'Create account';
+      document.getElementById('authToggleLink').textContent = emailAuthMode === 'signin' ? 'Create one' : 'Sign in instead';
+      document.getElementById('authToggleLink').previousSibling.textContent = emailAuthMode === 'signin' ? 'No account? ' : 'Already have one? ';
+      document.getElementById('authError').textContent = '';
+    });
+
+    document.getElementById('btnEmailSignIn').addEventListener('click', async () => {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      document.getElementById('authError').textContent = '';
+      if (!email || !password) { document.getElementById('authError').textContent = 'Please enter email and password.'; return; }
+      try {
+        if (emailAuthMode === 'signin') {
+          await window._fbEmailSignIn(email, password);
+        } else {
+          await window._fbEmailSignUp(email, password);
+        }
+      } catch(e) { document.getElementById('authError').textContent = e.message; }
     });
 
     document.getElementById('btnSignOut').addEventListener('click', async () => {
