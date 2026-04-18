@@ -572,19 +572,7 @@
 <script>
 const CARD_COLORS = ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10'];
 
-const DEFAULTS = [
-  {id:'1',name:'AMEX Platinum (75006)',balance:230.67,pending:0,stmtBal:0,limit:0,npsl:true,closing:'23rd',autopay:'16th',autopayAmt:0,autopayMode:'custom',apr:21.74,notes:'',includeInTotals:false,color:'c1',paydown:false},
-  {id:'2',name:'BoA Platinum (1581)',balance:4411.00,pending:0,stmtBal:4411.00,limit:20000,npsl:false,closing:'24th',autopay:'21st',autopayAmt:44.00,autopayMode:'custom',apr:21.74,notes:'0% APR until 09/2026',includeInTotals:true,color:'c2',paydown:true},
-  {id:'3',name:'AAdvantage Platinum (9751)',balance:1244.47,pending:0,stmtBal:78.87,limit:14300,npsl:false,closing:'27th',autopay:'21st',autopayAmt:78.87,autopayMode:'statement',apr:23.49,notes:'',includeInTotals:true,color:'c3',paydown:false},
-  {id:'4',name:'Apple Card (0519)',balance:1520.22,pending:0,stmtBal:0,limit:14000,npsl:false,closing:'EOM',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:20.74,notes:'',includeInTotals:true,color:'c4',paydown:false},
-  {id:'5',name:'Freedom (4507)',balance:279.15,pending:0,stmtBal:0,limit:10200,npsl:false,closing:'3rd',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:21.49,notes:'',includeInTotals:true,color:'c5',paydown:false},
-  {id:'6',name:'Freedom Unlimited (9595)',balance:0,pending:0,stmtBal:0,limit:14000,npsl:false,closing:'3rd',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:18.49,notes:'',includeInTotals:true,color:'c6',paydown:false},
-  {id:'7',name:'Sapphire Preferred (5765)',balance:3379.34,pending:0,stmtBal:0,limit:20000,npsl:false,closing:'3rd',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:19.49,notes:'',includeInTotals:true,color:'c7',paydown:false},
-  {id:'8',name:'Citi Double Cash (4000)',balance:173.65,pending:0,stmtBal:0,limit:22000,npsl:false,closing:'4th',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:20.49,notes:'',includeInTotals:true,color:'c8',paydown:false},
-  {id:'9',name:'Citi Strata (1488)',balance:53.23,pending:0,stmtBal:0,limit:10700,npsl:false,closing:'5th',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:19.99,notes:'',includeInTotals:true,color:'c9',paydown:false},
-  {id:'10',name:'Chase Ink Business (7023)',balance:171.59,pending:0,stmtBal:0,limit:11000,npsl:false,closing:'6th',autopay:'27th',autopayAmt:0,autopayMode:'custom',apr:16.74,notes:'',includeInTotals:false,color:'c10',paydown:false},
-  {id:'11',name:'Wallet',balance:108,pending:0,stmtBal:0,limit:0,npsl:false,closing:'',autopay:'',autopayAmt:0,autopayMode:'custom',apr:0,notes:'',includeInTotals:false,color:'c1',paydown:false,wallet:true},
-];
+const DEFAULTS = [];
 
 let cards = JSON.parse(JSON.stringify(DEFAULTS));
 cards = cards.map((c,i) => ({pending:0, stmtBal:0, autopayMode:'custom', lastAutoPay:'', lastStmtSnap:'', lastArchive:'', paydown:false, hidden:false, wallet:false, transactions:[], txnArchive:[], color: CARD_COLORS[i % CARD_COLORS.length], ...c}));
