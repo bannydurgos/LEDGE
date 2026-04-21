@@ -872,20 +872,6 @@ function checkAutoPayments() {
       }
     }
 
-    // ── AutoPay pending payment on autopay date ────────────────────
-    if (!updated.autopay) return updated;
-    const autopayDay = parseInt(updated.autopay);
-    if (isNaN(autopayDay)) return updated;
-    if (today.getDate() !== autopayDay) return updated;
-    const lastAutoKey = updated.lastAutoPay || '';
-    if (lastAutoKey === todayKey) return updated;
-    let payAmt = 0;
-    if (updated.autopayMode === 'statement' && updated.stmtBal > 0) payAmt = updated.stmtBal;
-    else if (updated.autopayMode === 'custom' && updated.autopayAmt > 0) payAmt = updated.autopayAmt;
-    if (payAmt <= 0) return updated;
-    updated.pending = +((updated.pending||0) - payAmt).toFixed(2);
-    updated.lastAutoPay = todayKey;
-    changed = true;
     return updated;
   });
 
