@@ -342,7 +342,7 @@
     </div>
   </div>
   <div class="summary-strip" id="summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;z-index:3"></div>
-  <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;display:none;grid-template-columns:1fr 1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
+  <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:320px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
   <div id="all-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:400px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>  <div class="header-right">
     <select id="sort-select" onchange="setSort(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;font-weight:500;padding:0.45rem 0.8rem;border:1.5px solid #8a6e2e;border-radius:0;background:#ffffff;color:#1a1714;cursor:pointer;outline:none;">
       <option value="none">sort: A → Z</option>
@@ -1693,7 +1693,7 @@ function buildWalletCard(c, idx) {
           <div class="bal-cell-val">${fmt$(net)}</div>
         </div>
       </div>
-      ${hasPending ? `<div style="margin:0 0 0.5rem;display:flex;gap:6px">
+      ${hasPending ? `<div style="margin:0 0 0.5rem;display:flex;gap:6px;padding:0 0.75rem">
         <button class="clear-pending-btn" onclick="event.stopPropagation();clearWalletPending('${c.id}')">✓ confirm ${pending < 0 ? 'spending' : 'deposit'} ${fmt$(Math.abs(pending))}</button>
       </div>` : ''}
       <div class="spend-section">
@@ -1925,9 +1925,9 @@ function updateCashSummary() {
   const totalPendingCash = wallets.reduce((s,c) => s+(c.pending||0), 0);
   cashSummary.style.display = 'grid';
   cashSummary.innerHTML = `
+    <div class="stat" style="border-top:4px solid #4a5e3a;grid-column:1/-1;border-right:none"><div class="stat-label">working balance</div><div class="stat-value">${fmt$(totalCash + totalPendingCash)}${wallets.length > 0 ? `<div class="stat-sub" onclick="openCashCOA()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${wallets.length} account${wallets.length>1?'s':''}</div>` : ''}</div></div>
     <div class="stat" style="border-top:4px solid #6b6358"><div class="stat-label">cleared</div><div class="stat-value">${fmt$(totalCash)}</div></div>
-    <div class="stat" style="border-top:4px solid #8a6e2e"><div class="stat-label">pending</div><div class="stat-value">${fmt$(totalPendingCash)}</div></div>
-    <div class="stat" style="border-top:4px solid #4a5e3a;border-right:none"><div class="stat-label">working balance</div><div class="stat-value">${fmt$(totalCash + totalPendingCash)}${wallets.length > 0 ? `<div class="stat-sub" onclick="openCashCOA()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${wallets.length} account${wallets.length>1?'s':''}</div>` : ''}</div></div>
+    <div class="stat" style="border-top:4px solid #8a6e2e;border-right:none"><div class="stat-label">pending</div><div class="stat-value">${fmt$(totalPendingCash)}</div></div>
   `;
 }
 
