@@ -344,6 +344,8 @@
   <div class="summary-strip" id="summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;z-index:3"></div>
   <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:320px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
   <div id="all-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:400px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>  <div class="header-right">
+    <button id="alert-mode-closing" class="btn primary" onclick="setAlertMode('closing')" style="grid-column:span 1">closing date</button>
+    <button id="alert-mode-autopay" class="btn" onclick="setAlertMode('autopay')" style="grid-column:span 1">autopay</button>
     <select id="sort-select" onchange="setSort(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;font-weight:500;padding:0.45rem 0.8rem;border:1.5px solid #8a6e2e;border-radius:0;background:#ffffff;color:#1a1714;cursor:pointer;outline:none;">
       <option value="none">sort: A → Z</option>
       <option value="closing">sort: closing date</option>
@@ -744,6 +746,7 @@ function initAuth() {
 let sortMode = localStorage.getItem('sortMode') || 'none';
 let pendingFirst = localStorage.getItem('pendingFirst') === 'true';
 let viewMode = localStorage.getItem('viewMode') || 'all';
+let alertMode = localStorage.getItem('alertMode') || 'closing';
 let searchQuery = '';
 let _appReady = false;
 
@@ -751,6 +754,16 @@ function togglePendingFirst() {
   pendingFirst = !pendingFirst;
   localStorage.setItem('pendingFirst', pendingFirst);
   updateSortBtns();
+  render();
+}
+
+function setAlertMode(mode) {
+  alertMode = mode;
+  localStorage.setItem('alertMode', mode);
+  const cb = document.getElementById('alert-mode-closing');
+  const ab = document.getElementById('alert-mode-autopay');
+  cb.classList.toggle('primary', mode === 'closing');
+  ab.classList.toggle('primary', mode === 'autopay');
   render();
 }
 
@@ -1505,7 +1518,9 @@ function buildCard(c, idx) {
     const closingDays = daysUntilDay(c.closing);
     // Red: day before closing (closingDays===1) AND closing day itself (closingDays===0)
     // Also stays red the day after closing until midnight (handled by lastStmtSnap not yet set for today)
-    const closingAlert = closingDays !== null && closingDays <= 1 && closingDays >= 0;
+    const closingAlert = alertMode === 'closing'
+      ? (closingDays !== null && closingDays <= 1 && closingDays >= 0)
+      : (apDays !== null && apDays <= 1 && apDays >= 0);
     const cardClass = closingAlert ? 'closing-alert' : '';
     const badgeClass = apDays===null?'':apDays<=3?'urgent':apDays<=7?'soon':'ok';
     const badgeText = apDays===null?'':apDays===0?'autopay today':`in ${apDays}d`;
@@ -1979,6 +1994,7 @@ document.getElementById('partial-modal').addEventListener('click', e => { if(e.t
 document.getElementById('action-modal-overlay').addEventListener('click', e => { if(e.target.id==='action-modal-overlay') closeActionModal(); });
 document.getElementById('history-modal-overlay').addEventListener('click', e => { if(e.target.id==='history-modal-overlay') document.getElementById('history-modal-overlay').classList.remove('open'); });
 updateTabs();
+setAlertMode(alertMode);
 initAuth();
 </script>
 <div id="save-confirm-overlay" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
