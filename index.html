@@ -1525,7 +1525,7 @@ function buildCard(c, idx) {
       <div class="card-stripe" style="background:var(--${color})"></div>
       <div class="card-body">
 
-        ${!c.npsl && c.limit ? `<span style="position:absolute;top:9px;left:10px;font-size:0.62rem;font-weight:700;z-index:2;color:${pct>=30?'#cc2222':pct>=20?'#c47a2e':pct>=10?'#8a6e2e':'#2d6a3f'}">${pct.toFixed(1)}%</span>` : c.npsl ? `<span style="position:absolute;top:9px;left:10px;font-size:0.62rem;font-weight:700;z-index:2;color:#a09880">N/A</span>` : ''}
+        ${!c.npsl && c.limit ? `<span style="position:absolute;top:9px;left:10px;font-size:0.62rem;font-weight:700;z-index:2;color:${pct>=30?'#cc2222':pct>=20?'#c47a2e':pct>=10?'#8a6e2e':'#2d6a3f'}">${pct.toFixed(2)}%</span>` : c.npsl ? `<span style="position:absolute;top:9px;left:10px;font-size:0.62rem;font-weight:700;z-index:2;color:#a09880">N/A</span>` : ''}
         <button class="icon-btn del" style="position:absolute;top:10px;right:10px;z-index:2" onclick="event.stopPropagation();cardAction('${c.id}')">✕</button>
         <div class="card-header" style="flex-direction:column;align-items:center;gap:0.5rem">
           <div style="text-align:center;width:100%">
@@ -1822,7 +1822,7 @@ function updateCOA() {
         <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)!==0?'#c47a2e':'#6b6358'}">${fmt$(c.pending||0)}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714;font-weight:600">${fmt$(working)}</td>
         <td class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;color:#6b6358">${c.npsl?'NPSL':c.limit?'$'+c.limit.toLocaleString():'—'}</td>
-        <td class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:${utilColor}">${pct===null?'N/A':pct.toFixed(1)+'%'}</td>
+        <td class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:${utilColor}">${pct===null?'N/A':pct.toFixed(2)+'%'}</td>
       </tr>`;
     }).join('');
   }
