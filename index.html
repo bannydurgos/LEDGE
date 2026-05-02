@@ -688,7 +688,6 @@ function initAuth() {
         await loadFromFirebase();
         checkAutoPayments();
         archiveOldTransactions();
-        backfillClearedToArchive();
         render();
         updateTabs();
       } else {
@@ -913,17 +912,22 @@ function archiveOldTransactions() {
   const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   let changed = false;
   cards = cards.map(c => {
-    if (c.lastArchive === thisMonth) return c;
-    const oldMonthTxns = (c.transactions||[]).filter(t => t.month && t.month !== thisMonth);
-    if (oldMonthTxns.length === 0) {
-      return {...c, lastArchive: thisMonth};
+    // Always remove current-month transactions from archive — they belong on the card
+    const baseArchive = (c.txnArchive||[]).filter(t => !t.month || t.month !== thisMonth);
+    const archiveCleaned = baseArchive.length !== (c.txnArchive||[]).length;
+
+    if (c.lastArchive === thisMonth) {
+      if (archiveCleaned) { changed = true; return {...c, txnArchive: baseArchive}; }
+      return c;
     }
-    // Add all old-month transactions to history, deduplicating by id (cleared ones may already be there)
-    const existingIds = new Set((c.txnArchive||[]).map(t => t.id));
+
+    // Move ALL old-month transactions to archive
+    const oldMonthTxns = (c.transactions||[]).filter(t => t.month && t.month !== thisMonth);
+    const existingIds = new Set(baseArchive.map(t => t.id));
     const newEntries = oldMonthTxns.filter(t => !existingIds.has(t.id));
-    const archive = [...(c.txnArchive||[]), ...newEntries];
-    // Keep cleared old-month transactions on the card; remove uncleared ones
-    const remaining = (c.transactions||[]).filter(t => !t.month || t.month === thisMonth || t.cleared);
+    const archive = [...baseArchive, ...newEntries];
+    // Keep only current-month transactions on the card
+    const remaining = (c.transactions||[]).filter(t => !t.month || t.month === thisMonth);
     changed = true;
     return {...c, transactions: remaining, txnArchive: archive, lastArchive: thisMonth};
   });
@@ -1012,11 +1016,7 @@ function clearTxn(cardId, txnId) {
     const newPending = parseFloat(txns.filter(t=>!t.cleared).reduce((s,t)=>s+t.amt,0).toFixed(2));
     const cleared = c.transactions.find(t=>t.id===txnId);
     const newBalance = +((c.balance||0) + (cleared ? cleared.amt : 0)).toFixed(2);
-    const existingIds = new Set((c.txnArchive||[]).map(t => t.id));
-    const newArchive = cleared && !existingIds.has(cleared.id)
-      ? [...(c.txnArchive||[]), {...cleared, cleared: true}]
-      : (c.txnArchive||[]);
-    return {...c, transactions: txns, pending: newPending, balance: newBalance, txnArchive: newArchive};
+    return {...c, transactions: txns, pending: newPending, balance: newBalance};
   });
   persist(); renderCard(cardId);
 }
@@ -1297,7 +1297,7 @@ function openHistory(id) {
   const c = cards.find(x => x.id === id);
   if (!c) return;
   document.getElementById('history-modal-title').textContent = c.name + ' · History';
-  const archive = [...(c.txnArchive||[])].reverse();
+  const archive = [...(c.txnArchive||[])];
   const byMonth = {};
   archive.forEach(t => {
     const m = t.month || 'Unknown';
@@ -1305,21 +1305,34 @@ function openHistory(id) {
     byMonth[m].push(t);
   });
   const months = Object.keys(byMonth).sort().reverse();
-  document.getElementById('history-modal-body').innerHTML = months.map(m => {
-    const [mYear, mMon] = m.split('-').map(Number);
-    const label = new Date(mYear, mMon - 1, 1).toLocaleDateString('en-US', {month:'long', year:'numeric'});
-    const txns = byMonth[m];
-    const total = txns.reduce((s,t) => s+t.amt, 0);
-    return `<div style="margin-bottom:1rem">
-      <div style="font-size:0.65rem;font-weight:700;color:#1a1714;text-transform:uppercase;letter-spacing:0.07em;border-bottom:1px solid #e0e0e0;padding-bottom:4px;margin-bottom:6px;display:flex;justify-content:space-between">
-        <span>${label}</span><span style="color:${c.wallet?(total>=0?'#1b4a2d':'#cc2222'):(total>=0?'#cc2222':'#1b4a2d')}">${total>=0?'+':''}${fmt$(total)}</span>
-      </div>
-      ${txns.map(t => `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:3px 0;font-size:0.75rem;border-bottom:1px solid #f0ece4">
-        <span style="color:#8a7f6a">${t.date}${t.note ? `<span style="color:#b0a898;font-style:italic;margin-left:6px">${t.note}</span>` : ''}</span>
-        <span style="font-weight:600;color:${c.wallet?(t.amt>0?'#1b4a2d':'#cc2222'):(t.amt>0?'#cc2222':'#1b4a2d')}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
-      </div>`).join('')}
-    </div>`;
-  }).join('');
+  if (months.length === 0) {
+    document.getElementById('history-modal-body').innerHTML = '<div style="font-size:0.75rem;color:#8a7f6a;padding:1.5rem;text-align:center;font-style:italic">No history yet — transactions from past months will appear here.</div>';
+  } else {
+    document.getElementById('history-modal-body').innerHTML = months.map((m, i) => {
+      const [mYear, mMon] = m.split('-').map(Number);
+      const label = new Date(mYear, mMon - 1, 1).toLocaleDateString('en-US', {month:'long', year:'numeric'});
+      const txns = byMonth[m];
+      const total = txns.reduce((s,t) => s+t.amt, 0);
+      const isOpen = i === 0;
+      const bodyId = `hist-body-${id}-${m.replace('-','_')}`;
+      const chId = `hist-ch-${id}-${m.replace('-','_')}`;
+      return `<div style="margin-bottom:0.4rem;border:1px solid #e0dcd4">
+        <div onclick="(function(el,ch){const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})(document.getElementById('${bodyId}'),document.getElementById('${chId}'))" style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;cursor:pointer;background:#f9f7f4;user-select:none">
+          <span style="font-size:0.68rem;font-weight:700;color:#1a1714;text-transform:uppercase;letter-spacing:0.07em">${label}</span>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:0.72rem;font-weight:600;color:${c.wallet?(total>=0?'#1b4a2d':'#cc2222'):(total>=0?'#cc2222':'#1b4a2d')}">${total>=0?'+':''}${fmt$(total)}</span>
+            <span id="${chId}" style="font-size:0.6rem;color:#a09880">${isOpen?'▾':'▸'}</span>
+          </div>
+        </div>
+        <div id="${bodyId}" style="display:${isOpen?'block':'none'};padding:4px 10px 6px">
+          ${txns.map(t => `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:3px 0;font-size:0.75rem;border-bottom:1px solid #f0ece4">
+            <span style="color:#8a7f6a">${t.date}${t.note ? `<span style="color:#b0a898;font-style:italic;margin-left:6px">${t.note}</span>` : ''}</span>
+            <span style="font-weight:600;color:${c.wallet?(t.amt>0?'#1b4a2d':'#cc2222'):(t.amt>0?'#cc2222':'#1b4a2d')}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  }
   document.getElementById('history-modal-overlay').classList.add('open');
 }
 
@@ -1510,6 +1523,9 @@ function render() {
 
 function buildCard(c, idx) {
   if (c.wallet) return buildWalletCard(c, idx);
+    const _now = new Date();
+    const thisMonth = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}`;
+    const currentTxns = (c.transactions||[]).filter(t => !t.month || t.month === thisMonth);
     const working = (c.balance||0)+(c.pending||0);
     const pct = (!c.npsl&&c.limit) ? parseFloat((c.balance/c.limit*100).toFixed(2)) : 0;
     const color = c.color||CARD_COLORS[idx%CARD_COLORS.length];
@@ -1568,7 +1584,7 @@ function buildCard(c, idx) {
               When on, this card's cleared balance and credit limit count toward your summary totals and utilization. Turn off for cards you don't want factored in.
             </div>
             <button class="icon-btn" onclick="event.stopPropagation();openModal('${c.id}')">edit</button>
-            ${(c.txnArchive||[]).length > 0 ? `<button class="icon-btn" onclick="event.stopPropagation();openHistory('${c.id}')">history</button>` : ''}
+            <button class="icon-btn" onclick="event.stopPropagation();openHistory('${c.id}')">history</button>
           </div>
           </div>
         </div>
@@ -1643,11 +1659,11 @@ function buildCard(c, idx) {
         <div class="txn-list">
           <div class="txn-section-label" onclick="event.stopPropagation();(function(){const el=document.getElementById('txn-body-${c.id}');const ch=document.getElementById('txn-ch-${c.id}');const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})()" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;padding:2px 0">
             <span>Transactions</span>
-            <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880;transition:color 0.15s">${(c.transactions||[]).some(t=>!t.cleared)?'▾':'▸'}</span>
+            <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880;transition:color 0.15s">${currentTxns.length>0?'▾':'▸'}</span>
           </div>
-          <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${(c.transactions||[]).some(t=>!t.cleared)?'block':'none'}">
-          ${(c.transactions||[]).length === 0 ? `<div style="font-size:0.65rem;color:#b0a898;padding:0.4rem 0.5rem;font-style:italic">no transactions yet</div>` : ''}
-          ${(c.transactions||[]).slice().reverse().map(t => `
+          <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${currentTxns.length>0?'block':'none'}">
+          ${currentTxns.length === 0 ? `<div style="font-size:0.65rem;color:#b0a898;padding:0.4rem 0.5rem;font-style:italic">no transactions yet</div>` : ''}
+          ${currentTxns.slice().reverse().map(t => `
             <div class="txn-item ${t.cleared?'cleared':''}">
               <span class="txn-date" onclick="showTxnPopup(event,'${c.id}','${t.id}')">${t.date}</span>
               <div class="txn-note-cell">
@@ -1675,7 +1691,9 @@ function buildWalletCard(c, idx) {
   const pending = +(c.pending||0).toFixed(2);
   const net = +(balance + pending).toFixed(2);
   const hasPending = pending !== 0;
-  const txns = c.transactions||[];
+  const _now2 = new Date();
+  const thisMonthW = `${_now2.getFullYear()}-${String(_now2.getMonth()+1).padStart(2,'0')}`;
+  const txns = (c.transactions||[]).filter(t => !t.month || t.month === thisMonthW);
   const hasUncleared = txns.some(t=>!t.cleared);
   return `<div class="card" draggable="true" data-id="${c.id}" style="animation-delay:${idx*0.04}s;background:#f4f1ec;border:1.5px solid #1a1714;">
     <div style="height:6px;width:100%;background:#8a6e2e"></div>
@@ -1687,7 +1705,7 @@ function buildWalletCard(c, idx) {
         </div>
         <div class="card-actions" style="align-items:center;width:100%;justify-content:flex-end">
           <button class="icon-btn" onclick="event.stopPropagation();openEditWallet('${c.id}')">edit</button>
-          ${(c.txnArchive||[]).length > 0 ? `<button class="icon-btn" onclick="event.stopPropagation();openHistory('${c.id}')">history</button>` : ''}
+          <button class="icon-btn" onclick="event.stopPropagation();openHistory('${c.id}')">history</button>
         </div>
       </div>
     </div>
@@ -1723,9 +1741,9 @@ function buildWalletCard(c, idx) {
       <div class="txn-list">
         <div class="txn-section-label" onclick="event.stopPropagation();(function(){const el=document.getElementById('txn-body-${c.id}');const ch=document.getElementById('txn-ch-${c.id}');const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})()\" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;padding:2px 0">
           <span>Transactions</span>
-          <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880">${hasUncleared?'▾':'▸'}</span>
+          <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880">${txns.length>0?'▾':'▸'}</span>
         </div>
-        <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${hasUncleared?'block':'none'}">
+        <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${txns.length>0?'block':'none'}">
         ${txns.length === 0 ? `<div style="font-size:0.65rem;color:#b0a898;padding:0.4rem 0.5rem;font-style:italic">no transactions yet</div>` : ''}
         ${txns.slice().reverse().map(t => `
           <div class="txn-item ${t.cleared?'cleared':''}">
