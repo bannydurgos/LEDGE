@@ -763,6 +763,15 @@ function setAlertMode(mode) {
   const ab = document.getElementById('alert-mode-autopay');
   cb.classList.toggle('primary', mode === 'closing');
   ab.classList.toggle('primary', mode === 'autopay');
+  if (mode === 'closing') {
+    sortMode = 'closing';
+    localStorage.setItem('sortMode', 'closing');
+    document.getElementById('sort-select').value = 'closing';
+  } else if (mode === 'autopay') {
+    sortMode = 'autopay';
+    localStorage.setItem('sortMode', 'autopay');
+    document.getElementById('sort-select').value = 'autopay';
+  }
   render();
 }
 
