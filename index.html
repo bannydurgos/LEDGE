@@ -1548,6 +1548,7 @@ function buildCard(c, idx) {
     const _now = new Date();
     const thisMonth = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}`;
     const currentTxns = (c.transactions||[]).filter(t => !t.month || t.month === thisMonth);
+    const txnListOpen = currentTxns.some(t => !t.cleared);
     const working = (c.balance||0)+(c.pending||0);
     const pct = (!c.npsl&&c.limit) ? parseFloat((c.balance/c.limit*100).toFixed(2)) : 0;
     const color = c.color||CARD_COLORS[idx%CARD_COLORS.length];
@@ -1681,9 +1682,9 @@ function buildCard(c, idx) {
         <div class="txn-list">
           <div class="txn-section-label" onclick="event.stopPropagation();(function(){const el=document.getElementById('txn-body-${c.id}');const ch=document.getElementById('txn-ch-${c.id}');const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})()" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;padding:2px 0">
             <span>Transactions</span>
-            <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880;transition:color 0.15s">${currentTxns.length>0?'▾':'▸'}</span>
+            <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880;transition:color 0.15s">${txnListOpen?'▾':'▸'}</span>
           </div>
-          <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${currentTxns.length>0?'block':'none'}">
+          <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${txnListOpen?'block':'none'}">
           ${currentTxns.length === 0 ? `<div style="font-size:0.65rem;color:#b0a898;padding:0.4rem 0.5rem;font-style:italic">no transactions yet</div>` : ''}
           ${currentTxns.slice().reverse().map(t => `
             <div class="txn-item ${t.cleared?'cleared':''}">
@@ -1763,9 +1764,9 @@ function buildWalletCard(c, idx) {
       <div class="txn-list">
         <div class="txn-section-label" onclick="event.stopPropagation();(function(){const el=document.getElementById('txn-body-${c.id}');const ch=document.getElementById('txn-ch-${c.id}');const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})()\" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;padding:2px 0">
           <span>Transactions</span>
-          <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880">${txns.length>0?'▾':'▸'}</span>
+          <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880">${hasUncleared?'▾':'▸'}</span>
         </div>
-        <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${txns.length>0?'block':'none'}">
+        <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${hasUncleared?'block':'none'}">
         ${txns.length === 0 ? `<div style="font-size:0.65rem;color:#b0a898;padding:0.4rem 0.5rem;font-style:italic">no transactions yet</div>` : ''}
         ${txns.slice().reverse().map(t => `
           <div class="txn-item ${t.cleared?'cleared':''}">
