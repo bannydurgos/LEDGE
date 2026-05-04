@@ -90,6 +90,13 @@
   .btn.primary:hover { background: #374830; border-color: #374830; }
   .btn.danger:hover { background: #8b2020; color: #ffffff; border-color: #8b2020; }
 
+  .info-btn { background: none; border: 1.5px solid #8a6e2e; border-radius: 50%; color: #8a6e2e; cursor: pointer; font-size: 0.6rem; font-weight: 700; font-family: 'IBM Plex Mono', monospace; width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; line-height: 1; padding: 0; flex-shrink: 0; transition: all 0.15s; }
+  .info-btn:hover { background: #8a6e2e; color: #ffffff; }
+  .info-wrap { position: relative; display: inline-flex; align-items: center; }
+  .info-tip { display: none; position: absolute; top: calc(100% + 6px); right: 0; width: 210px; background: #1a1714; color: #f4f1ec; font-size: 0.62rem; font-family: 'IBM Plex Mono', monospace; line-height: 1.5; padding: 0.5rem 0.65rem; border-radius: 0; z-index: 100; pointer-events: none; }
+  .info-tip::before { content: ''; position: absolute; bottom: 100%; right: 6px; border: 5px solid transparent; border-bottom-color: #1a1714; }
+  .info-wrap:hover .info-tip { display: block; }
+
   .summary-strip { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border: 1.5px solid #1a1714; border-top: 4px solid #8a6e2e; }
   .stat { background: #ffffff; border-radius: 0; padding: 0.45rem 0.75rem; border-right: 1px solid rgba(0,0,0,0.1); border-bottom: 1px solid rgba(0,0,0,0.1); border-top: none; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .stat-label { font-size: 0.55rem; color: #6b6358; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; margin-bottom: 2px; }
@@ -344,8 +351,20 @@
   <div class="summary-strip" id="summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;z-index:3"></div>
   <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:320px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
   <div id="all-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:400px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>  <div class="header-right">
-    <button id="alert-mode-closing" class="btn primary" onclick="setAlertMode('closing')" style="grid-column:span 1">closing date</button>
-    <button id="alert-mode-autopay" class="btn" onclick="setAlertMode('autopay')" style="grid-column:span 1">autopay</button>
+    <div style="display:flex;align-items:center;gap:4px;grid-column:span 1">
+      <button id="alert-mode-closing" class="btn primary" onclick="setAlertMode('closing')" style="flex:1">closing date</button>
+      <div class="info-wrap">
+        <button class="info-btn" tabindex="-1">i</button>
+        <div class="info-tip">Pay your balance before the closing date so the balance reported to credit bureaus each month is as close to $0 as possible.</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:4px;grid-column:span 1">
+      <button id="alert-mode-autopay" class="btn" onclick="setAlertMode('autopay')" style="flex:1">autopay</button>
+      <div class="info-wrap">
+        <button class="info-btn" tabindex="-1">i</button>
+        <div class="info-tip">Set up autopay by the due date to ensure you never pay interest on your cards.</div>
+      </div>
+    </div>
     <select id="sort-select" onchange="setSort(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;font-weight:500;padding:0.45rem 0.8rem;border:1.5px solid #8a6e2e;border-radius:0;background:#ffffff;color:#1a1714;cursor:pointer;outline:none;">
       <option value="none">sort: A → Z</option>
       <option value="closing">sort: closing date</option>
@@ -355,7 +374,7 @@
     <button class="btn" id="pending-first-btn" onclick="togglePendingFirst()">pending first</button>
     <button class="btn" id="undo-btn" onclick="undo()" disabled>↩ undo</button>
     <button class="btn danger" onclick="resetToDefaults()">reset</button>
-    <button class="btn primary" onclick="handleAddCard()" style="grid-column:span 2;width:100%">ADD</button>
+    <button class="btn primary" onclick="handleAddCard()" style="grid-column:span 2;width:100%">ADD ACCOUNT</button>
   </div>
 </header>
 
