@@ -877,33 +877,39 @@ function closingDayNum(c) {
 function checkAutoPayments() {
   const now = new Date();
   const today = new Date(now); today.setHours(0,0,0,0);
-  const todayKey = today.toISOString().split('T')[0];
-  const isMidnight = now.getHours() === 0;
+  const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
   let changed = false;
 
   cards = cards.map(c => {
     let updated = {...c};
 
-    // ── Statement snapshot at midnight on the day after closing ──────────────
-    if (c.closing && isMidnight) {
-      const closingDay = c.closing.toLowerCase() === 'eom'
-        ? new Date(today.getFullYear(), today.getMonth()+1, 0).getDate()
-        : parseInt(c.closing);
-      const yesterday = new Date(today);
-      yesterday.setDate(today.getDate() - 1);
-      if (!isNaN(closingDay) && yesterday.getDate() === closingDay) {
-        const lastSnapKey = c.lastStmtSnap || '';
-        if (lastSnapKey !== todayKey) {
-          const clearedBal = +(updated.balance||0).toFixed(2);
-          updated.stmtBal = clearedBal;
-          // For non-paydown cards, autopay also becomes the cleared balance
-          if (!updated.paydown) {
-            updated.autopayAmt = clearedBal;
-          }
-          updated.lastStmtSnap = todayKey;
-          changed = true;
-        }
-      }
+    if (!c.closing) return updated;
+
+    const isEOM = c.closing.toLowerCase() === 'eom';
+    const closingNum = isEOM ? null : parseInt(c.closing);
+    if (!isEOM && isNaN(closingNum)) return updated;
+
+    // Get the closing date for a given year/month
+    function getClose(yr, mo) {
+      if (isEOM) return new Date(yr, mo + 1, 0);
+      return new Date(yr, mo, Math.min(closingNum, new Date(yr, mo + 1, 0).getDate()));
+    }
+
+    // Find the most recent closing date that has already passed (on or before yesterday)
+    const thisClose = getClose(today.getFullYear(), today.getMonth());
+    const lastClose = thisClose <= yesterday ? thisClose : getClose(today.getFullYear(), today.getMonth() - 1);
+
+    // Snap key = day after the closing date (when statement becomes available)
+    const snapDate = new Date(lastClose); snapDate.setDate(snapDate.getDate() + 1);
+    const snapKey = snapDate.toISOString().split('T')[0];
+
+    if ((c.lastStmtSnap || '') !== snapKey) {
+      const clearedBal = +(updated.balance || 0).toFixed(2);
+      updated.stmtBal = clearedBal;
+      // For non-paydown cards, autopay also becomes the cleared balance
+      if (!updated.paydown) updated.autopayAmt = clearedBal;
+      updated.lastStmtSnap = snapKey;
+      changed = true;
     }
 
     return updated;
