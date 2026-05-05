@@ -325,8 +325,7 @@
 <body>
 
 <header>
-  <div class="logo" style="position:static;flex:1;text-align:center;cursor:pointer" onclick="setView('all')">
-    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+  <div class="logo" style="flex:1;text-align:center;cursor:pointer" onclick="setView('all')">
     <svg id="logo-svg" width="320" height="100" viewBox="0 0 160 56" xmlns="http://www.w3.org/2000/svg">
       <rect x="0" y="4" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
       <rect x="0" y="11" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
@@ -342,12 +341,6 @@
       <rect x="0" y="39" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
       <rect x="0" y="46" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
     </svg>
-    <div id="userPill" class="user-pill" onclick="event.stopPropagation()" style="display:none;justify-content:center">
-      <img class="user-avatar" id="userAvatar" src="" alt="">
-      <span class="user-email" id="userEmail" title="Click to edit" onclick="event.stopPropagation();startEditUsername(this)" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px"></span>
-      <button id="btnSignOut">Sign out</button>
-    </div>
-    </div>
   </div>
   <div class="summary-strip" id="summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;z-index:3"></div>
   <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:320px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
@@ -379,13 +372,18 @@
   </div>
 </header>
 
-<div id="tab-bar" style="max-width:1400px;margin:0 auto 1rem;display:flex;align-items:center;gap:0;border-bottom:2px solid #1a1714">
+<div id="tab-bar" style="max-width:1400px;margin:0 auto 1rem;display:flex;align-items:center;gap:0;border-bottom:2px solid #1a1714;position:relative">
   <button id="tab-all" onclick="setView('all')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:#6b6358;cursor:pointer">All</button>
   <button id="tab-cash" onclick="setView('cash')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:#6b6358;cursor:pointer">Cash</button>
   <button id="tab-credit" onclick="setView('credit')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.4rem 1rem;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:#6b6358;cursor:pointer">Credit</button>
   <div style="position:relative;margin-left:1rem;margin-bottom:4px;">
     <input id="search-bar" type="text" placeholder="search..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;padding:0.3rem 1.6rem 0.3rem 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;letter-spacing:0.01em;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
     <button id="search-clear" onclick="clearSearch()" style="display:none;position:absolute;right:0.4rem;top:50%;transform:translateY(-50%);background:none;border:none;font-size:0.8rem;color:#6b6358;cursor:pointer;line-height:1;padding:0">✕</button>
+  </div>
+  <div id="userPill" class="user-pill" style="display:none;margin-left:auto;margin-right:3rem">
+    <img class="user-avatar" id="userAvatar" src="" alt="">
+    <span class="user-email" id="userEmail" title="Click to edit" onclick="startEditUsername(this)" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;text-transform:uppercase"></span>
+    <button id="btnSignOut">Sign out</button>
   </div>
 </div>
 
@@ -700,7 +698,7 @@ function startEditUsername(el) {
   const input = document.createElement('input');
   input.value = _username;
   input.placeholder = _currentUser ? _currentUser.email : '';
-  input.style.cssText = 'font-family:inherit;font-size:inherit;color:inherit;background:transparent;border:none;border-bottom:1px solid #8a6e2e;outline:none;width:120px;padding:0';
+  input.style.cssText = 'font-family:inherit;font-size:inherit;color:inherit;background:transparent;border:none;border-bottom:1px solid #8a6e2e;outline:none;width:120px;padding:0;text-transform:uppercase';
   el.replaceWith(input);
   input.focus();
   input.select();
@@ -710,7 +708,7 @@ function startEditUsername(el) {
     span.className = 'user-email';
     span.id = 'userEmail';
     span.title = 'Click to edit';
-    span.style.cssText = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px';
+    span.style.cssText = 'cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;text-transform:uppercase';
     span.onclick = function(e) { e.stopPropagation(); startEditUsername(this); };
     span.textContent = _username || (_currentUser && _currentUser.email) || '';
     input.replaceWith(span);
