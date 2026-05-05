@@ -13,7 +13,7 @@
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-  import { getFirestore, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+  import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
   const firebaseConfig = {
     apiKey: "AIzaSyDtZzfvaHmIX2n9oGa9FGlpN685w7zqkjc",
@@ -40,6 +40,7 @@
   window._fbDoc = doc;
   window._fbSetDoc = setDoc;
   window._fbGetDoc = getDoc;
+  window._fbOnSnapshot = onSnapshot;
   window._firebaseReady = true;
   window.dispatchEvent(new Event('firebaseReady'));
 </script>
@@ -595,12 +596,12 @@ const CARD_COLORS = ['c1','c2','c3','c4','c5','c6','c7','c8','c9','c10'];
 
 const DEFAULTS = [];
 
-let cards = JSON.parse(JSON.stringify(DEFAULTS));
-cards = cards.map((c,i) => ({pending:0, stmtBal:0, autopayMode:'custom', lastAutoPay:'', lastStmtSnap:'', lastArchive:'', paydown:false, hidden:false, wallet:false, transactions:[], txnArchive:[], color: CARD_COLORS[i % CARD_COLORS.length], ...c}));
+let cards = [];
 
 let editingId = null, dragSrcId = null, partialClearId = null;
 let _currentUser = null;
 let _username = '';
+let _unsubscribeSnapshot = null;
 
 // ── UNDO HISTORY ──────────────────────────────────────────
 let undoStack = [];
@@ -632,7 +633,21 @@ async function persist() {
   }
   _lastPersistedCards = JSON.stringify(cards);
   const ref = window._fbDoc(window._fbDb, 'users', _currentUser.uid);
-  await window._fbSetDoc(ref, { cards: _lastPersistedCards, username: _username }, { merge: true });
+  try {
+    await window._fbSetDoc(ref, { cards: _lastPersistedCards, username: _username }, { merge: true });
+  } catch (e) {
+    showSyncError();
+  }
+}
+
+function showSyncError() {
+  if (document.getElementById('sync-error-toast')) return;
+  const toast = document.createElement('div');
+  toast.id = 'sync-error-toast';
+  toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#8b2020;color:#fff;padding:9px 18px;border-radius:6px;font-size:13px;font-family:inherit;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,0.4)';
+  toast.textContent = 'Could not save — check your connection';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
 }
 
 async function persistUsername() {
@@ -641,20 +656,37 @@ async function persistUsername() {
   await window._fbSetDoc(ref, { username: _username }, { merge: true });
 }
 
+function applyCardDefaults(loaded) {
+  return loaded.map((c,i) => ({pending:0, stmtBal:0, autopayMode:'custom', lastAutoPay:'', lastStmtSnap:'', lastArchive:'', paydown:false, hidden:false, wallet:false, transactions:[], txnArchive:[], color: CARD_COLORS[i % CARD_COLORS.length], ...c}));
+}
+
 async function loadFromFirebase() {
   if (!_currentUser) return;
   const ref = window._fbDoc(window._fbDb, 'users', _currentUser.uid);
   const snap = await window._fbGetDoc(ref);
   if (snap.exists()) {
     const data = snap.data();
-    if (data.cards) {
-      const loaded = JSON.parse(data.cards);
-      cards = loaded.map((c,i) => ({pending:0, stmtBal:0, autopayMode:'custom', lastAutoPay:'', lastStmtSnap:'', lastArchive:'', paydown:false, hidden:false, wallet:false, transactions:[], txnArchive:[], color: CARD_COLORS[i % CARD_COLORS.length], ...c}));
-    }
+    if (data.cards) cards = applyCardDefaults(JSON.parse(data.cards));
     if (data.username) _username = data.username;
   }
   _lastPersistedCards = JSON.stringify(cards);
   updateUsernameDisplay();
+
+  // Real-time listener: keeps devices in sync
+  if (_unsubscribeSnapshot) _unsubscribeSnapshot();
+  _unsubscribeSnapshot = window._fbOnSnapshot(ref, (snapshot) => {
+    if (!snapshot.exists()) return;
+    const data = snapshot.data();
+    if (!data.cards) return;
+    // Skip if this update came from our own persist() call
+    if (data.cards === _lastPersistedCards) return;
+    // Another device changed data — update local state
+    cards = applyCardDefaults(JSON.parse(data.cards));
+    if (data.username) _username = data.username;
+    _lastPersistedCards = data.cards;
+    render();
+    updateUsernameDisplay();
+  });
 }
 
 function updateUsernameDisplay() {
@@ -712,8 +744,9 @@ function initAuth() {
       } else {
         _currentUser = null;
         _username = '';
+        if (_unsubscribeSnapshot) { _unsubscribeSnapshot(); _unsubscribeSnapshot = null; }
         cards = JSON.parse(JSON.stringify(DEFAULTS));
-        cards = cards.map((c,i) => ({pending:0, stmtBal:0, autopayMode:'custom', lastAutoPay:'', lastStmtSnap:'', lastArchive:'', paydown:false, hidden:false, wallet:false, transactions:[], txnArchive:[], color: CARD_COLORS[i % CARD_COLORS.length], ...c}));
+        cards = applyCardDefaults(cards);
         const pill = document.getElementById('userPill');
         if (pill) pill.style.display = 'none';
         document.getElementById('authOverlay').classList.add('visible');
