@@ -80,7 +80,8 @@
   }
   body { font-family: 'IBM Plex Mono', monospace; background: #f4f1ec; color: #1a1714; min-height: 100vh; padding: 2rem 1.5rem 5rem; letter-spacing: -0.01em; }
 
-  header { max-width: 1400px; margin: 0 auto 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; position: relative; min-height: 100px; }
+  header { max-width: 1400px; margin: 0 auto 2rem; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; position: relative; min-height: 100px; }
   .logo { font-family: 'Libre Baskerville', serif; font-size: 3.4rem; color: #1a1714; letter-spacing: 0.04em; text-transform: uppercase; }
   .logo em { color: #4a5e3a; font-style: italic; }
   .header-right { display: grid; grid-template-columns: repeat(2, auto); gap: 6px; align-items: center; flex:1; justify-content: flex-end; position: relative; z-index: 2; }
@@ -281,14 +282,14 @@
   .quick-log-fab { position:fixed; bottom:1.5rem; left:1.5rem; width:52px; height:52px; background:#1a1714; border:none; border-radius:0; color:#f4f1ec; font-size:1.8rem; line-height:52px; text-align:center; cursor:pointer; z-index:300; box-shadow:4px 4px 0 #8a6e2e; font-family:'Libre Baskerville',serif; transition:background 0.15s; }
   .quick-log-fab:hover { background:#8a6e2e; }
   @media (min-width:701px) { .quick-log-fab { display:none; } .quick-log-desktop { display:block !important; } }
+  @media (max-width: 750px) {
+    .header-top { flex-wrap: wrap; min-height: auto; gap: 0.75rem 0; }
+    .logo { position: static !important; transform: none !important; left: auto !important; order: 1; flex: 0 0 auto; }
+    .header-right { order: 1; flex: none; width: fit-content; margin-left: auto; }
+    .summary-strip, #cash-summary, #all-summary { position: static !important; transform: none !important; order: 2; flex: 0 0 100%; width: auto !important; margin: 0 auto !important; }
+  }
   @media (max-width: 700px) {
-    header { flex-direction: column; align-items: center; gap: 1.25rem; min-height: auto; padding-bottom: 0; margin-bottom: 1.25rem; }
-    .logo { position: static !important; transform: none !important; text-align: center; left: auto !important; }
     #logo-svg { width: 220px !important; height: 68px !important; }
-    .summary-strip { position: static !important; transform: none !important; width: 100% !important; margin-bottom: 0 !important; }
-    #cash-summary { position: static !important; transform: none !important; width: 100% !important; margin-bottom: 0 !important; }
-    #all-summary { position: static !important; transform: none !important; width: 100% !important; margin-bottom: 0 !important; }
-    .header-right { justify-content: center; flex: none; position: static; }
     .quick-log-desktop { display: none !important; }
     #tab-bar { margin-bottom: 1.25rem; margin-top: 0; flex-wrap: wrap; }
     #tab-bar > div { flex: 1 1 100%; margin-left: 0 !important; padding: 4px 0 6px; }
@@ -325,26 +326,28 @@
 <body>
 
 <header>
-  <div class="logo" style="flex:1;text-align:center;cursor:pointer" onclick="setView('all')">
-    <svg id="logo-svg" width="320" height="100" viewBox="0 0 160 56" xmlns="http://www.w3.org/2000/svg">
-      <rect x="0" y="4" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-      <rect x="0" y="11" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-      <rect x="0" y="18" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-      <rect x="0" y="25" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-      <rect x="0" y="32" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-      <rect x="0" y="4" width="160" height="32" fill="#f4f1ec"/>
-      <text x="2" y="32" font-family="'Libre Baskerville', serif" font-size="26" fill="#4a5e3a" font-style="italic" letter-spacing="2">LED</text>
-      <text x="72" y="38" font-family="'Libre Baskerville', serif" font-size="26" fill="#8a6e2e" font-style="italic" letter-spacing="2">GE</text>
-      <rect x="0" y="36" width="72" height="3" fill="#8a6e2e"/>
-      <rect x="72" y="36" width="88" height="24" fill="#f4f1ec"/>
-      <polygon points="72,36 72,52 56,52" fill="#f4f1ec"/>
-      <rect x="0" y="39" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-      <rect x="0" y="46" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-    </svg>
-  </div>
-  <div class="summary-strip" id="summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;z-index:3"></div>
-  <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:320px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
-  <div id="all-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:400px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>  <div class="header-right">
+  <div class="header-top">
+    <div class="logo" style="cursor:pointer" onclick="setView('all')">
+      <svg id="logo-svg" width="320" height="100" viewBox="0 0 160 56" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="4" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+        <rect x="0" y="11" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+        <rect x="0" y="18" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+        <rect x="0" y="25" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+        <rect x="0" y="32" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+        <rect x="0" y="4" width="160" height="32" fill="#f4f1ec"/>
+        <text x="2" y="32" font-family="'Libre Baskerville', serif" font-size="26" fill="#4a5e3a" font-style="italic" letter-spacing="2">LED</text>
+        <text x="72" y="38" font-family="'Libre Baskerville', serif" font-size="26" fill="#8a6e2e" font-style="italic" letter-spacing="2">GE</text>
+        <rect x="0" y="36" width="72" height="3" fill="#8a6e2e"/>
+        <rect x="72" y="36" width="88" height="24" fill="#f4f1ec"/>
+        <polygon points="72,36 72,52 56,52" fill="#f4f1ec"/>
+        <rect x="0" y="39" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+        <rect x="0" y="46" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
+      </svg>
+    </div>
+    <div class="summary-strip" id="summary" style="position:absolute;left:50%;transform:translateX(-50%);width:500px;margin:0;z-index:3"></div>
+    <div id="cash-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:320px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
+    <div id="all-summary" style="position:absolute;left:50%;transform:translateX(-50%);width:400px;margin:0;display:none;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #1a1714;z-index:3"></div>
+    <div class="header-right">
     <div style="display:flex;align-items:center;gap:4px;grid-column:span 1">
       <button id="alert-mode-closing" class="btn primary" onclick="setAlertMode('closing')" style="flex:1">closing date</button>
       <div class="info-wrap">
@@ -369,6 +372,7 @@
     <button class="btn" id="undo-btn" onclick="undo()" disabled>↩ undo</button>
     <button class="btn danger" onclick="resetToDefaults()">reset</button>
     <button class="btn primary" onclick="handleAddCard()" style="grid-column:span 2;width:100%">ADD ACCOUNT</button>
+  </div>
   </div>
 </header>
 
@@ -855,7 +859,7 @@ function updateTabs() {
   const hasCredit = cards.some(c => !c.wallet && !c.hidden);
   const tabBar = document.getElementById('tab-bar');
   if (tabBar) tabBar.style.display = 'flex';
-  const isMobile = window.innerWidth <= 700;
+  const isMobile = window.innerWidth <= 750;
   const logo = document.querySelector('.logo');
   const logoSvg = document.getElementById('logo-svg');
   if (logo && !isMobile) {
