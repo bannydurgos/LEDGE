@@ -327,25 +327,7 @@
 
 <header>
   <div class="header-top">
-    <div style="flex:1;display:flex;align-items:center">
-    <div class="logo" style="cursor:pointer" onclick="setView('all')">
-      <svg id="logo-svg" width="320" height="100" viewBox="0 0 160 56" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="4" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-        <rect x="0" y="11" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-        <rect x="0" y="18" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-        <rect x="0" y="25" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-        <rect x="0" y="32" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-        <rect x="0" y="4" width="160" height="32" fill="#f4f1ec"/>
-        <text x="2" y="32" font-family="'Libre Baskerville', serif" font-size="26" fill="#4a5e3a" font-style="italic" letter-spacing="2">LED</text>
-        <text x="72" y="38" font-family="'Libre Baskerville', serif" font-size="26" fill="#8a6e2e" font-style="italic" letter-spacing="2">GE</text>
-        <rect x="0" y="36" width="72" height="3" fill="#8a6e2e"/>
-        <rect x="72" y="36" width="88" height="24" fill="#f4f1ec"/>
-        <polygon points="72,36 72,52 56,52" fill="#f4f1ec"/>
-        <rect x="0" y="39" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-        <rect x="0" y="46" width="160" height="1.2" fill="#4a5e3a" opacity="0.15"/>
-      </svg>
-    </div>
-    </div>
+    <div style="flex:1"></div>
     <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:center">
       <div class="summary-strip" id="summary" style="width:500px;margin:0;z-index:3"></div>
       <div id="cash-summary" style="width:320px;margin:0;display:none;z-index:3"></div>
@@ -1058,8 +1040,7 @@ function resetToDefaults() {
 }
 
 function effectiveAutopay(c) {
-  const amt = c.autopayMode === 'statement' ? (c.stmtBal||0) : (c.autopayAmt||0);
-  return parseFloat(amt.toFixed(2));
+  return parseFloat((c.autopayAmt||0).toFixed(2));
 }
 
 function updateStmtBal(id, val) {
@@ -1730,11 +1711,11 @@ function buildCard(c, idx) {
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0.08rem 0.55rem;">
               <div><span style="font-size:0.52rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">AutoPay</span>${c.autopay ? `<div style="font-size:0.78rem;color:#1a1714;font-weight:700;margin-top:1px">${ordinal(c.autopay)}</div>` : ''}</div>
               <div style="text-align:center">${badgeText ? `<span class="badge ${badgeClass}">${badgeText}</span>` : ''}</div>
-              <div style="text-align:right"><input type="number" class="stmt-input" style="width:70px;text-align:right" value="${isStmt ? (c.stmtBal||0).toFixed(2) : (c.autopayAmt||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
+              <div style="text-align:right"><input type="number" class="stmt-input" style="width:70px;text-align:right" value="${(c.autopayAmt||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
                 onclick="event.stopPropagation()"
-                onchange="${isStmt ? `updateStmtBal('${c.id}', this.value)` : `updateCustomAutopay('${c.id}', this.value)`}"
-                onblur="${isStmt ? `updateStmtBal('${c.id}', this.value)` : `updateCustomAutopay('${c.id}', this.value)`}"
-                onkeydown="if(event.key==='Enter'){${isStmt ? `updateStmtBal('${c.id}', this.value)` : `updateCustomAutopay('${c.id}', this.value)`};this.blur();}" /></div>
+                onchange="updateCustomAutopay('${c.id}', this.value)"
+                onblur="updateCustomAutopay('${c.id}', this.value)"
+                onkeydown="if(event.key==='Enter'){updateCustomAutopay('${c.id}', this.value);this.blur();}" /></div>
             </div>
           </div>
         </div>
