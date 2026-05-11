@@ -290,7 +290,8 @@
     .summary-strip, #cash-summary, #all-summary { width: 100% !important; box-sizing: border-box; }
     #tab-bar { flex-wrap: wrap; gap: 2px; padding-bottom: 6px; margin-bottom: 0.75rem; }
     #tab-bar > button[id^="tab-"] { flex: 1; }
-    #tab-bar > button:not([id^="tab-"]), #tab-bar > div { flex: 1 1 auto; }
+    #tab-bar > #undo-btn, #tab-bar > #redo-btn { flex: 0 0 auto; }
+    #tab-bar > div { flex: 1 1 auto; }
     #tab-bar > [style*="position:absolute"] { position: static !important; transform: none !important; order: 10; width: 100%; justify-content: center; padding: 4px 0; }
     #tab-bar > [style*="margin-left:auto"] { margin-left: 0 !important; width: 100%; flex-wrap: wrap; }
     #search-bar { width: 100% !important; box-sizing: border-box; }
