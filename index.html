@@ -287,12 +287,13 @@
     header { margin-bottom: 0; }
     .header-top { height: auto !important; flex-direction: column; align-items: center; gap: 0.5rem; padding: 0.75rem 0; }
     .header-right { display: flex !important; flex-wrap: wrap; justify-content: center; gap: 6px; width: 100%; }
-    .summary-strip, #cash-summary, #all-summary { width: 100% !important; box-sizing: border-box; }
+    .summary-strip, #cash-summary, #all-summary { width: 100% !important; box-sizing: border-box; min-width: 0; }
+    .header-top > div:nth-child(2) { width: 100% !important; flex: 1 1 100% !important; }
     #tab-bar { flex-wrap: wrap; gap: 2px; padding-bottom: 6px; margin-bottom: 0.75rem; }
     #tab-bar > button[id^="tab-"] { flex: 1; order: 20; }
     #tab-bar > #undo-btn, #tab-bar > #redo-btn { flex: 0 0 auto; }
     #tab-bar > div { flex: 1 1 auto; }
-    #tab-bar > [style*="position:absolute"] { position: fixed !important; top: 0; left: 0; right: 0; transform: none !important; background: #f4f1ec; z-index: 200; display: flex !important; justify-content: center !important; align-items: center; padding: 8px 0; }
+    #tab-bar > [style*="position:absolute"] { position: fixed !important; top: 0 !important; left: 0 !important; right: 0; transform: none !important; background: #f4f1ec; z-index: 200; display: flex !important; justify-content: center !important; align-items: center; padding: 8px 0; }
     body { padding-top: 44px !important; }
     #sort-select { order: -1; flex: 0 0 auto; }
     #tab-bar > [style*="margin-left:auto"] { margin-left: 0 !important; width: 100%; flex-wrap: wrap; }
@@ -1892,7 +1893,7 @@ function updateAllSummary() {
   el.style.flexWrap = 'wrap';
   el.style.justifyContent = 'center';
   el.style.gap = '8px';
-  const allStatStyle = 'flex:0 0 calc(50% - 4px);box-sizing:border-box;border:1.5px solid #1a1714';
+  const allStatStyle = 'flex:1 1 calc(50% - 4px);min-width:120px;box-sizing:border-box;border:1.5px solid #1a1714';
   el.innerHTML = `
     <div class="stat" style="${allStatStyle}"><div class="stat-label">Cash</div><div class="stat-value">${fmt$(totalCash)}${wallets.length > 0 ? `<div class="stat-sub" onclick="event.stopPropagation();openCashCOA()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${wallets.length} account${wallets.length>1?'s':''}</div>` : ''}</div></div>
     <div class="stat" style="${allStatStyle}"><div class="stat-label">Credit</div><div class="stat-value">${fmt$(totalWorking)}${creditCards.length > 0 ? `<div class="stat-sub" onclick="event.stopPropagation();document.getElementById('chart-of-accounts').style.display='flex'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} card${creditCards.length>1?'s':''}</div>` : ''}</div></div>
