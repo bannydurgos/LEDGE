@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Ledge">
@@ -281,7 +281,7 @@
   .no-anim .card { animation: none; }
   .quick-log-fab { position:fixed; bottom:1.5rem; left:1.5rem; width:52px; height:52px; background:#1a1714; border:none; border-radius:0; color:#f4f1ec; font-size:1.8rem; line-height:52px; text-align:center; cursor:pointer; z-index:300; box-shadow:4px 4px 0 #8a6e2e; font-family:'Libre Baskerville',serif; transition:background 0.15s; }
   .quick-log-fab:hover { background:#8a6e2e; }
-  @media (min-width:701px) { .quick-log-fab { display:none; } .quick-log-desktop { display:block !important; } #mobile-search-bar { display:none !important; } }
+  @media (min-width:701px) { .quick-log-fab { display:none; } .quick-log-desktop { display:block !important; } #mobile-search-bar { display:none !important; } #undo-btn-mobile, #redo-btn-mobile { display:none !important; } }
   @media (max-width: 700px) {
     body { padding: 1rem 0.75rem 5rem; }
     header { margin-bottom: 0; }
@@ -291,7 +291,9 @@
     .header-top > div:nth-child(2) { width: 100% !important; flex: 1 1 100% !important; }
     #tab-bar { flex-wrap: wrap; gap: 2px; padding-bottom: 6px; margin-bottom: 0.75rem; }
     #tab-bar > button[id^="tab-"] { flex: 1; order: 20; }
-    #tab-bar > #undo-btn, #tab-bar > #redo-btn { flex: 0 0 auto; }
+    #tab-bar > #undo-btn, #tab-bar > #redo-btn { display: none !important; }
+    #tab-bar > button[title="Add account"] { display: none !important; }
+    #undo-btn-mobile, #redo-btn-mobile { display: inline-flex !important; align-items: center; justify-content: center; }
     #tab-bar > div { flex: 1 1 auto; }
     #tab-bar > [style*="position:absolute"] { position: fixed !important; top: 0 !important; left: 0 !important; right: 0; transform: none !important; background: #f4f1ec; z-index: 200; display: flex !important; justify-content: center !important; align-items: center; padding: 8px 0; }
     body { padding-top: 44px !important; }
@@ -305,7 +307,7 @@
     #mobile-search-bar { padding: 0 0.75rem; box-sizing: border-box; }
     .quick-log-desktop { display: none !important; }
     .coa-limit-util { display: none !important; }
-    .spend-input-wrap input, .spend-section input[type="text"] { font-size: 16px !important; }
+    input, select, textarea { font-size: 16px !important; }
     #chart-of-accounts > div { max-height: none !important; overflow-y: visible !important; }
     .cards-grid { grid-template-columns: 1fr; }
   }
@@ -402,6 +404,8 @@
     <input id="search-bar" type="text" placeholder="SEARCH..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;height:28px;box-sizing:border-box;padding:0 1.6rem 0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;letter-spacing:0.07em;text-transform:uppercase;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
     <button id="search-clear" onclick="clearSearch()" style="display:none;position:absolute;right:0.4rem;top:50%;transform:translateY(-50%);background:none;border:none;font-size:0.8rem;color:#6b6358;cursor:pointer;line-height:1;padding:0">✕</button>
   </div>
+  <button id="undo-btn-mobile" onclick="undo()" disabled title="Undo" style="background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;line-height:1;cursor:pointer;width:28px;height:28px;padding:0;border-radius:0;transition:opacity 0.15s;flex-shrink:0;opacity:0.4" onmouseenter="if(!this.disabled)this.style.opacity='1'" onmouseleave="if(!this.disabled)this.style.opacity='1'">↩</button>
+  <button id="redo-btn-mobile" onclick="redo()" disabled title="Redo" style="background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;line-height:1;cursor:pointer;width:28px;height:28px;padding:0;border-radius:0;transition:opacity 0.15s;flex-shrink:0;opacity:0.4" onmouseenter="if(!this.disabled)this.style.opacity='1'" onmouseleave="if(!this.disabled)this.style.opacity='1'">↪</button>
 </div>
 
 <div class="cards-grid" id="cards-grid"></div>
@@ -624,10 +628,8 @@ let redoStack = [];
 let _lastPersistedCards = null;
 
 function updateUndoBtn() {
-  const ub = document.getElementById('undo-btn');
-  const rb = document.getElementById('redo-btn');
-  if (ub) { ub.disabled = undoStack.length === 0; ub.style.opacity = undoStack.length === 0 ? '0.4' : '1'; }
-  if (rb) { rb.disabled = redoStack.length === 0; rb.style.opacity = redoStack.length === 0 ? '0.4' : '1'; }
+  ['undo-btn','undo-btn-mobile'].forEach(id => { const el = document.getElementById(id); if (el) { el.disabled = undoStack.length === 0; el.style.opacity = undoStack.length === 0 ? '0.4' : '1'; }});
+  ['redo-btn','redo-btn-mobile'].forEach(id => { const el = document.getElementById(id); if (el) { el.disabled = redoStack.length === 0; el.style.opacity = redoStack.length === 0 ? '0.4' : '1'; }});
 }
 
 async function undo() {
@@ -2107,6 +2109,15 @@ function updateCashSummary() {
   `;
 }
 
+function toggleFabMenu() {
+  const menu = document.getElementById('fab-menu');
+  if (!menu) return;
+  menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+}
+function closeFabMenu() {
+  const menu = document.getElementById('fab-menu');
+  if (menu) menu.style.display = 'none';
+}
 function openQuickLog() {
   const wallets = cards.filter(c => c.wallet && !c.hidden);
   const sel = document.getElementById('ql-card');
@@ -2158,6 +2169,8 @@ document.addEventListener('click', (e) => {
   document.querySelectorAll('[id^="inc-info-"],[id^="card-info-"],#excl-info').forEach(el => el.style.display = 'none');
   const dd = document.getElementById('user-dropdown');
   if (dd && !dd.contains(e.target) && !e.target.closest('#userPill')) dd.style.display = 'none';
+  const fabMenu = document.getElementById('fab-menu');
+  if (fabMenu && !e.target.closest('#fab-container')) fabMenu.style.display = 'none';
 });
 document.getElementById('partial-modal').addEventListener('click', e => { if(e.target.id==='partial-modal') closePartialModal(); });
 document.getElementById('action-modal-overlay').addEventListener('click', e => { if(e.target.id==='action-modal-overlay') closeActionModal(); });
@@ -2245,7 +2258,13 @@ initAuth();
   </div>
 </div>
 
-<button class="quick-log-fab" onclick="openQuickLog()">+</button>
+<div id="fab-container" style="position:fixed;bottom:1.5rem;left:1.5rem;z-index:300;display:flex;flex-direction:column-reverse;align-items:flex-start;gap:8px">
+  <button class="quick-log-fab" onclick="toggleFabMenu()" style="position:static;box-shadow:4px 4px 0 #8a6e2e">+</button>
+  <div id="fab-menu" style="display:none;flex-direction:column;gap:6px">
+    <button onclick="closeFabMenu();openQuickLog()" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;height:36px;padding:0 14px;background:#1a1714;color:#f4f1ec;border:none;cursor:pointer;white-space:nowrap;box-shadow:3px 3px 0 #8a6e2e">+ log transaction</button>
+    <button onclick="closeFabMenu();handleAddCard()" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;height:36px;padding:0 14px;background:#4a5e3a;color:#ffffff;border:none;cursor:pointer;white-space:nowrap;box-shadow:3px 3px 0 #8a6e2e">+ add account</button>
+  </div>
+</div>
 
 <div id="edit-txn-overlay" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
   <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:360px;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
