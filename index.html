@@ -367,13 +367,13 @@
   </div>
   <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
     <select id="sort-select" onchange="setSort(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:500;height:28px;padding:0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#6b6358;cursor:pointer;outline:none;">
-      <option value="none">a → z</option>
-      <option value="closing">closing date</option>
-      <option value="autopay">autopay date</option>
-      <option value="utilization">utilization</option>
+      <option value="none">A → Z</option>
+      <option value="closing">CLOSING DATE</option>
+      <option value="autopay">AUTOPAY DATE</option>
+      <option value="utilization">UTILIZATION</option>
     </select>
     <div style="position:relative">
-      <input id="search-bar-desktop" type="text" placeholder="search..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;height:28px;box-sizing:border-box;padding:0 1.6rem 0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
+      <input id="search-bar-desktop" type="text" placeholder="SEARCH..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;height:28px;box-sizing:border-box;padding:0 1.6rem 0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
       <button id="search-clear-desktop" onclick="clearSearch()" style="display:none;position:absolute;right:0.4rem;top:50%;transform:translateY(-50%);background:none;border:none;font-size:0.8rem;color:#6b6358;cursor:pointer;line-height:1;padding:0">✕</button>
     </div>
     <div id="userPill" style="display:none;position:relative">
@@ -388,13 +388,13 @@
 
 <div id="mobile-search-bar" style="max-width:1400px;margin:0 auto 0.75rem;display:flex;align-items:center;gap:6px">
   <select id="sort-select-mobile" onchange="setSort(this.value)" style="display:none;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:500;height:28px;padding:0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#6b6358;cursor:pointer;outline:none;">
-    <option value="none">a → z</option>
-    <option value="closing">closing date</option>
-    <option value="autopay">autopay date</option>
-    <option value="utilization">utilization</option>
+    <option value="none">A → Z</option>
+    <option value="closing">CLOSING DATE</option>
+    <option value="autopay">AUTOPAY DATE</option>
+    <option value="utilization">UTILIZATION</option>
   </select>
   <div style="position:relative;flex:1">
-    <input id="search-bar" type="text" placeholder="search..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;height:28px;box-sizing:border-box;padding:0 1.6rem 0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
+    <input id="search-bar" type="text" placeholder="SEARCH..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;height:28px;box-sizing:border-box;padding:0 1.6rem 0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
     <button id="search-clear" onclick="clearSearch()" style="display:none;position:absolute;right:0.4rem;top:50%;transform:translateY(-50%);background:none;border:none;font-size:0.8rem;color:#6b6358;cursor:pointer;line-height:1;padding:0">✕</button>
   </div>
   <button id="undo-btn-mobile" onclick="undo()" disabled title="Undo" style="background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;line-height:1;cursor:pointer;width:28px;height:28px;padding:0;border-radius:0;transition:opacity 0.15s;flex-shrink:0;opacity:0.4" onmouseenter="if(!this.disabled)this.style.opacity='1'" onmouseleave="if(!this.disabled)this.style.opacity='1'">↩</button>
