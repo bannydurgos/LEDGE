@@ -289,10 +289,10 @@
     .header-right { display: flex !important; flex-wrap: wrap; justify-content: center; gap: 6px; width: 100%; }
     .summary-strip, #cash-summary, #all-summary { width: 100% !important; box-sizing: border-box; }
     #tab-bar { flex-wrap: wrap; gap: 2px; padding-bottom: 6px; margin-bottom: 0.75rem; }
-    #tab-bar > button[id^="tab-"] { flex: 1; }
+    #tab-bar > button[id^="tab-"] { flex: 1; order: 20; }
     #tab-bar > #undo-btn, #tab-bar > #redo-btn { flex: 0 0 auto; }
     #tab-bar > div { flex: 1 1 auto; }
-    #tab-bar > [style*="position:absolute"] { position: fixed !important; top: 0; left: 0; right: 0; transform: none !important; background: #f4f1ec; border-bottom: 1.5px solid #c8bfb0; z-index: 200; justify-content: center; padding: 8px 0; display: flex; }
+    #tab-bar > [style*="position:absolute"] { position: fixed !important; top: 0; left: 0; right: 0; transform: none !important; background: #f4f1ec; z-index: 200; display: flex !important; justify-content: center !important; align-items: center; padding: 8px 0; }
     body { padding-top: 44px !important; }
     #sort-select { order: -1; flex: 0 0 auto; }
     #tab-bar > [style*="margin-left:auto"] { margin-left: 0 !important; width: 100%; flex-wrap: wrap; }
