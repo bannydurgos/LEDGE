@@ -295,9 +295,10 @@
     #tab-bar > div { flex: 1 1 auto; }
     #tab-bar > [style*="position:absolute"] { position: fixed !important; top: 0 !important; left: 0 !important; right: 0; transform: none !important; background: #f4f1ec; z-index: 200; display: flex !important; justify-content: center !important; align-items: center; padding: 8px 0; }
     body { padding-top: 44px !important; }
-    #sort-select { order: -1; flex: 0 0 auto; }
+    #sort-select { flex: 0 0 auto; }
     #tab-bar > [style*="margin-left:auto"] { margin-left: 0 !important; width: 100%; flex-wrap: wrap; }
-    #search-bar { width: 100% !important; box-sizing: border-box; }
+    #userPill { position: fixed !important; top: 6px; right: 8px; z-index: 300; }
+    #search-bar { width: calc(100vw - 2rem) !important; box-sizing: border-box; }
     .quick-log-desktop { display: none !important; }
     .coa-limit-util { display: none !important; }
     .spend-input-wrap input, .spend-section input[type="text"] { font-size: 16px !important; }
@@ -331,7 +332,13 @@
 </head>
 <body>
 
-<header>
+<header style="overflow:hidden;position:relative">
+  <div style="position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;display:flex;align-items:center;justify-content:center">
+    <svg width="1800" height="400" viewBox="0 0 400 130" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="opacity:0.1;flex-shrink:0">
+      <text x="200" y="95" font-family="'Libre Baskerville', serif" font-size="110" fill="#4a5e3a" font-style="italic" letter-spacing="8" text-anchor="middle">LEDGE</text>
+      <rect x="60" y="103" width="280" height="8" fill="#8a6e2e"/>
+    </svg>
+  </div>
   <div class="header-top">
     <div style="flex:1"></div>
     <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:center">
@@ -359,17 +366,13 @@
     </label>
     <span id="alert-label-autopay" style="font-size:0.65rem;font-weight:600;color:#a09880;font-family:'IBM Plex Mono',monospace;letter-spacing:0.07em;text-transform:uppercase">autopay</span>
   </div>
-  <select id="sort-select" onchange="setSort(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;height:28px;padding:0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;cursor:pointer;outline:none;">
-    <option value="none">A → Z</option>
-    <option value="closing">CLOSING DATE</option>
-    <option value="autopay">AUTOPAY DATE</option>
-    <option value="utilization">UTILIZATION</option>
-  </select>
   <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-    <div style="position:relative">
-      <input id="search-bar" type="text" placeholder="SEARCH..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;height:28px;box-sizing:border-box;padding:0 1.6rem 0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;letter-spacing:0.07em;text-transform:uppercase;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
-      <button id="search-clear" onclick="clearSearch()" style="display:none;position:absolute;right:0.4rem;top:50%;transform:translateY(-50%);background:none;border:none;font-size:0.8rem;color:#6b6358;cursor:pointer;line-height:1;padding:0">✕</button>
-    </div>
+    <select id="sort-select" onchange="setSort(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;height:28px;padding:0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;cursor:pointer;outline:none;">
+      <option value="none">A → Z</option>
+      <option value="closing">CLOSING DATE</option>
+      <option value="autopay">AUTOPAY DATE</option>
+      <option value="utilization">UTILIZATION</option>
+    </select>
     <div id="userPill" style="display:none;position:relative">
       <button onclick="document.getElementById('user-dropdown').style.display=document.getElementById('user-dropdown').style.display==='block'?'none':'block'" style="background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.75rem;cursor:pointer;width:28px;height:28px;padding:0;border-radius:0;line-height:1">▾</button>
       <div id="user-dropdown" style="display:none;position:absolute;right:0;top:32px;background:#ffffff;border:1.5px solid #1a1714;z-index:500;min-width:110px;box-shadow:2px 2px 0 rgba(0,0,0,0.08)">
@@ -377,6 +380,13 @@
         <button onclick="document.getElementById('user-dropdown').style.display='none';resetToDefaults()" style="display:block;width:100%;text-align:left;padding:7px 12px;background:none;border:none;font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:500;text-transform:uppercase;letter-spacing:0.04em;color:#cc2222;cursor:pointer" onmouseenter="this.style.background='#f4f1ec'" onmouseleave="this.style.background='none'">Reset</button>
       </div>
     </div>
+  </div>
+</div>
+
+<div style="max-width:1400px;margin:0 auto 0.75rem;display:flex;align-items:center">
+  <div style="position:relative">
+    <input id="search-bar" type="text" placeholder="SEARCH..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;height:28px;box-sizing:border-box;padding:0 1.6rem 0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;letter-spacing:0.07em;text-transform:uppercase;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
+    <button id="search-clear" onclick="clearSearch()" style="display:none;position:absolute;right:0.4rem;top:50%;transform:translateY(-50%);background:none;border:none;font-size:0.8rem;color:#6b6358;cursor:pointer;line-height:1;padding:0">✕</button>
   </div>
 </div>
 
