@@ -838,7 +838,11 @@ function setAlertMode(mode) {
   if (toggle) toggle.checked = mode === 'autopay';
   if (lc) lc.style.color = mode === 'closing' ? '#1a1714' : '#a09880';
   if (la) la.style.color = mode === 'autopay' ? '#1a1714' : '#a09880';
-  render();
+  // Auto-sort on toggle switch (sort by the opposite date)
+  const autoSort = mode === 'autopay' ? 'closing' : 'autopay';
+  setSort(autoSort);
+  const sel = document.getElementById('sort-select');
+  if (sel) sel.value = autoSort;
 }
 
 function setSort(val) {
