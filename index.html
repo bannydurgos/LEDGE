@@ -292,7 +292,8 @@
     #tab-bar > button[id^="tab-"] { flex: 1; }
     #tab-bar > #undo-btn, #tab-bar > #redo-btn { flex: 0 0 auto; }
     #tab-bar > div { flex: 1 1 auto; }
-    #tab-bar > [style*="position:absolute"] { position: static !important; transform: none !important; order: -1; flex: 1 1 auto; justify-content: center; padding: 4px 0; }
+    #tab-bar > [style*="position:absolute"] { position: fixed !important; top: 0; left: 0; right: 0; transform: none !important; background: #f4f1ec; border-bottom: 1.5px solid #c8bfb0; z-index: 200; justify-content: center; padding: 8px 0; display: flex; }
+    body { padding-top: 44px !important; }
     #sort-select { order: -1; flex: 0 0 auto; }
     #tab-bar > [style*="margin-left:auto"] { margin-left: 0 !important; width: 100%; flex-wrap: wrap; }
     #search-bar { width: 100% !important; box-sizing: border-box; }
