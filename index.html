@@ -1944,7 +1944,7 @@ function updateSummary() {
   const apBreakdown = Object.entries(apByDate).sort((a,b)=>{ const n=v=>v==='EOM'?32:parseInt(v)||0; return n(a[0])-n(b[0]); }).map(([d,a])=>`<span style="color:#a09880">${ordinal(d)}</span>&thinsp;<span style="font-weight:600;color:#1a1714">${fmt$(a)}</span>`).join('<br>');
   const excludedNames = cards.filter(c=>(!c.includeInTotals||c.npsl)&&!c.wallet).map(c=>c.name.split(' ').slice(0,2).join(' '));
   const fmtK = v => Math.abs(v)>=1000?`$${(v/1000).toFixed(1)}k`:`$${v.toFixed(2)}`;
-  const statStyle = 'flex:0 0 calc(33.333% - 6px);box-sizing:border-box;border:1.5px solid #1a1714';
+  const statStyle = 'flex:0 0 calc(33.333% - 6px);min-width:0;box-sizing:border-box;border:1.5px solid #1a1714';
   document.getElementById('summary').innerHTML = `
     <div class="stat" style="${statStyle}"><div class="stat-label">working balance</div><div class="stat-value">${fmt$(totalWorking)}<div class="stat-sub" onclick="event.stopPropagation();document.getElementById('chart-of-accounts').style.display='flex'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} cards</div></div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">total limit</div><div class="stat-value" style="display:flex;flex-direction:column;align-items:center">
