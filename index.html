@@ -372,6 +372,7 @@
       <option value="closing">CLOSING DATE</option>
       <option value="autopay">AUTOPAY DATE</option>
       <option value="utilization">UTILIZATION</option>
+      <option value="pending">PENDING FIRST</option>
     </select>
     <div style="position:relative">
       <input id="search-bar-desktop" type="text" placeholder="SEARCH..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;height:28px;box-sizing:border-box;padding:0 1.6rem 0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
@@ -393,6 +394,7 @@
     <option value="closing">CLOSING DATE</option>
     <option value="autopay">AUTOPAY DATE</option>
     <option value="utilization">UTILIZATION</option>
+    <option value="pending">PENDING FIRST</option>
   </select>
   <div style="position:relative;flex:1">
     <input id="search-bar" type="text" placeholder="SEARCH..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;height:28px;box-sizing:border-box;padding:0 1.6rem 0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
@@ -856,6 +858,8 @@ function setAlertMode(mode) {
 function setSort(val) {
   sortMode = val;
   localStorage.setItem('sortMode', val);
+  pendingFirst = val === 'pending';
+  localStorage.setItem('pendingFirst', pendingFirst);
   const s1 = document.getElementById('sort-select');
   const s2 = document.getElementById('sort-select-mobile');
   if (s1) s1.value = val;
