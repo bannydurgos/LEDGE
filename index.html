@@ -906,7 +906,8 @@ function updateTabs() {
   if (logo && !isMobile) {
     logo.style.position = 'absolute';
     logo.style.left = '12.5%';
-    logo.style.transform = 'translateX(-50%)';
+    logo.style.top = '50%';
+    logo.style.transform = 'translateX(-50%) translateY(-50%)';
     logo.style.flex = '';
     if (logoSvg) { logoSvg.setAttribute('width', '320'); logoSvg.setAttribute('height', '100'); }
   }
