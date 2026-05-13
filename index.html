@@ -113,7 +113,7 @@
   .card.drag-over { border-color: #8a6e2e; box-shadow: 4px 4px 0 #8a6e2e; }
   .card.closing-alert { border-color: #cc2222 !important; border-width: 2.5px !important; box-shadow: 4px 4px 0 #cc2222 !important; }
   .card-stripe { display: none; }
-  .card-body { padding: 0.85rem 1.75rem; display: flex; flex-direction: column; }
+  .card-body { padding: 0.6rem 1rem; display: flex; flex-direction: column; }
 
   .card-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 0.65rem; gap: 0.4rem; }
   .card-name { font-family: 'Libre Baskerville', serif; font-size: 0.95rem; color: #1a1714; line-height: 1.2; letter-spacing: 0.01em; }
@@ -123,14 +123,14 @@
   .icon-btn:hover { background: #1a1714; color: #ffffff; border-color: #1a1714; }
   .icon-btn.del:hover { background: #8b2020; color: #ffffff; border-color: #8b2020; }
 
-  .balance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 0.65rem; margin-left: 0.5rem; margin-right: 0.5rem; }
+  .balance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 0.45rem; margin-left: 0.25rem; margin-right: 0.25rem; }
   .bal-cell.working { grid-column: 1 / -1; background: #f0f4ed; border: 1.5px solid #4a5e3a; border-radius: 0; }
-  .bal-cell { background: #f0ece4; border-radius: 0; padding: 0.4rem 0.5rem; text-align: center; border: 1px solid #d8d0c4; }
+  .bal-cell { background: #f0ece4; border-radius: 0; padding: 0.25rem 0.4rem; text-align: center; border: 1px solid #d8d0c4; }
   .bal-cell.cleared { background: #e8f5ec; border-color: #5a9e72; }
   .bal-cell.cleared .bal-cell-label { color: #2d6a3f; }
   .bal-cell.cleared .bal-cell-val { color: #1b4a2d; }
-  .bal-cell-label { font-size: 0.58rem; color: #6b6358; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 2px; }
-  .bal-cell-val { font-size: 0.82rem; font-weight: 600; color: #1a1714; }
+  .bal-cell-label { font-size: 0.52rem; color: #6b6358; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 1px; }
+  .bal-cell-val { font-size: 0.78rem; font-weight: 600; color: #1a1714; }
   .bal-cell.working .bal-cell-label { color: #4a5e3a; }
   .bal-cell.working .bal-cell-val { color: #1a1714; }
   .bal-cell.pending-cell { background: #f0ece4; border-color: #c4a55a; }
@@ -196,8 +196,8 @@
 
   .paydown-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; padding: 0.4rem 0.65rem; background: #f5edd8; border-radius: 0; border: 1px solid #c8a85a; }
   .paydown-label { font-size: 0.65rem; color: #8a6e2e; font-weight: 600; letter-spacing: 0.03em; }
-  .spend-section { padding-top: 0.4rem; margin-left: 0.5rem; margin-right: 0.5rem; }
-  .spend-label { font-size: 0.62rem; color: #6b6358; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 6px; }
+  .spend-section { padding-top: 0.3rem; margin-left: 0.25rem; margin-right: 0.25rem; }
+  .spend-label { font-size: 0.62rem; color: #6b6358; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-bottom: 4px; }
   .spend-input-wrap { display: flex; gap: 7px; }
   .spend-input-wrap input { flex: 1; background: #ffffff; border: 1.5px solid #c8bfb0; border-radius: 0; color: #1a1714; font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; font-weight: 400; padding: 0.4rem 0.7rem; outline: none; transition: border-color 0.15s; min-width: 0; }
   .spend-input-wrap input:focus { border-color: #8a6e2e; }
@@ -247,7 +247,7 @@
   .action-btn.hide:hover { background: #8a6e2e; color: #fff; }
   .action-btn.delete { background: #1a1714; border: 1.5px solid #1a1714; color: #ffffff; }
   .action-btn.delete:hover { background: #8b2020; border-color: #8b2020; }
-  .txn-list { margin-bottom: 0.65rem; margin-left: 0.5rem; margin-right: 0.5rem; border: 1px solid #c8c0b8; }
+  .txn-list { margin-bottom: 0.65rem; margin-left: 0.25rem; margin-right: 0.25rem; border: 1px solid #c8c0b8; }
   .txn-list-body { max-height: 120px; overflow-y: auto; }
   .txn-item { display: grid; grid-template-columns: 38px 1fr 65px auto; align-items: center; padding: 0.3rem 0.5rem; border-bottom: 1px solid #f0ece4; gap: 6px; }
   .txn-item:last-child { border-bottom: none; }
@@ -1723,35 +1723,46 @@ function buildCard(c, idx) {
 
 
 
-        <div style="border:1px solid #c8c0b8;margin-bottom:0.35rem;margin-left:0.5rem;margin-right:0.5rem">
+        <div style="border:1px solid #c8c0b8;margin-bottom:0.3rem;margin-left:0.25rem;margin-right:0.25rem">
           <div onclick="event.stopPropagation();(function(el){el.style.display=el.style.display==='none'?'block':'none'})(document.getElementById('details-${c.id}'))"
-            style="display:flex;align-items:center;justify-content:space-between;padding:0.1rem 0.55rem;cursor:pointer;user-select:none;">
+            style="display:flex;align-items:center;justify-content:space-between;padding:0.08rem 0.5rem;cursor:pointer;user-select:none;">
             <span style="font-size:0.52rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Details</span>
             <span style="font-size:0.55rem;color:#a09880" id="chevron-${c.id}">▾</span>
           </div>
-          <div id="details-${c.id}" style="display:block">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0.08rem 0.55rem;">
-              <div><span style="font-size:0.5rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Closing</span>${c.closing ? `<div style="font-size:0.78rem;color:#1a1714;font-weight:700;margin-top:1px">${ordinal(c.closing)}</div>` : ''}</div>
-              <div style="text-align:center">${closingDays!==null ? `<span class="badge ${closingDays<=3?'urgent':closingDays<=5?'soon':'ok'}">${closingDays===0?'today':'in '+closingDays+'d'}</span>` : ''}</div>
-              <div></div>
+          <div id="details-${c.id}" style="display:block;padding:0.2rem 0.5rem 0.25rem">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:0.2rem">
+              <div>
+                <div style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:2px">Closing</div>
+                <div style="display:flex;align-items:center;gap:4px">
+                  ${c.closing ? `<span style="font-size:0.72rem;color:#1a1714;font-weight:700">${ordinal(c.closing)}</span>` : '<span style="font-size:0.72rem;color:#a09880">—</span>'}
+                  ${closingDays!==null ? `<span class="badge ${closingDays<=3?'urgent':closingDays<=5?'soon':'ok'}">${closingDays===0?'today':'in '+closingDays+'d'}</span>` : ''}
+                </div>
+              </div>
+              <div>
+                <div style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:2px">AutoPay</div>
+                <div style="display:flex;align-items:center;gap:4px">
+                  ${c.autopay ? `<span style="font-size:0.72rem;color:#1a1714;font-weight:700">${ordinal(c.autopay)}</span>` : '<span style="font-size:0.72rem;color:#a09880">—</span>'}
+                  ${badgeText ? `<span class="badge ${badgeClass}">${badgeText}</span>` : ''}
+                </div>
+              </div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0.08rem 0.55rem;">
-              <span style="font-size:0.5rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Stmt bal</span>
-              <div></div>
-              <div style="text-align:right"><input class="stmt-input" type="number" value="${(c.stmtBal||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
-                style="width:70px;text-align:right"
-                onclick="event.stopPropagation()"
-                onchange="updateStmtBal('${c.id}', this.value)"
-                onblur="updateStmtBal('${c.id}', this.value)" /></div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0.08rem 0.55rem;">
-              <div><span style="font-size:0.52rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">AutoPay</span>${c.autopay ? `<div style="font-size:0.78rem;color:#1a1714;font-weight:700;margin-top:1px">${ordinal(c.autopay)}</div>` : ''}</div>
-              <div style="text-align:center">${badgeText ? `<span class="badge ${badgeClass}">${badgeText}</span>` : ''}</div>
-              <div style="text-align:right"><input type="number" class="stmt-input" style="width:70px;text-align:right" value="${(c.autopayAmt||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
-                onclick="event.stopPropagation()"
-                onchange="updateCustomAutopay('${c.id}', this.value)"
-                onblur="updateCustomAutopay('${c.id}', this.value)"
-                onkeydown="if(event.key==='Enter'){updateCustomAutopay('${c.id}', this.value);this.blur();}" /></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <div>
+                <div style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:2px">Statement Balance</div>
+                <input class="stmt-input" type="number" value="${(c.stmtBal||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
+                  style="width:100%;text-align:right;box-sizing:border-box"
+                  onclick="event.stopPropagation()"
+                  onchange="updateStmtBal('${c.id}', this.value)"
+                  onblur="updateStmtBal('${c.id}', this.value)" />
+              </div>
+              <div>
+                <div style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:2px">AutoPay Amount</div>
+                <input type="number" class="stmt-input" style="width:100%;text-align:right;box-sizing:border-box" value="${(c.autopayAmt||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
+                  onclick="event.stopPropagation()"
+                  onchange="updateCustomAutopay('${c.id}', this.value)"
+                  onblur="updateCustomAutopay('${c.id}', this.value)"
+                  onkeydown="if(event.key==='Enter'){updateCustomAutopay('${c.id}', this.value);this.blur();}" />
+              </div>
             </div>
           </div>
         </div>
@@ -1759,22 +1770,20 @@ function buildCard(c, idx) {
 
 
         <div class="spend-section">
-          <div class="spend-label">log new charge or payment</div>
-          <input type="text" id="snote-${c.id}" placeholder="Description" maxlength="60"
-            onclick="event.stopPropagation()"
-            onkeydown="if(event.key==='Enter')addCharge('${c.id}')"
-            style="width:100%;margin-bottom:5px;background:#ffffff;border:1.5px solid #c8bfb0;border-radius:0;color:#1a1714;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;padding:0.3rem 0.7rem;outline:none;box-sizing:border-box;" />
-          <div class="spend-input-wrap">
-            <input type="number" id="sinp-${c.id}" placeholder="" step="0.01"
+          <div class="spend-input-wrap" style="margin-bottom:5px">
+            <input type="number" id="sinp-${c.id}" placeholder="0.00" step="0.01"
               onclick="event.stopPropagation()"
               onkeydown="if(event.key==='Enter')addCharge('${c.id}')" />
             <button onclick="event.stopPropagation();addCharge('${c.id}')">+ log</button>
           </div>
+          <input type="text" id="snote-${c.id}" placeholder="Description" maxlength="60"
+            onclick="event.stopPropagation()"
+            onkeydown="if(event.key==='Enter')addCharge('${c.id}')"
+            style="width:100%;background:#ffffff;border:1.5px solid #c8bfb0;border-radius:0;color:#1a1714;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;padding:0.3rem 0.7rem;outline:none;box-sizing:border-box;" />
         </div>
 
         <div class="txn-list">
-          <div class="txn-section-label" onclick="event.stopPropagation();(function(){const el=document.getElementById('txn-body-${c.id}');const ch=document.getElementById('txn-ch-${c.id}');const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})()" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;padding:2px 0">
-            <span>Transactions</span>
+          <div onclick="event.stopPropagation();(function(){const el=document.getElementById('txn-body-${c.id}');const ch=document.getElementById('txn-ch-${c.id}');const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})()" style="cursor:pointer;display:flex;justify-content:center;align-items:center;padding:2px 0;user-select:none">
             <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880;transition:color 0.15s">${txnListOpen?'▾':'▸'}</span>
           </div>
           <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${txnListOpen?'block':'none'}">
@@ -1814,7 +1823,6 @@ function buildWalletCard(c, idx) {
   const otherWallets = cards.filter(x => x.wallet && !x.hidden && x.id !== c.id);
   const visibleCreditCards = cards.filter(x => !x.wallet && !x.hidden);
   return `<div class="card" draggable="true" data-id="${c.id}" style="animation-delay:${idx*0.04}s;background:#f4f1ec;border:1.5px solid #1a1714;">
-    <div style="height:6px;width:100%;background:#8a6e2e"></div>
     <div class="card-body">
       <button class="icon-btn del" style="position:absolute;top:10px;right:10px;z-index:2" onclick="event.stopPropagation();cardAction('${c.id}')">✕</button>
       <div class="card-header" style="flex-direction:column;align-items:center;gap:0.5rem">
@@ -1842,23 +1850,21 @@ function buildWalletCard(c, idx) {
         </div>
       </div>
       <div class="spend-section">
-        <div class="spend-label">log cash ${''}</div>
-        <input type="text" id="snote-${c.id}" placeholder="Description" maxlength="60"
-          onclick="event.stopPropagation()"
-          onkeydown="if(event.key==='Enter')addCharge('${c.id}')"
-          style="width:100%;margin-bottom:5px;background:#ffffff;border:1.5px solid #c8bfb0;border-radius:0;color:#1a1714;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;padding:0.3rem 0.7rem;outline:none;box-sizing:border-box;" />
-        <div class="spend-input-wrap">
+        <div class="spend-input-wrap" style="margin-bottom:5px">
           <input type="number" id="sinp-${c.id}" placeholder="-12.00" step="0.01"
             onclick="event.stopPropagation()"
             onkeydown="if(event.key==='Enter')addCharge('${c.id}')" />
           <button onclick="event.stopPropagation();addCharge('${c.id}')">+ log</button>
         </div>
+        <input type="text" id="snote-${c.id}" placeholder="Description" maxlength="60"
+          onclick="event.stopPropagation()"
+          onkeydown="if(event.key==='Enter')addCharge('${c.id}')"
+          style="width:100%;background:#ffffff;border:1.5px solid #c8bfb0;border-radius:0;color:#1a1714;font-family:'IBM Plex Mono',monospace;font-size:0.72rem;padding:0.3rem 0.7rem;outline:none;box-sizing:border-box;" />
         <div class="spend-hint" style="font-size:0.6rem;color:#a09880;margin-top:4px">negative = spending · positive = deposit</div>
         ${otherWallets.length > 0 || visibleCreditCards.length > 0 ? `<div style="display:flex;gap:6px;margin-top:0.5rem">${otherWallets.length > 0 ? `<button onclick="event.stopPropagation();openTransfer('${c.id}','transfer')" class="btn" style="flex:1;text-align:center">⇄ transfer</button>` : ''}${visibleCreditCards.length > 0 ? `<button onclick="event.stopPropagation();openTransfer('${c.id}','payment')" class="btn" style="flex:1;text-align:center">↑ pay card</button>` : ''}</div>` : ''}
       </div>
       <div class="txn-list">
-        <div class="txn-section-label" onclick="event.stopPropagation();(function(){const el=document.getElementById('txn-body-${c.id}');const ch=document.getElementById('txn-ch-${c.id}');const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})()\" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none;padding:2px 0">
-          <span>Transactions</span>
+        <div onclick="event.stopPropagation();(function(){const el=document.getElementById('txn-body-${c.id}');const ch=document.getElementById('txn-ch-${c.id}');const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})()" style="cursor:pointer;display:flex;justify-content:center;align-items:center;padding:2px 0;user-select:none">
           <span id="txn-ch-${c.id}" style="font-size:0.6rem;color:#a09880">${hasUncleared?'▾':'▸'}</span>
         </div>
         <div class="txn-list-body"><div id="txn-body-${c.id}" style="display:${hasUncleared?'block':'none'}">
