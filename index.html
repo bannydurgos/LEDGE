@@ -105,7 +105,7 @@
   .stat-value { font-size: 1rem; font-weight: 700; color: #1a1714; line-height: 1.2; font-family: 'Libre Baskerville', serif; }
   .stat-sub { font-size: 0.58rem; color: #6b6358; margin-top: 1px; }
 
-  .cards-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+  .cards-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
   .card { background: #ffffff; border-radius: 0; box-shadow: none; overflow: hidden; cursor: grab; user-select: none; transition: box-shadow 0.2s, transform 0.15s; border: 1.5px solid #1a1714; animation: fadeUp 0.3s ease both; display: flex; flex-direction: column; position: relative; }
   .card:active { cursor: grabbing; }
   .card:hover { box-shadow: 4px 4px 0 #8a6e2e; border-color: #8a6e2e; }
@@ -309,7 +309,7 @@
     input, select, textarea { font-size: 16px !important; }
     #sort-select-mobile, #search-bar { font-size: 0.65rem !important; }
     #chart-of-accounts > div { max-height: none !important; overflow-y: visible !important; }
-    .cards-grid { grid-template-columns: 1fr; }
+    .cards-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
   }
 /* AUTH */
 #authOverlay{position:fixed;inset:0;background:#f4f1ec;z-index:9999;display:none;align-items:center;justify-content:center}
@@ -343,7 +343,15 @@
     <div style="flex:1">
       <div class="logo"><em>L</em>EDGE</div>
     </div>
-    <div style="flex:0 0 auto;display:flex;align-items:center;justify-content:center">
+    <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;justify-content:center">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span id="alert-label-closing" style="font-size:0.65rem;font-weight:600;color:#1a1714;font-family:'IBM Plex Mono',monospace;letter-spacing:0.07em;text-transform:uppercase">closing</span>
+        <label class="small-toggle" style="margin:0">
+          <input type="checkbox" id="alert-mode-toggle" onchange="setAlertMode(this.checked?'autopay':'closing')" />
+          <span class="small-toggle-slider"></span>
+        </label>
+        <span id="alert-label-autopay" style="font-size:0.65rem;font-weight:600;color:#a09880;font-family:'IBM Plex Mono',monospace;letter-spacing:0.07em;text-transform:uppercase">autopay</span>
+      </div>
       <div class="summary-strip" id="summary" style="width:500px;margin:0;z-index:3"></div>
       <div id="cash-summary" style="width:320px;margin:0;display:none;z-index:3"></div>
       <div id="all-summary" style="width:400px;margin:0;display:none;z-index:3"></div>
@@ -360,15 +368,7 @@
   <button onclick="handleAddCard()" title="Add account" style="background:#4a5e3a;border:1.5px solid #4a5e3a;color:#ffffff;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;line-height:1;cursor:pointer;height:28px;padding:0 0.8rem;border-radius:0;flex-shrink:0">+ add account</button>
   <button id="undo-btn" onclick="undo()" disabled title="Undo" style="background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;line-height:1;cursor:pointer;width:28px;height:28px;padding:0;border-radius:0;transition:opacity 0.15s;flex-shrink:0;opacity:0.4;margin-left:8px" onmouseenter="if(!this.disabled)this.style.opacity='1'" onmouseleave="if(!this.disabled)this.style.opacity='1'">↩</button>
   <button id="redo-btn" onclick="redo()" disabled title="Redo" style="background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;line-height:1;cursor:pointer;width:28px;height:28px;padding:0;border-radius:0;transition:opacity 0.15s;flex-shrink:0;opacity:0.4" onmouseenter="if(!this.disabled)this.style.opacity='1'" onmouseleave="if(!this.disabled)this.style.opacity='1'">↪</button>
-  <div style="position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px">
-    <span id="alert-label-closing" style="font-size:0.65rem;font-weight:600;color:#1a1714;font-family:'IBM Plex Mono',monospace;letter-spacing:0.07em;text-transform:uppercase">closing</span>
-    <label class="small-toggle" style="margin:0">
-      <input type="checkbox" id="alert-mode-toggle" onchange="setAlertMode(this.checked?'autopay':'closing')" />
-      <span class="small-toggle-slider"></span>
-    </label>
-    <span id="alert-label-autopay" style="font-size:0.65rem;font-weight:600;color:#a09880;font-family:'IBM Plex Mono',monospace;letter-spacing:0.07em;text-transform:uppercase">autopay</span>
-  </div>
-  <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+<div style="margin-left:auto;display:flex;align-items:center;gap:8px">
     <select id="sort-select" onchange="setSort(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:500;height:28px;padding:0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#6b6358;cursor:pointer;outline:none;">
       <option value="none">A → Z</option>
       <option value="closing">CLOSING DATE</option>
