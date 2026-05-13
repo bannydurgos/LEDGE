@@ -287,7 +287,7 @@
     header { margin-bottom: 0; }
     .header-top { height: auto !important; min-height: 120px; flex-direction: column; align-items: center; gap: 0.5rem; padding: 0.75rem 0; }
     .header-right { display: flex !important; flex-wrap: wrap; justify-content: center; gap: 6px; width: 100%; }
-    .summary-strip, #cash-summary, #all-summary { width: 100% !important; box-sizing: border-box; min-width: 0; }
+    .summary-strip, #cash-summary, #all-summary { width: 100% !important; box-sizing: border-box; min-width: 0; min-height: 116px; }
     .header-top > div:nth-child(2) { width: 100% !important; flex: 1 1 100% !important; }
     #tab-bar { flex-wrap: wrap; gap: 2px; padding-bottom: 6px; margin-bottom: 0.75rem; }
     #tab-bar > button[id^="tab-"] { flex: 1; order: 20; }
@@ -623,6 +623,7 @@ let _unsubscribeSnapshot = null;
 // ── UNDO/REDO HISTORY ─────────────────────────────────────
 let undoStack = [];
 let redoStack = [];
+let apCarouselIdx = 0;
 let _lastPersistedCards = null;
 
 function updateUndoBtn() {
@@ -1948,7 +1949,11 @@ function updateSummary() {
   const totalAP = parseFloat(creditCards.reduce((s,c)=>s+effectiveAutopay(c),0).toFixed(2));
   const apByDate = {};
   creditCards.forEach(c => { if (!c.autopay) return; const a = effectiveAutopay(c); if (a) apByDate[c.autopay] = (apByDate[c.autopay]||0)+a; });
-  const apBreakdown = Object.entries(apByDate).sort((a,b)=>{ const n=v=>v==='EOM'?32:parseInt(v)||0; return n(a[0])-n(b[0]); }).map(([d,a])=>`<span style="color:#a09880">${ordinal(d)}</span>&thinsp;<span style="font-weight:600;color:#1a1714">${fmt$(a)}</span>`).join('<br>');
+  const apEntries = Object.entries(apByDate).sort((a,b)=>{ const n=v=>v==='EOM'?32:parseInt(v)||0; return n(a[0])-n(b[0]); });
+  if (apCarouselIdx >= apEntries.length) apCarouselIdx = 0;
+  const apSub = apEntries.length === 0 ? '' : apEntries.length === 1
+    ? `<span style="color:#a09880">${ordinal(apEntries[0][0])}</span>&thinsp;<span style="font-weight:600;color:#1a1714">${fmt$(apEntries[0][1])}</span>`
+    : `<span onclick="event.stopPropagation();apCarouselIdx=(apCarouselIdx-1+${apEntries.length})%${apEntries.length};updateSummary()" style="cursor:pointer;padding:0 4px;color:#1a1714;font-size:0.85rem;font-weight:700;user-select:none;line-height:1">&#8249;</span><span style="color:#a09880">${ordinal(apEntries[apCarouselIdx][0])}</span>&thinsp;<span style="font-weight:600;color:#1a1714">${fmt$(apEntries[apCarouselIdx][1])}</span><span onclick="event.stopPropagation();apCarouselIdx=(apCarouselIdx+1)%${apEntries.length};updateSummary()" style="cursor:pointer;padding:0 4px;color:#1a1714;font-size:0.85rem;font-weight:700;user-select:none;line-height:1">&#8250;</span>`;
   const excludedNames = cards.filter(c=>(!c.includeInTotals||c.npsl)&&!c.wallet).map(c=>c.name.split(' ').slice(0,2).join(' '));
   const fmtK = v => Math.abs(v)>=1000?`$${(v/1000).toFixed(1)}k`:`$${v.toFixed(2)}`;
   const statStyle = 'flex:0 0 calc(33.333% - 6px);min-width:0;box-sizing:border-box;border:1.5px solid #1a1714';
@@ -1963,7 +1968,7 @@ function updateSummary() {
     </div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">utilization</div><div class="stat-value">${util}%</div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">pending</div><div class="stat-value">${fmt$(totalPending)}</div></div>
-    <div class="stat" style="${statStyle}"><div class="stat-label">autopay due</div><div class="stat-value">${fmt$(totalAP)}<div class="stat-sub" style="margin-top:2px;line-height:1.7;font-size:0.6rem">${apBreakdown}</div></div></div>
+    <div class="stat" style="${statStyle}"><div class="stat-label">autopay due</div><div class="stat-value">${fmt$(totalAP)}<div class="stat-sub" style="margin-top:2px;font-size:0.6rem;display:flex;align-items:center;justify-content:center;gap:1px">${apSub}</div></div></div>
   `;
 }
 
