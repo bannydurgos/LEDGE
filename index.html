@@ -1392,6 +1392,43 @@ function openModal(id) {
 }
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
 
+function toggleCardInfo(id) {
+  const el = document.getElementById('card-info-' + id);
+  const isOpen = el.style.display !== 'none';
+  document.querySelectorAll('[id^="card-info-"]').forEach(p => p.style.display = 'none');
+  if (!isOpen) el.style.display = 'block';
+}
+
+function quickRenameCard(id) {
+  const nameEl = document.querySelector(`[data-id="${id}"] .card-name`);
+  if (!nameEl) return;
+  const c = cards.find(x => x.id === id);
+  if (!c) return;
+  const input = document.createElement('input');
+  input.value = c.name;
+  input.style.cssText = 'font-family:\'Libre Baskerville\',serif;font-size:0.95rem;color:#1a1714;background:transparent;border:none;border-bottom:1.5px solid #1a1714;outline:none;text-align:center;width:100%;letter-spacing:0.01em;padding:0';
+  nameEl.innerHTML = '';
+  nameEl.appendChild(input);
+  input.focus();
+  input.select();
+  function commit() {
+    const newName = input.value.trim();
+    if (newName && newName !== c.name) {
+      cards = cards.map(x => x.id === id ? {...x, name: newName} : x);
+      persist();
+      renderCard(id);
+    } else {
+      renderCard(id);
+    }
+  }
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+    else if (e.key === 'Escape') { input.removeEventListener('blur', commit); renderCard(id); }
+  });
+  input.addEventListener('click', e => e.stopPropagation());
+}
+
 function saveCard() {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { alert('Card name is required.'); return; }
@@ -1673,7 +1710,7 @@ function buildCard(c, idx) {
       : (apDays !== null && apDays <= 1 && apDays >= 0);
     const cardClass = closingAlert ? 'closing-alert' : '';
     const badgeClass = apDays===null?'':apDays<=3?'urgent':apDays<=7?'soon':'ok';
-    const badgeText = apDays===null?'':apDays===0?'autopay today':`in ${apDays}d`;
+    const badgeText = apDays===null?'':apDays===0?'autopay today':`${apDays}d`;
     const utilLabel = c.npsl?'No preset limit':c.limit?`${pct.toFixed(2)}% of ${fmtK(c.limit)}`:'no limit set';
     const hasPending = (c.pending||0) !== 0;
     const isStmt = c.autopayMode==='statement';
@@ -1694,14 +1731,14 @@ function buildCard(c, idx) {
         <button class="icon-btn del" style="position:absolute;top:10px;right:10px;z-index:2" onclick="event.stopPropagation();cardAction('${c.id}')">✕</button>
         <div class="card-header" style="flex-direction:column;align-items:center;gap:0.5rem">
           <div style="text-align:center;width:100%">
-            <div class="card-name" style="display:flex;align-items:center;justify-content:center;gap:5px">
+            <div class="card-name" onclick="event.stopPropagation();toggleCardInfo('${c.id}')" ondblclick="event.stopPropagation();document.getElementById('card-info-${c.id}').style.display='none';quickRenameCard('${c.id}')" style="cursor:pointer">
               ${c.name}
-              <button onclick="event.stopPropagation();const el=document.getElementById('card-info-${c.id}');el.style.display=el.style.display==='none'?'block':'none'" style="background:none;border:1px solid #6b6358;border-radius:50%;color:#6b6358;cursor:pointer;font-size:0.48rem;font-weight:700;width:12px;height:12px;padding:0;line-height:12px;text-align:center;font-family:'IBM Plex Mono',monospace;flex-shrink:0">?</button>
             </div>
             <div id="card-info-${c.id}" onclick="event.stopPropagation()" style="display:none;position:absolute;top:38px;left:50%;transform:translateX(-50%);width:200px;background:#ffffff;border:1.5px solid #1a1714;padding:0.5rem 0.65rem;font-size:0.65rem;color:#6b6358;line-height:1.8;z-index:50;box-shadow:4px 4px 0 #8a6e2e">
               <div style="display:flex;justify-content:space-between"><span style="color:#a09880">Limit</span><span style="font-weight:600;color:#1a1714">${c.npsl ? 'NPSL' : c.limit ? '$'+c.limit.toLocaleString() : '—'}</span></div>
               <div style="display:flex;justify-content:space-between"><span style="color:#a09880">APR</span><span style="font-weight:600;color:#1a1714">${c.apr ? c.apr+'%' : '—'}</span></div>
-              <div style="display:flex;justify-content:space-between"><span style="color:#a09880">Closes</span><span style="font-weight:600;color:#1a1714">${c.closing ? ordinal(c.closing) : '—'}</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:#a09880">Closing</span><span style="font-weight:600;color:#1a1714">${c.closing ? ordinal(c.closing) : '—'}${closingDays!==null ? `<span class="badge ${closingDays<=3?'urgent':closingDays<=5?'soon':'ok'}" style="margin-left:4px">${closingDays===0?'today':closingDays+'d'}</span>` : ''}</span></div>
+              <div style="display:flex;justify-content:space-between"><span style="color:#a09880">AP Date</span><span style="font-weight:600;color:#1a1714">${c.autopay ? ordinal(c.autopay) : '—'}${badgeText ? `<span class="badge ${badgeClass}" style="margin-left:4px">${badgeText}</span>` : ''}</span></div>
               ${c.notes ? `<div style="margin-top:4px;padding-top:4px;border-top:1px solid #e0e0e0;color:#6b6358;font-style:italic">${c.notes}</div>` : ''}
             </div>
           </div>
@@ -1733,38 +1770,23 @@ function buildCard(c, idx) {
         <div style="border:1px solid #c8c0b8;margin-bottom:0.3rem;margin-left:0.25rem;margin-right:0.25rem">
           <div onclick="event.stopPropagation();(function(el){el.style.display=el.style.display==='none'?'block':'none'})(document.getElementById('details-${c.id}'))"
             style="display:flex;align-items:center;justify-content:space-between;padding:0.08rem 0.5rem;cursor:pointer;user-select:none;">
-            <span style="font-size:0.52rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Details</span>
+            <span style="font-size:0.52rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Payment Details</span>
             <span style="font-size:0.55rem;color:#a09880" id="chevron-${c.id}">${(closingDays!==null&&closingDays<=5)||(apDays!==null&&apDays<=7)?'▾':'▸'}</span>
           </div>
           <div id="details-${c.id}" style="display:${(closingDays!==null&&closingDays<=5)||(apDays!==null&&apDays<=7)?'block':'none'};padding:0.2rem 0.5rem 0.25rem">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:0.2rem">
-              <div>
-                <div style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:2px">Closing</div>
-                <div style="display:flex;align-items:center;gap:4px">
-                  ${c.closing ? `<span style="font-size:0.72rem;color:#1a1714;font-weight:700">${ordinal(c.closing)}</span>` : '<span style="font-size:0.72rem;color:#a09880">—</span>'}
-                  ${closingDays!==null ? `<span class="badge ${closingDays<=3?'urgent':closingDays<=5?'soon':'ok'}">${closingDays===0?'today':'in '+closingDays+'d'}</span>` : ''}
-                </div>
-              </div>
-              <div>
-                <div style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:2px">AutoPay</div>
-                <div style="display:flex;align-items:center;gap:4px">
-                  ${c.autopay ? `<span style="font-size:0.72rem;color:#1a1714;font-weight:700">${ordinal(c.autopay)}</span>` : '<span style="font-size:0.72rem;color:#a09880">—</span>'}
-                  ${badgeText ? `<span class="badge ${badgeClass}">${badgeText}</span>` : ''}
-                </div>
-              </div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-              <div>
-                <div style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:2px">Statement Balance</div>
+            <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:4px 0;width:100%;align-items:center">
+              <div style="display:flex;align-items:center;gap:5px;padding-right:8px">
+                <span style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;white-space:nowrap">Stmt:</span>
                 <input class="stmt-input" type="number" value="${(c.stmtBal||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
-                  style="width:100%;text-align:right;box-sizing:border-box"
+                  style="flex:1;text-align:right;box-sizing:border-box"
                   onclick="event.stopPropagation()"
                   onchange="updateStmtBal('${c.id}', this.value)"
                   onblur="updateStmtBal('${c.id}', this.value)" />
               </div>
-              <div>
-                <div style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:2px">AutoPay Amount</div>
-                <input type="number" class="stmt-input" style="width:100%;text-align:right;box-sizing:border-box" value="${(c.autopayAmt||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
+              <span style="color:#d0c8bc;font-size:0.6rem;text-align:center">|</span>
+              <div style="display:flex;align-items:center;gap:5px;padding-left:8px">
+                <span style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;white-space:nowrap">AP Amt:</span>
+                <input type="number" class="stmt-input" style="flex:1;text-align:right;box-sizing:border-box" value="${(c.autopayAmt||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
                   onclick="event.stopPropagation()"
                   onchange="updateCustomAutopay('${c.id}', this.value)"
                   onblur="updateCustomAutopay('${c.id}', this.value)"
