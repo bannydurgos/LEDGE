@@ -109,6 +109,7 @@
   .card { background: #ffffff; border-radius: 0; box-shadow: none; overflow: hidden; user-select: none; transition: box-shadow 0.2s, transform 0.15s; border: 1.5px solid #1a1714; animation: fadeUp 0.3s ease both; display: flex; flex-direction: column; position: relative; }
   .card:hover { box-shadow: 4px 4px 0 #8a6e2e; border-color: #8a6e2e; }
 .card.closing-alert { border-color: #cc2222 !important; border-width: 2.5px !important; box-shadow: 4px 4px 0 #cc2222 !important; }
+  .card.autopay-alert { border-color: #2255cc !important; border-width: 2.5px !important; box-shadow: 4px 4px 0 #2255cc !important; }
   .card-stripe { display: none; }
   .card-body { padding: 0.6rem 1rem; display: flex; flex-direction: column; }
 
@@ -350,14 +351,6 @@
       <div class="logo"><em>L</em>EDGE</div>
     </div>
     <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;justify-content:center">
-      <div style="display:flex;align-items:center;gap:6px">
-        <span id="alert-label-closing" style="font-size:0.65rem;font-weight:600;color:#1a1714;font-family:'IBM Plex Mono',monospace;letter-spacing:0.07em;text-transform:uppercase">closing</span>
-        <label class="small-toggle" style="margin:0">
-          <input type="checkbox" id="alert-mode-toggle" onchange="setAlertMode(this.checked?'autopay':'closing')" />
-          <span class="small-toggle-slider"></span>
-        </label>
-        <span id="alert-label-autopay" style="font-size:0.65rem;font-weight:600;color:#a09880;font-family:'IBM Plex Mono',monospace;letter-spacing:0.07em;text-transform:uppercase">autopay</span>
-      </div>
       <div class="summary-strip" id="summary" style="width:500px;margin:0;z-index:3"></div>
       <div id="cash-summary" style="width:320px;margin:0;display:none;z-index:3"></div>
       <div id="all-summary" style="width:400px;margin:0;display:none;z-index:3"></div>
@@ -847,7 +840,6 @@ function initAuth() {
 let sortMode = localStorage.getItem('sortMode') || 'none';
 let pendingFirst = localStorage.getItem('pendingFirst') === 'true';
 let viewMode = localStorage.getItem('viewMode') || 'all';
-let alertMode = localStorage.getItem('alertMode') || 'closing';
 let searchQuery = '';
 let _appReady = false;
 
@@ -858,21 +850,6 @@ function togglePendingFirst() {
   render();
 }
 
-function setAlertMode(mode) {
-  alertMode = mode;
-  localStorage.setItem('alertMode', mode);
-  const toggle = document.getElementById('alert-mode-toggle');
-  const lc = document.getElementById('alert-label-closing');
-  const la = document.getElementById('alert-label-autopay');
-  if (toggle) toggle.checked = mode === 'autopay';
-  if (lc) lc.style.color = mode === 'closing' ? '#1a1714' : '#a09880';
-  if (la) la.style.color = mode === 'autopay' ? '#1a1714' : '#a09880';
-  // Auto-sort on toggle switch (sort by the opposite date)
-  const autoSort = mode === 'autopay' ? 'closing' : 'autopay';
-  setSort(autoSort);
-  const sel = document.getElementById('sort-select');
-  if (sel) sel.value = autoSort;
-}
 
 function setSort(val) {
   sortMode = val;
@@ -1764,12 +1741,10 @@ function buildCard(c, idx) {
     const barColor = c.npsl?'var(--c2)':pct>75?'var(--c5)':pct>40?'var(--c4)':`var(--${color})`;
     const apDays = daysUntilDay(c.autopay);
     const closingDays = daysUntilDay(c.closing);
-    // Red: day before closing (closingDays===1) AND closing day itself (closingDays===0)
-    // Also stays red the day after closing until midnight (handled by lastStmtSnap not yet set for today)
-    const closingAlert = alertMode === 'closing'
-      ? (closingDays !== null && closingDays <= 1 && closingDays >= 0)
-      : (apDays !== null && apDays <= 1 && apDays >= 0);
-    const cardClass = closingAlert ? 'closing-alert' : '';
+    // Red: day before or on closing date; Blue: day before or on autopay date; closing takes priority
+    const closingAlert = closingDays !== null && closingDays <= 1 && closingDays >= 0;
+    const autopayAlert = !closingAlert && apDays !== null && apDays <= 1 && apDays >= 0;
+    const cardClass = closingAlert ? 'closing-alert' : autopayAlert ? 'autopay-alert' : '';
     const badgeClass = apDays===null?'':apDays<=3?'urgent':apDays<=7?'soon':'ok';
     const badgeText = apDays===null?'':apDays===0?'autopay today':`${apDays}d`;
     const utilLabel = c.npsl?'No preset limit':c.limit?`${pct.toFixed(2)}% of ${fmtK(c.limit)}`:'no limit set';
@@ -1779,11 +1754,12 @@ function buildCard(c, idx) {
 
     const utilBg = c.npsl ? '' : !c.limit ? '' : pct >= 30 ? 'rgba(204,34,34,0.08)' : pct >= 20 ? 'rgba(196,100,20,0.12)' : pct >= 10 ? 'rgba(196,165,20,0.1)' : 'rgba(30,120,60,0.1)';
     const utilStripe = c.npsl ? 'rgba(0,0,0,0.04)' : !c.limit ? 'rgba(0,0,0,0.04)' : pct >= 30 ? 'rgba(204,34,34,0.12)' : pct >= 20 ? 'rgba(196,100,20,0.15)' : pct >= 10 ? 'rgba(196,165,20,0.15)' : 'rgba(30,120,60,0.12)';
-    const alertStripe = 'rgba(204,34,34,0.12)';
     const paydownBg = closingAlert
       ? `repeating-linear-gradient(45deg, rgba(255,240,240,1), rgba(255,240,240,1) 6px, rgba(204,34,34,0.15) 6px, rgba(204,34,34,0.15) 12px)`
+      : autopayAlert
+      ? `repeating-linear-gradient(45deg, rgba(240,245,255,1), rgba(240,245,255,1) 6px, rgba(34,85,204,0.12) 6px, rgba(34,85,204,0.12) 12px)`
       : `repeating-linear-gradient(45deg, transparent, transparent 6px, ${utilStripe} 6px, ${utilStripe} 12px)`;
-    const solidBg = closingAlert ? '#fff0f0' : utilBg;
+    const solidBg = closingAlert ? '#fff0f0' : autopayAlert ? '#f0f4ff' : utilBg;
     return `<div class="card ${cardClass}" data-id="${c.id}" style="animation-delay:${idx*0.04}s;${c.paydown?`background:${paydownBg};`:solidBg?`background:${solidBg};`:''}">
       <div class="card-stripe" style="background:var(--${color})"></div>
       <div class="card-body">
@@ -2271,7 +2247,6 @@ document.getElementById('partial-modal').addEventListener('click', e => { if(e.t
 document.getElementById('action-modal-overlay').addEventListener('click', e => { if(e.target.id==='action-modal-overlay') closeActionModal(); });
 document.getElementById('history-modal-overlay').addEventListener('click', e => { if(e.target.id==='history-modal-overlay') document.getElementById('history-modal-overlay').classList.remove('open'); });
 updateTabs();
-setAlertMode(alertMode);
 initAuth();
 window.addEventListener('resize', updateTabs);
 </script>
