@@ -372,6 +372,7 @@
   <button id="tab-cash" onclick="setView('cash')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0 1rem;height:28px;border:none;border-bottom:2px solid transparent;margin-bottom:-6px;background:transparent;color:#6b6358;cursor:pointer">Cash</button>
   <button id="tab-credit" onclick="setView('credit')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0 1rem;height:28px;border:none;border-bottom:2px solid transparent;margin-bottom:-6px;background:transparent;color:#6b6358;cursor:pointer">Credit</button>
 <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+    <button id="show-details-btn" onclick="toggleAllDetails()" style="display:none;background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;line-height:1;cursor:pointer;height:28px;padding:0 0.8rem;border-radius:0;flex-shrink:0">show details</button>
     <button id="undo-btn" onclick="undo()" disabled title="Undo" style="background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;line-height:1;cursor:pointer;width:28px;height:28px;padding:0;border-radius:0;transition:opacity 0.15s;flex-shrink:0;opacity:0.4" onmouseenter="if(!this.disabled)this.style.opacity='1'" onmouseleave="if(!this.disabled)this.style.opacity='1'">↩</button>
     <button id="redo-btn" onclick="redo()" disabled title="Redo" style="background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;line-height:1;cursor:pointer;width:28px;height:28px;padding:0;border-radius:0;transition:opacity 0.15s;flex-shrink:0;opacity:0.4" onmouseenter="if(!this.disabled)this.style.opacity='1'" onmouseleave="if(!this.disabled)this.style.opacity='1'">↪</button>
     <button onclick="handleAddCard()" title="Add account" style="background:#4a5e3a;border:1.5px solid #4a5e3a;color:#ffffff;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;line-height:1;cursor:pointer;height:28px;padding:0 0.8rem;border-radius:0;flex-shrink:0">+ add account</button>
@@ -881,6 +882,30 @@ function setSort(val) {
   render();
 }
 
+let allDetailsExpanded = false;
+
+function isDetailsUrgent(c) {
+  const closingDays = daysUntilDay(c.closing);
+  const apDays = daysUntilDay(c.autopay);
+  return (closingDays !== null && closingDays <= 5) || (apDays !== null && apDays <= 7);
+}
+
+function toggleAllDetails() {
+  allDetailsExpanded = !allDetailsExpanded;
+  const creditCards = cards.filter(c => !c.wallet && !c.hidden);
+  creditCards.forEach(c => {
+    const urgent = isDetailsUrgent(c);
+    // When collapsing, skip cards that are urgently auto-expanded
+    if (!allDetailsExpanded && urgent) return;
+    const el = document.getElementById('details-' + c.id);
+    const ch = document.getElementById('chevron-' + c.id);
+    if (el) el.style.display = allDetailsExpanded ? 'block' : 'none';
+    if (ch) ch.textContent = allDetailsExpanded ? '▾' : '▸';
+  });
+  const btn = document.getElementById('show-details-btn');
+  if (btn) btn.textContent = allDetailsExpanded ? 'hide details' : 'show details';
+}
+
 function setView(mode) {
   viewMode = mode;
   localStorage.setItem('viewMode', mode);
@@ -940,6 +965,8 @@ function updateTabs() {
       btn.style.borderBottomColor = 'transparent';
     }
   });
+  const showDetailsBtn = document.getElementById('show-details-btn');
+  if (showDetailsBtn) showDetailsBtn.style.display = viewMode === 'credit' ? 'inline-block' : 'none';
 }
 
 function updateSortBtns() {
