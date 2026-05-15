@@ -873,7 +873,7 @@ let allDetailsExpanded = false;
 function isDetailsUrgent(c) {
   const closingDays = daysUntilDay(c.closing);
   const apDays = daysUntilDay(c.autopay);
-  return (closingDays !== null && closingDays <= 5) || (apDays !== null && apDays <= 7);
+  return (closingDays !== null && closingDays <= 5) || (apDays !== null && apDays <= 5);
 }
 
 function toggleAllDetails() {
@@ -1810,7 +1810,7 @@ function buildCard(c, idx) {
             <span style="font-size:0.52rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Payment Details</span>
             <span style="font-size:0.55rem;color:#a09880" id="chevron-${c.id}">${(closingDays!==null&&closingDays<=5)||(apDays!==null&&apDays<=7)?'▾':'▸'}</span>
           </div>
-          <div id="details-${c.id}" style="display:${(closingDays!==null&&closingDays<=5)||(apDays!==null&&apDays<=7)?'block':'none'};padding:0.2rem 0.5rem 0.25rem">
+          <div id="details-${c.id}" style="display:${(closingDays!==null&&closingDays<=5)||(apDays!==null&&apDays<=5)?'block':'none'};padding:0.2rem 0.5rem 0.25rem">
             <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:4px 0;width:100%;align-items:center">
               <div style="display:flex;align-items:center;gap:5px;padding-right:8px">
                 <span style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;white-space:nowrap">Stmt:</span>
