@@ -598,6 +598,16 @@
   </div>
 </div>
 
+<div id="autopay-breakdown" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+  <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem">
+      <h2 style="font-family:'Libre Baskerville',serif;font-size:1.1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0">Autopay Schedule</h2>
+      <button onclick="document.getElementById('autopay-breakdown').style.display='none'" style="background:none;border:none;font-size:1rem;color:#6b6358;cursor:pointer">✕</button>
+    </div>
+    <div id="autopay-breakdown-body"></div>
+  </div>
+</div>
+
 <div id="authOverlay">
   <div class="auth-box">
     <div class="auth-logo"><em>L</em>edge</div>
@@ -630,7 +640,6 @@ let _unsubscribeSnapshot = null;
 // ── UNDO/REDO HISTORY ─────────────────────────────────────
 let undoStack = [];
 let redoStack = [];
-let apCarouselIdx = 0;
 let _lastPersistedCards = null;
 
 function updateUndoBtn() {
@@ -1119,6 +1128,50 @@ function resetToDefaults() {
 
 function effectiveAutopay(c) {
   return parseFloat((c.autopayAmt||0).toFixed(2));
+}
+
+function openAutopayBreakdown() {
+  const cc = cards.filter(c => !c.wallet);
+  const rows = cc
+    .filter(c => c.autopay && effectiveAutopay(c) > 0)
+    .sort((a, b) => {
+      const n = v => v === 'EOM' ? 32 : parseInt(v) || 0;
+      return n(a.autopay) - n(b.autopay);
+    });
+  const body = document.getElementById('autopay-breakdown-body');
+  if (!rows.length) {
+    body.innerHTML = '<div style="color:#6b6358;font-size:0.72rem;text-align:center;padding:1rem">No autopay amounts set.</div>';
+  } else {
+    const total = parseFloat(rows.reduce((s, c) => s + effectiveAutopay(c), 0).toFixed(2));
+    body.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:0.72rem">
+      <thead>
+        <tr style="border-bottom:2px solid #1a1714">
+          <th style="text-align:left;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Card</th>
+          <th style="text-align:center;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Due</th>
+          <th style="text-align:right;padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(c => {
+          const apDays = daysUntilDay(c.autopay);
+          const badgeClass = apDays === null ? '' : apDays <= 3 ? 'urgent' : apDays <= 7 ? 'soon' : 'ok';
+          const badgeText = apDays === null ? '' : apDays === 0 ? 'today' : `${apDays}d`;
+          return `<tr style="border-bottom:1px solid #e8e4dc">
+            <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">${c.name}</td>
+            <td style="text-align:center;padding:0.35rem 0.5rem;color:#1a1714">${ordinal(c.autopay)}${badgeText ? `<span class="badge ${badgeClass}" style="margin-left:4px">${badgeText}</span>` : ''}</td>
+            <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714;font-weight:600">${fmt$(effectiveAutopay(c))}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+      <tfoot>
+        <tr style="border-top:2px solid #1a1714">
+          <td colspan="2" style="padding:0.35rem 0.5rem;font-size:0.58rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600">Total</td>
+          <td style="text-align:right;padding:0.35rem 0.5rem;font-weight:700;color:#1a1714">${fmt$(total)}</td>
+        </tr>
+      </tfoot>
+    </table>`;
+  }
+  document.getElementById('autopay-breakdown').style.display = 'flex';
 }
 
 function updateStmtBal(id, val) {
@@ -1990,13 +2043,6 @@ function updateSummary() {
   const totalWorking = parseFloat(creditCards.reduce((s,c)=>s+(c.balance||0)+(c.pending||0),0).toFixed(2));
   const totalPending = parseFloat(creditCards.reduce((s,c)=>s+(c.pending||0),0).toFixed(2));
   const totalAP = parseFloat(creditCards.reduce((s,c)=>s+effectiveAutopay(c),0).toFixed(2));
-  const apByDate = {};
-  creditCards.forEach(c => { if (!c.autopay) return; const a = effectiveAutopay(c); if (a) apByDate[c.autopay] = (apByDate[c.autopay]||0)+a; });
-  const apEntries = Object.entries(apByDate).sort((a,b)=>{ const n=v=>v==='EOM'?32:parseInt(v)||0; return n(a[0])-n(b[0]); });
-  if (apCarouselIdx >= apEntries.length) apCarouselIdx = 0;
-  const apSub = apEntries.length === 0 ? '' : apEntries.length === 1
-    ? `<span style="color:#a09880">${ordinal(apEntries[0][0])}</span>&thinsp;<span style="font-weight:600;color:#1a1714">${fmt$(apEntries[0][1])}</span>`
-    : `<span onclick="event.stopPropagation();apCarouselIdx=(apCarouselIdx-1+${apEntries.length})%${apEntries.length};updateSummary()" style="cursor:pointer;padding:0 4px;color:#1a1714;font-size:0.85rem;font-weight:700;user-select:none;line-height:1">&#8249;</span><span style="color:#a09880">${ordinal(apEntries[apCarouselIdx][0])}</span>&thinsp;<span style="font-weight:600;color:#1a1714">${fmt$(apEntries[apCarouselIdx][1])}</span><span onclick="event.stopPropagation();apCarouselIdx=(apCarouselIdx+1)%${apEntries.length};updateSummary()" style="cursor:pointer;padding:0 4px;color:#1a1714;font-size:0.85rem;font-weight:700;user-select:none;line-height:1">&#8250;</span>`;
   const excludedNames = cards.filter(c=>(!c.includeInTotals||c.npsl)&&!c.wallet).map(c=>c.name.split(' ').slice(0,2).join(' '));
   const fmtK = v => Math.abs(v)>=1000?`$${(v/1000).toFixed(1)}k`:`$${v.toFixed(2)}`;
   const statStyle = 'flex:0 0 calc(33.333% - 6px);min-width:0;box-sizing:border-box;border:1.5px solid #1a1714';
@@ -2011,7 +2057,7 @@ function updateSummary() {
     </div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">utilization</div><div class="stat-value">${util}%</div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">pending</div><div class="stat-value">${fmt$(totalPending)}</div></div>
-    <div class="stat" style="${statStyle}"><div class="stat-label">autopay due</div><div class="stat-value">${fmt$(totalAP)}<div class="stat-sub" style="margin-top:2px;font-size:0.6rem;display:flex;align-items:center;justify-content:center;gap:1px">${apSub}</div></div></div>
+    <div class="stat" style="${statStyle}"><div class="stat-label">autopay due</div><div class="stat-value" onclick="event.stopPropagation();openAutopayBreakdown()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px">${fmt$(totalAP)}</div></div>
   `;
 }
 
