@@ -1776,6 +1776,24 @@ function buildCard(c, idx) {
               <div style="display:flex;justify-content:space-between"><span style="color:#a09880">APR</span><span style="font-weight:600;color:#1a1714">${c.apr ? c.apr+'%' : '—'}</span></div>
               <div style="display:flex;justify-content:space-between"><span style="color:#a09880">Closing</span><span style="font-weight:600;color:#1a1714">${c.closing ? ordinal(c.closing) : '—'}${closingDays!==null ? `<span class="badge ${closingDays<=3?'urgent':closingDays<=5?'soon':'ok'}" style="margin-left:4px">${closingDays===0?'today':closingDays+'d'}</span>` : ''}</span></div>
               <div style="display:flex;justify-content:space-between"><span style="color:#a09880">AP Date</span><span style="font-weight:600;color:#1a1714">${c.autopay ? ordinal(c.autopay) : '—'}${badgeText ? `<span class="badge ${badgeClass}" style="margin-left:4px">${badgeText}</span>` : ''}</span></div>
+              <div style="margin-top:4px;padding-top:4px;border-top:1px solid #e0e0e0">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+                  <span style="color:#a09880">Stmt Bal</span>
+                  <input class="stmt-input" type="number" value="${(c.stmtBal||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
+                    style="width:80px;text-align:right;box-sizing:border-box"
+                    onclick="event.stopPropagation()"
+                    onchange="updateStmtBal('${c.id}', this.value)"
+                    onblur="updateStmtBal('${c.id}', this.value)" />
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="color:#a09880">AP Amt</span>
+                  <input type="number" class="stmt-input" style="width:80px;text-align:right;box-sizing:border-box" value="${(c.autopayAmt||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
+                    onclick="event.stopPropagation()"
+                    onchange="updateCustomAutopay('${c.id}', this.value)"
+                    onblur="updateCustomAutopay('${c.id}', this.value)"
+                    onkeydown="if(event.key==='Enter'){updateCustomAutopay('${c.id}', this.value);this.blur();}" />
+                </div>
+              </div>
               ${c.notes ? `<div style="margin-top:4px;padding-top:4px;border-top:1px solid #e0e0e0;color:#6b6358;font-style:italic">${c.notes}</div>` : ''}
             </div>
           </div>
@@ -1803,35 +1821,6 @@ function buildCard(c, idx) {
         </div>
 
 
-
-        <div style="border:1px solid #c8c0b8;margin-bottom:0.3rem;margin-left:0.25rem;margin-right:0.25rem">
-          <div onclick="event.stopPropagation();(function(el){el.style.display=el.style.display==='none'?'block':'none'})(document.getElementById('details-${c.id}'))"
-            style="display:flex;align-items:center;justify-content:space-between;padding:0.08rem 0.5rem;cursor:pointer;user-select:none;">
-            <span style="font-size:0.52rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Payment Details</span>
-            <span style="font-size:0.55rem;color:#a09880" id="chevron-${c.id}">${(closingDays!==null&&closingDays<=5)||(apDays!==null&&apDays<=7)?'▾':'▸'}</span>
-          </div>
-          <div id="details-${c.id}" style="display:${(closingDays!==null&&closingDays<=5)||(apDays!==null&&apDays<=5)?'block':'none'};padding:0.2rem 0.5rem 0.25rem">
-            <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:4px 0;width:100%;align-items:center">
-              <div style="display:flex;align-items:center;gap:5px;padding-right:8px">
-                <span style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;white-space:nowrap">Stmt:</span>
-                <input class="stmt-input" type="number" value="${(c.stmtBal||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
-                  style="flex:1;text-align:right;box-sizing:border-box"
-                  onclick="event.stopPropagation()"
-                  onchange="updateStmtBal('${c.id}', this.value)"
-                  onblur="updateStmtBal('${c.id}', this.value)" />
-              </div>
-              <span style="color:#d0c8bc;font-size:0.6rem;text-align:center">|</span>
-              <div style="display:flex;align-items:center;gap:5px;padding-left:8px">
-                <span style="font-size:0.48rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;white-space:nowrap">AP Amt:</span>
-                <input type="number" class="stmt-input" style="flex:1;text-align:right;box-sizing:border-box" value="${(c.autopayAmt||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
-                  onclick="event.stopPropagation()"
-                  onchange="updateCustomAutopay('${c.id}', this.value)"
-                  onblur="updateCustomAutopay('${c.id}', this.value)"
-                  onkeydown="if(event.key==='Enter'){updateCustomAutopay('${c.id}', this.value);this.blur();}" />
-              </div>
-            </div>
-          </div>
-        </div>
 
 
 
