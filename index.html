@@ -364,10 +364,13 @@
   <button id="tab-all" onclick="setView('all')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0 1rem;height:28px;border:none;border-bottom:2px solid transparent;margin-bottom:-6px;background:transparent;color:#6b6358;cursor:pointer">All</button>
   <button id="tab-cash" onclick="setView('cash')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0 1rem;height:28px;border:none;border-bottom:2px solid transparent;margin-bottom:-6px;background:transparent;color:#6b6358;cursor:pointer">Cash</button>
   <button id="tab-credit" onclick="setView('credit')" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0 1rem;height:28px;border:none;border-bottom:2px solid transparent;margin-bottom:-6px;background:transparent;color:#6b6358;cursor:pointer">Credit</button>
+  <div style="position:relative;margin-left:8px">
+    <input id="search-bar-desktop" type="text" placeholder="SEARCH..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;height:28px;box-sizing:border-box;padding:0 1.6rem 0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
+    <button id="search-clear-desktop" onclick="clearSearch()" style="display:none;position:absolute;right:0.4rem;top:50%;transform:translateY(-50%);background:none;border:none;font-size:0.8rem;color:#6b6358;cursor:pointer;line-height:1;padding:0">✕</button>
+  </div>
 <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
 <button id="undo-btn" onclick="undo()" disabled title="Undo" style="background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;line-height:1;cursor:pointer;width:28px;height:28px;padding:0;border-radius:0;transition:opacity 0.15s;flex-shrink:0;opacity:0.4" onmouseenter="if(!this.disabled)this.style.opacity='1'" onmouseleave="if(!this.disabled)this.style.opacity='1'">↩</button>
     <button id="redo-btn" onclick="redo()" disabled title="Redo" style="background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;line-height:1;cursor:pointer;width:28px;height:28px;padding:0;border-radius:0;transition:opacity 0.15s;flex-shrink:0;opacity:0.4" onmouseenter="if(!this.disabled)this.style.opacity='1'" onmouseleave="if(!this.disabled)this.style.opacity='1'">↪</button>
-    <button onclick="handleAddCard()" title="Add account" style="background:#4a5e3a;border:1.5px solid #4a5e3a;color:#ffffff;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;line-height:1;cursor:pointer;height:28px;padding:0 0.8rem;border-radius:0;flex-shrink:0">+ add account</button>
     <select id="sort-select" onchange="setSort(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;font-weight:500;height:28px;padding:0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#6b6358;cursor:pointer;outline:none;">
       <option value="none">A → Z</option>
       <option value="closing">CLOSING DATE</option>
@@ -375,10 +378,7 @@
       <option value="utilization">UTILIZATION</option>
       <option value="pending">PENDING FIRST</option>
     </select>
-    <div style="position:relative">
-      <input id="search-bar-desktop" type="text" placeholder="SEARCH..." oninput="setSearch(this.value)" style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;width:180px;height:28px;box-sizing:border-box;padding:0 1.6rem 0 0.6rem;border:1.5px solid rgba(0,0,0,0.15);border-radius:0;background:#ffffff;color:#1a1714;outline:none;" onfocus="this.style.borderColor='#8a6e2e'" onblur="this.style.borderColor='rgba(0,0,0,0.15)'">
-      <button id="search-clear-desktop" onclick="clearSearch()" style="display:none;position:absolute;right:0.4rem;top:50%;transform:translateY(-50%);background:none;border:none;font-size:0.8rem;color:#6b6358;cursor:pointer;line-height:1;padding:0">✕</button>
-    </div>
+    <button onclick="handleAddCard()" title="Add account" style="background:#4a5e3a;border:1.5px solid #4a5e3a;color:#ffffff;font-size:0.65rem;font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;line-height:1;cursor:pointer;height:28px;padding:0 0.8rem;border-radius:0;flex-shrink:0">+ add account</button>
     <div id="userPill" style="display:none;position:relative">
       <button onclick="document.getElementById('user-dropdown').style.display=document.getElementById('user-dropdown').style.display==='block'?'none':'block'" style="background:none;border:1.5px solid #c8bfb0;color:#6b6358;font-size:0.75rem;cursor:pointer;width:28px;height:28px;padding:0;border-radius:0;line-height:1">▾</button>
       <div id="user-dropdown" style="display:none;position:absolute;right:0;top:32px;background:#ffffff;border:1.5px solid #1a1714;z-index:500;min-width:110px;box-shadow:2px 2px 0 rgba(0,0,0,0.08)">
