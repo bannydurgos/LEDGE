@@ -2037,6 +2037,21 @@ function openCashCOA() {
   document.getElementById('cash-chart-of-accounts').style.display = 'flex';
 }
 
+function updateTransferFromInfo() {
+  const infoEl = document.getElementById('transfer-from-info');
+  if (!infoEl) return;
+  const fromId = document.getElementById('transfer-from').value;
+  const card = cards.find(c => c.id === fromId);
+  if (!card) { infoEl.innerHTML = ''; return; }
+  const cleared = +(card.balance || 0).toFixed(2);
+  const working = +((card.balance||0) + (card.pending||0)).toFixed(2);
+  const btnBase = `font-family:'IBM Plex Mono',monospace;font-size:0.65rem;padding:0.35rem 0.6rem;border-radius:0;cursor:pointer;text-align:center;flex:1`;
+  infoEl.innerHTML = `<div style="display:flex;gap:6px">
+    <button type="button" onclick="document.getElementById('transfer-amount').value=${cleared>0?cleared:0};document.getElementById('transfer-amount').select()" style="${btnBase};border:1.5px solid #74c69d;background:#d8f3dc;color:#1a6b3a">cleared ${fmt$(cleared)}</button>
+    ${working !== cleared ? `<button type="button" onclick="document.getElementById('transfer-amount').value=${working>0?working:0};document.getElementById('transfer-amount').select()" style="${btnBase};border:1.5px solid #d4b97a;background:#f5ecd7;color:#8a6e2e">working ${fmt$(working)}</button>` : ''}
+  </div>`;
+}
+
 function updateTransferCardInfo() {
   const infoEl = document.getElementById('transfer-card-info');
   if (!infoEl || infoEl.style.display === 'none') return;
@@ -2069,6 +2084,7 @@ function openTransfer(fromId, mode) {
   document.getElementById('transfer-modal-title').textContent = isPayment ? 'Pay Credit Card' : 'Transfer Cash';
   document.getElementById('transfer-submit-btn').textContent = isPayment ? 'pay' : 'transfer';
   document.getElementById('transfer-amount').value = '';
+  updateTransferFromInfo();
   // Show/hide card balance info
   const infoEl = document.getElementById('transfer-card-info');
   infoEl.style.display = isPayment ? 'block' : 'none';
@@ -2253,8 +2269,9 @@ window.addEventListener('resize', updateTabs);
     </div>
     <div style="margin-bottom:0.85rem">
       <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">From</label>
-      <select id="transfer-from" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;background:#ffffff;color:#1a1714;outline:none"></select>
+      <select id="transfer-from" onchange="updateTransferFromInfo()" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;background:#ffffff;color:#1a1714;outline:none"></select>
     </div>
+    <div id="transfer-from-info" style="margin-top:-0.5rem;margin-bottom:0.85rem"></div>
     <div style="margin-bottom:0.85rem">
       <label style="display:block;font-size:0.62rem;color:#6b6358;text-transform:uppercase;letter-spacing:0.07em;font-weight:600;margin-bottom:5px">To</label>
       <select id="transfer-to" onchange="updateTransferCardInfo()" style="width:100%;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:0.5rem 0.7rem;border:1.5px solid #1a1714;border-radius:0;background:#ffffff;color:#1a1714;outline:none"></select>
