@@ -2012,7 +2012,7 @@ function updateCOA() {
       return `<tr style="border-bottom:1px solid #e8e4dc">
         <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">${c.name}${c.paydown?'<span style="font-size:0.55rem;color:#8a6e2e;margin-left:5px">↓</span>':''}${!c.includeInTotals?'<span style="font-size:0.55rem;color:#a09880;margin-left:5px">excl.</span>':''}${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714">${fmt$(c.balance||0)}</td>
-        <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)!==0?'#c47a2e':'#6b6358'}">${fmt$(c.pending||0)}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)>0?'#cc2222':'#2d6a3f'}">${fmt$(c.pending||0)}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714;font-weight:600">${fmt$(working)}</td>
         <td class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;color:#6b6358">${c.npsl?'NPSL':c.limit?'$'+c.limit.toLocaleString():'—'}</td>
         <td class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:${utilColor}">${pct===null?'N/A':pct.toFixed(2)+'%'}</td>
