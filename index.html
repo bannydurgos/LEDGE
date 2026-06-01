@@ -780,6 +780,7 @@ function initAuth() {
         if (avatarEl && user.photoURL) avatarEl.src = user.photoURL;
         await loadFromFirebase();
         checkAutoPayments();
+        restoreUnclearedFromArchive();
         archiveOldTransactions();
         render();
         updateTabs();
@@ -1025,6 +1026,24 @@ function backfillClearedToArchive() {
   if (changed) persist();
 }
 
+function restoreUnclearedFromArchive() {
+  // One-time fix: move uncleared archived transactions back to the active list
+  const now = new Date();
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  let changed = false;
+  cards = cards.map(c => {
+    const toRestore = (c.txnArchive||[]).filter(t => !t.cleared && t.month !== thisMonth);
+    if (toRestore.length === 0) return c;
+    const restoredIds = new Set(toRestore.map(t => t.id));
+    const existingIds = new Set((c.transactions||[]).map(t => t.id));
+    const newToCard = toRestore.filter(t => !existingIds.has(t.id));
+    const newArchive = (c.txnArchive||[]).filter(t => !restoredIds.has(t.id));
+    changed = true;
+    return {...c, transactions: [...(c.transactions||[]), ...newToCard], txnArchive: newArchive};
+  });
+  if (changed) persist();
+}
+
 function archiveOldTransactions() {
   const now = new Date();
   const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
@@ -1039,13 +1058,13 @@ function archiveOldTransactions() {
       return c;
     }
 
-    // Move ALL old-month transactions to archive
+    // Move only CLEARED old-month transactions to archive; leave uncleared ones on the card
     const oldMonthTxns = (c.transactions||[]).filter(t => t.month && t.month !== thisMonth);
     const existingIds = new Set(baseArchive.map(t => t.id));
-    const newEntries = oldMonthTxns.filter(t => !existingIds.has(t.id));
+    const newEntries = oldMonthTxns.filter(t => t.cleared && !existingIds.has(t.id));
     const archive = [...baseArchive, ...newEntries];
-    // Keep only current-month transactions on the card
-    const remaining = (c.transactions||[]).filter(t => !t.month || t.month === thisMonth);
+    // Keep current-month transactions and any uncleared old-month transactions on the card
+    const remaining = (c.transactions||[]).filter(t => !t.month || t.month === thisMonth || !t.cleared);
     changed = true;
     return {...c, transactions: remaining, txnArchive: archive, lastArchive: thisMonth};
   });
@@ -1707,7 +1726,7 @@ function buildCard(c, idx) {
   if (c.wallet) return buildWalletCard(c, idx);
     const _now = new Date();
     const thisMonth = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}`;
-    const currentTxns = (c.transactions||[]).filter(t => !t.month || t.month === thisMonth);
+    const currentTxns = (c.transactions||[]).filter(t => !t.month || t.month === thisMonth || !t.cleared);
     const txnListOpen = currentTxns.some(t => !t.cleared);
     const working = (c.balance||0)+(c.pending||0);
     const pct = (!c.npsl&&c.limit) ? parseFloat((c.balance/c.limit*100).toFixed(2)) : 0;
@@ -1848,7 +1867,7 @@ function buildWalletCard(c, idx) {
   const hasPending = pending !== 0;
   const _now2 = new Date();
   const thisMonthW = `${_now2.getFullYear()}-${String(_now2.getMonth()+1).padStart(2,'0')}`;
-  const txns = (c.transactions||[]).filter(t => !t.month || t.month === thisMonthW);
+  const txns = (c.transactions||[]).filter(t => !t.month || t.month === thisMonthW || !t.cleared);
   const hasUncleared = txns.some(t=>!t.cleared);
   const otherWallets = cards.filter(x => x.wallet && !x.hidden && x.id !== c.id);
   const visibleCreditCards = cards.filter(x => !x.wallet && !x.hidden);
