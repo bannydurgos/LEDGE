@@ -1103,7 +1103,7 @@ function effectiveAutopay(c) {
 function openAutopayBreakdown() {
   const cc = cards.filter(c => !c.wallet);
   const rows = cc
-    .filter(c => c.autopay && effectiveAutopay(c) > 0)
+    .filter(c => c.autopay && !c.hidden)
     .sort((a, b) => {
       const n = v => v === 'EOM' ? 32 : parseInt(v) || 0;
       return n(a.autopay) - n(b.autopay);
