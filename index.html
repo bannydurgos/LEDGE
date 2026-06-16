@@ -1258,7 +1258,7 @@ function showTxnPopup(event, cardId, txnId) {
   if (!t) return;
   const lines = [];
   lines.push(`<span style="color:#6b6358;font-size:0.58rem">DATE</span><br>${t.date}`);
-  lines.push(`<span style="color:#6b6358;font-size:0.58rem">AMOUNT</span><br><span style="color:${card.wallet?(t.amt<0?'#cc2222':'#1b4a2d'):(t.amt>0?'#cc2222':'#1b4a2d')};font-weight:600">${t.amt>0?'+':''}${fmt$(t.amt)}</span>`);
+  lines.push(`<span style="color:#6b6358;font-size:0.58rem">AMOUNT</span><br><span style="color:${card.wallet?(t.amt<0?'#cc2222':'#1b4a2d'):(t.amt>0?'#cc2222':'#1b4a2d')};font-weight:600">${card.wallet?(t.amt>0?'+':''):(t.amt>0?'-':'+')}${fmt$(card.wallet?t.amt:Math.abs(t.amt))}</span>`);
   if (t.transferPeer) {
     const peer = cards.find(c => c.id === t.transferPeer);
     const peerName = peer ? peer.name : 'unknown';
@@ -1537,14 +1537,14 @@ function openHistory(id) {
         <div onclick="(function(el,ch){const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})(document.getElementById('${bodyId}'),document.getElementById('${chId}'))" style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;cursor:pointer;background:#f9f7f4;user-select:none">
           <span style="font-size:0.68rem;font-weight:700;color:#1a1714;text-transform:uppercase;letter-spacing:0.07em">${label}</span>
           <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:0.72rem;font-weight:600;color:${c.wallet?(total>=0?'#1b4a2d':'#cc2222'):(total>=0?'#cc2222':'#1b4a2d')}">${total>=0?'+':''}${fmt$(total)}</span>
+            <span style="font-size:0.72rem;font-weight:600;color:${c.wallet?(total>=0?'#1b4a2d':'#cc2222'):(total>=0?'#cc2222':'#1b4a2d')}">${c.wallet?(total>=0?'+':''):(total>=0?'-':'+')}${fmt$(c.wallet?total:Math.abs(total))}</span>
             <span id="${chId}" style="font-size:0.6rem;color:#a09880">${isOpen?'▾':'▸'}</span>
           </div>
         </div>
         <div id="${bodyId}" style="display:${isOpen?'block':'none'};padding:4px 10px 6px">
           ${txns.map(t => `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:3px 0;font-size:0.75rem;border-bottom:1px solid #f0ece4">
             <span style="color:#8a7f6a">${t.date}${t.note ? `<span style="color:#b0a898;font-style:italic;margin-left:6px">${t.note}</span>` : ''}</span>
-            <span style="font-weight:600;color:${c.wallet?(t.amt>0?'#1b4a2d':'#cc2222'):(t.amt>0?'#cc2222':'#1b4a2d')}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
+            <span style="font-weight:600;color:${c.wallet?(t.amt>0?'#1b4a2d':'#cc2222'):(t.amt>0?'#cc2222':'#1b4a2d')}">${c.wallet?(t.amt>0?'+':''):(t.amt>0?'-':'+')}${fmt$(c.wallet?t.amt:Math.abs(t.amt))}</span>
           </div>`).join('')}
         </div>
       </div>`;
@@ -1844,7 +1844,7 @@ function buildCard(c, idx) {
                 ${t.transferId ? `<span style="font-size:0.58rem;color:#1a6b3a;background:#d8f3dc;border:1px solid #74c69d;padding:1px 5px;border-radius:0;white-space:nowrap;flex-shrink:0">↑ payment</span>` : ''}
                 ${t.note ? `<span style="font-size:0.62rem;color:#8a7f6a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.note}</span>` : ''}
               </div>
-              <span class="txn-amt ${t.amt>0?'negative':'positive'}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
+              <span class="txn-amt ${t.amt>0?'negative':'positive'}">${t.amt>0?'-':'+'}${fmt$(Math.abs(t.amt))}</span>
               <div class="txn-actions">
                 ${!t.cleared ? `<button class="txn-btn" onclick="event.stopPropagation();clearTxn('${c.id}','${t.id}')">C</button>` : `<button class="txn-btn" onclick="event.stopPropagation();unclearTxn('${c.id}','${t.id}')" style="color:#8a7f6a">C</button>`}
                 <button class="txn-btn" onclick="event.stopPropagation();openEditTxn('${c.id}','${t.id}')" style="line-height:1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
@@ -1925,7 +1925,7 @@ function buildWalletCard(c, idx) {
               ${t.transferId ? (()=>{const peer=cards.find(x=>x.id===t.transferPeer);return peer&&!peer.wallet?`<span style="font-size:0.58rem;color:#1a6b3a;background:#d8f3dc;border:1px solid #74c69d;padding:1px 5px;border-radius:0;white-space:nowrap;flex-shrink:0">↑ payment</span>`:`<span style="font-size:0.58rem;color:#8a6e2e;background:#f5ecd7;border:1px solid #d4b97a;padding:1px 5px;border-radius:0;white-space:nowrap;flex-shrink:0">⇄ transfer</span>`;})() : ''}
               ${t.note ? `<span style="font-size:0.62rem;color:#8a7f6a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.note}</span>` : ''}
             </div>
-            <span class="txn-amt ${t.amt>0?'positive':'negative'}">${t.amt>0?'+':''}${fmt$(t.amt)}</span>
+            <span class="txn-amt ${t.amt>0?'positive':'negative'}">${t.amt>0?'+':'-'}${fmt$(Math.abs(t.amt))}</span>
             <div class="txn-actions">
               ${!t.cleared ? `<button class="txn-btn" onclick="event.stopPropagation();clearTxn('${c.id}','${t.id}')">C</button>` : `<button class="txn-btn" onclick="event.stopPropagation();unclearTxn('${c.id}','${t.id}')" style="color:#8a7f6a">C</button>`}
               <button class="txn-btn" onclick="event.stopPropagation();openEditTxn('${c.id}','${t.id}')" style="line-height:1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
@@ -2080,10 +2080,12 @@ function updateTransferCardInfo() {
   if (!card || card.wallet) { infoEl.innerHTML = ''; return; }
   const cleared = +(card.balance || 0).toFixed(2);
   const working = +((card.balance||0) + (card.pending||0)).toFixed(2);
+  const autopay = effectiveAutopay(card);
   const btnBase = `font-family:'IBM Plex Mono',monospace;font-size:0.65rem;padding:0.35rem 0.6rem;border-radius:0;cursor:pointer;text-align:center;flex:1`;
   infoEl.innerHTML = `<div style="display:flex;gap:6px">
     <button type="button" onclick="document.getElementById('transfer-amount').value=${cleared>0?cleared:0};document.getElementById('transfer-amount').select()" style="${btnBase};border:1.5px solid #74c69d;background:#d8f3dc;color:#1a6b3a">cleared ${fmt$(cleared)}</button>
     ${working !== cleared ? `<button type="button" onclick="document.getElementById('transfer-amount').value=${working>0?working:0};document.getElementById('transfer-amount').select()" style="${btnBase};border:1.5px solid #d4b97a;background:#f5ecd7;color:#8a6e2e">working ${fmt$(working)}</button>` : ''}
+    ${autopay > 0 ? `<button type="button" onclick="document.getElementById('transfer-amount').value=${autopay};document.getElementById('transfer-amount').select()" style="${btnBase};border:1.5px solid #2255cc;background:#e8eeff;color:#2255cc">autopay ${fmt$(autopay)}</button>` : ''}
   </div>`;
 }
 
