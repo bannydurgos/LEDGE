@@ -1169,7 +1169,7 @@ function openPendingBreakdown(type) {
       const pending = c.pending||0;
       const pendingTxns = (c.transactions||[]).filter(t => !t.cleared);
       const txnRows = pendingTxns.length ? pendingTxns.map(t => {
-        const color = c.wallet ? (t.amt < 0 ? '#cc2222' : '#1b4a2d') : (t.amt > 0 ? '#cc2222' : '#1b4a2d');
+        const color = c.wallet ? (t.amt === 0 ? '#1a1714' : t.amt < 0 ? '#cc2222' : '#1b4a2d') : (t.amt === 0 ? '#1a1714' : t.amt > 0 ? '#cc2222' : '#1b4a2d');
         const sign = c.wallet ? (t.amt > 0 ? '+' : t.amt < 0 ? '-' : '') : (t.amt > 0 ? '-' : t.amt < 0 ? '+' : '');
         const d = t.date ? t.date : '';
         return `<tr style="border-bottom:1px solid #f0ece4">
@@ -1181,7 +1181,7 @@ function openPendingBreakdown(type) {
           </td>
         </tr>`;
       }).join('') : `<tr><td colspan="4" style="padding:0.3rem 0.5rem;color:#9a9080;font-size:0.65rem;font-style:italic">No individual transactions recorded</td></tr>`;
-      const labelColor = c.wallet ? (pending > 0 ? '#2d6a3f' : '#cc2222') : (pending < 0 ? '#047857' : '#cc2222');
+      const labelColor = c.wallet ? (pending === 0 ? '#1a1714' : pending > 0 ? '#2d6a3f' : '#cc2222') : (pending === 0 ? '#1a1714' : pending < 0 ? '#047857' : '#cc2222');
       const pendingSign = c.wallet ? (pending > 0 ? '+' : pending < 0 ? '-' : '') : (pending > 0 ? '-' : pending < 0 ? '+' : '');
       const typeTag = c.wallet ? '<span style="font-size:0.55rem;color:#6b6358;margin-left:6px;text-transform:uppercase;letter-spacing:0.05em">cash</span>' : '';
       return `<div style="margin-bottom:1rem;border:1.5px solid #d8d0c4;padding:0.75rem">
@@ -1328,7 +1328,7 @@ function showTxnPopup(event, cardId, txnId) {
   if (!t) return;
   const lines = [];
   lines.push(`<span style="color:#6b6358;font-size:0.58rem">DATE</span><br>${t.date}`);
-  lines.push(`<span style="color:#6b6358;font-size:0.58rem">AMOUNT</span><br><span style="color:${card.wallet?(t.amt<0?'#cc2222':'#1b4a2d'):(t.amt>0?'#cc2222':'#1b4a2d')};font-weight:600">${card.wallet?(t.amt>0?'+':''):(t.amt>0?'-':'+')}${fmt$(card.wallet?t.amt:Math.abs(t.amt))}</span>`);
+  lines.push(`<span style="color:#6b6358;font-size:0.58rem">AMOUNT</span><br><span style="color:${card.wallet?(t.amt===0?'#1a1714':t.amt<0?'#cc2222':'#1b4a2d'):(t.amt===0?'#1a1714':t.amt>0?'#cc2222':'#1b4a2d')};font-weight:600">${card.wallet?(t.amt>0?'+':''):(t.amt>0?'-':'+')}${fmt$(card.wallet?t.amt:Math.abs(t.amt))}</span>`);
   if (t.transferPeer) {
     const peer = cards.find(c => c.id === t.transferPeer);
     const peerName = peer ? peer.name : 'unknown';
@@ -1607,14 +1607,14 @@ function openHistory(id) {
         <div onclick="(function(el,ch){const open=el.style.display!=='none';el.style.display=open?'none':'block';ch.textContent=open?'▸':'▾';})(document.getElementById('${bodyId}'),document.getElementById('${chId}'))" style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;cursor:pointer;background:#f9f7f4;user-select:none">
           <span style="font-size:0.68rem;font-weight:700;color:#1a1714;text-transform:uppercase;letter-spacing:0.07em">${label}</span>
           <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:0.72rem;font-weight:600;color:${c.wallet?(total>=0?'#1b4a2d':'#cc2222'):(total>=0?'#cc2222':'#1b4a2d')}">${c.wallet?(total>=0?'+':''):(total>=0?'-':'+')}${fmt$(c.wallet?total:Math.abs(total))}</span>
+            <span style="font-size:0.72rem;font-weight:600;color:${c.wallet?(total===0?'#1a1714':total>0?'#1b4a2d':'#cc2222'):(total===0?'#1a1714':total>0?'#cc2222':'#1b4a2d')}">${c.wallet?(total>=0?'+':''):(total>=0?'-':'+')}${fmt$(c.wallet?total:Math.abs(total))}</span>
             <span id="${chId}" style="font-size:0.6rem;color:#a09880">${isOpen?'▾':'▸'}</span>
           </div>
         </div>
         <div id="${bodyId}" style="display:${isOpen?'block':'none'};padding:4px 10px 6px">
           ${txns.map(t => `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:3px 0;font-size:0.75rem;border-bottom:1px solid #f0ece4">
             <span style="color:#8a7f6a">${t.date}${t.note ? `<span style="color:#b0a898;font-style:italic;margin-left:6px">${t.note}</span>` : ''}</span>
-            <span style="font-weight:600;color:${c.wallet?(t.amt>0?'#1b4a2d':'#cc2222'):(t.amt>0?'#cc2222':'#1b4a2d')}">${c.wallet?(t.amt>0?'+':''):(t.amt>0?'-':'+')}${fmt$(c.wallet?t.amt:Math.abs(t.amt))}</span>
+            <span style="font-weight:600;color:${c.wallet?(t.amt===0?'#1a1714':t.amt>0?'#1b4a2d':'#cc2222'):(t.amt===0?'#1a1714':t.amt>0?'#cc2222':'#1b4a2d')}">${c.wallet?(t.amt>0?'+':''):(t.amt>0?'-':'+')}${fmt$(c.wallet?t.amt:Math.abs(t.amt))}</span>
           </div>`).join('')}
         </div>
       </div>`;
@@ -2061,7 +2061,7 @@ function updateAllSummary() {
   const allStatStyle = 'flex:1 1 calc(50% - 4px);min-width:120px;box-sizing:border-box;border:1.5px solid #1a1714';
   el.innerHTML = `
     <div class="stat" style="${allStatStyle}"><div class="stat-label">Cash</div><div class="stat-value">${fmt$(totalCash)}${wallets.length > 0 ? `<div class="stat-sub" onclick="event.stopPropagation();openCashCOA()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${wallets.length} account${wallets.length>1?'s':''}</div>` : ''}</div></div>
-    <div class="stat" style="${allStatStyle}"><div class="stat-label">Credit</div><div class="stat-value">${fmt$(totalWorking)}${creditCards.length > 0 ? `<div class="stat-sub" onclick="event.stopPropagation();document.getElementById('chart-of-accounts').style.display='flex'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} card${creditCards.length>1?'s':''}</div>` : ''}</div></div>
+    <div class="stat" style="${allStatStyle}"><div class="stat-label">Credit</div><div class="stat-value">${fmt$(-totalWorking)}${creditCards.length > 0 ? `<div class="stat-sub" onclick="event.stopPropagation();document.getElementById('chart-of-accounts').style.display='flex'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} card${creditCards.length>1?'s':''}</div>` : ''}</div></div>
   `;
 }
 
@@ -2086,7 +2086,7 @@ function updateSummary() {
   const fmtK = v => Math.abs(v)>=1000?`$${(v/1000).toFixed(1)}k`:`$${v.toFixed(2)}`;
   const statStyle = 'flex:0 0 calc(33.333% - 6px);min-width:0;box-sizing:border-box;border:1.5px solid #1a1714';
   document.getElementById('summary').innerHTML = `
-    <div class="stat" style="${statStyle}"><div class="stat-label">working balance</div><div class="stat-value">${fmt$(totalWorking)}<div class="stat-sub" onclick="event.stopPropagation();document.getElementById('chart-of-accounts').style.display='flex'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} cards</div></div></div>
+    <div class="stat" style="${statStyle}"><div class="stat-label">working balance</div><div class="stat-value">${fmt$(-totalWorking)}<div class="stat-sub" onclick="event.stopPropagation();document.getElementById('chart-of-accounts').style.display='flex'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} cards</div></div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">total limit</div><div class="stat-value" style="display:flex;flex-direction:column;align-items:center">
       <span id="limit-eye" onclick="(function(){document.getElementById('limit-eye').style.display='none';document.getElementById('limit-val').style.display='inline';})()\" style="cursor:pointer;color:#8a7f6a;user-select:none;line-height:1">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -2095,7 +2095,7 @@ function updateSummary() {
       <div class="stat-sub" style="position:relative">${excludedNames.length ? `<span onclick="event.stopPropagation();const el=document.getElementById('excl-info');el.style.display=el.style.display==='none'?'block':'none'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${excludedNames.length} excl.</span><div id="excl-info" onclick="event.stopPropagation()" style="display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);white-space:nowrap;background:#ffffff;border:1.5px solid #1a1714;padding:0.4rem 0.6rem;font-size:0.62rem;color:#6b6358;line-height:1.8;z-index:50;box-shadow:4px 4px 0 #8a6e2e">${excludedNames.join('<br>')}</div>` : 'all included'}</div>
     </div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">utilization</div><div class="stat-value">${util}%</div></div>
-    <div class="stat" style="${statStyle}"><div class="stat-label">pending</div><div class="stat-value" onclick="event.stopPropagation();openPendingBreakdown('credit')" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px">${fmt$(totalPending)}</div></div>
+    <div class="stat" style="${statStyle}"><div class="stat-label">pending</div><div class="stat-value" onclick="event.stopPropagation();openPendingBreakdown('credit')" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px">${fmt$(-totalPending)}</div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">autopay due</div><div class="stat-value" onclick="event.stopPropagation();openAutopayBreakdown()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px">${fmt$(totalAP)}</div></div>
   `;
 }
@@ -2111,7 +2111,7 @@ function updateCOA() {
       return `<tr style="border-bottom:1px solid #e8e4dc">
         <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">${c.name}${c.paydown?'<span style="font-size:0.55rem;color:#8a6e2e;margin-left:5px">↓</span>':''}${!c.includeInTotals?'<span style="font-size:0.55rem;color:#a09880;margin-left:5px">excl.</span>':''}${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714">${fmt$(-(c.balance||0))}</td>
-        <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)>0?'#cc2222':'#2d6a3f'}">${(c.pending||0)>0?'-':((c.pending||0)<0?'+':'')}${fmt$(Math.abs(c.pending||0))}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)===0?'#1a1714':(c.pending||0)>0?'#cc2222':'#2d6a3f'}">${(c.pending||0)>0?'-':((c.pending||0)<0?'+':'')}${fmt$(Math.abs(c.pending||0))}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714;font-weight:600">${fmt$(-working)}</td>
         <td class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;color:#6b6358">${c.npsl?'NPSL':c.limit?'$'+c.limit.toLocaleString():'—'}</td>
         <td class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:${utilColor}">${pct===null?'N/A':pct.toFixed(2)+'%'}</td>
