@@ -1169,24 +1169,25 @@ function openPendingBreakdown(type) {
       const pending = c.pending||0;
       const pendingTxns = (c.transactions||[]).filter(t => !t.cleared);
       const txnRows = pendingTxns.length ? pendingTxns.map(t => {
-        const color = t.amt < 0 ? '#1b4a2d' : '#cc2222';
-        const sign = t.amt < 0 ? '' : '+';
+        const color = c.wallet ? (t.amt < 0 ? '#cc2222' : '#1b4a2d') : (t.amt > 0 ? '#cc2222' : '#1b4a2d');
+        const sign = c.wallet ? (t.amt > 0 ? '+' : t.amt < 0 ? '-' : '') : (t.amt > 0 ? '-' : t.amt < 0 ? '+' : '');
         const d = t.date ? t.date : '';
         return `<tr style="border-bottom:1px solid #f0ece4">
           <td style="padding:0.28rem 0.5rem;color:#8a7f6a;font-size:0.6rem;white-space:nowrap">${d}</td>
           <td style="padding:0.28rem 0.5rem;color:#1a1714;font-size:0.68rem;min-width:0;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td>
-          <td style="padding:0.28rem 0.5rem;text-align:right;font-weight:600;color:${color};font-size:0.72rem;white-space:nowrap">${sign}${fmt$(t.amt)}</td>
+          <td style="padding:0.28rem 0.5rem;text-align:right;font-weight:600;color:${color};font-size:0.72rem;white-space:nowrap">${sign}${fmt$(Math.abs(t.amt))}</td>
           <td style="padding:0.28rem 0.5rem;text-align:right">
             <button onclick="clearTxnFromBreakdown('${c.id}','${t.id}','${c.wallet?'cash':'credit'}')" style="background:none;border:1px solid #d8d0c4;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;font-weight:600;padding:2px 7px;cursor:pointer;color:#6b6358;transition:all 0.15s" onmouseover="this.style.background='#1a1714';this.style.color='#fff';this.style.borderColor='#1a1714'" onmouseout="this.style.background='none';this.style.color='#6b6358';this.style.borderColor='#d8d0c4'">C</button>
           </td>
         </tr>`;
       }).join('') : `<tr><td colspan="4" style="padding:0.3rem 0.5rem;color:#9a9080;font-size:0.65rem;font-style:italic">No individual transactions recorded</td></tr>`;
-      const labelColor = pending < 0 ? '#047857' : '#cc2222';
+      const labelColor = c.wallet ? (pending > 0 ? '#2d6a3f' : '#cc2222') : (pending < 0 ? '#047857' : '#cc2222');
+      const pendingSign = c.wallet ? (pending > 0 ? '+' : pending < 0 ? '-' : '') : (pending > 0 ? '-' : pending < 0 ? '+' : '');
       const typeTag = c.wallet ? '<span style="font-size:0.55rem;color:#6b6358;margin-left:6px;text-transform:uppercase;letter-spacing:0.05em">cash</span>' : '';
       return `<div style="margin-bottom:1rem;border:1.5px solid #d8d0c4;padding:0.75rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
           <span style="font-weight:600;color:#1a1714;font-size:0.82rem">${c.name}${typeTag}</span>
-          <span style="font-weight:700;color:${labelColor};font-size:0.82rem">${pending < 0 ? '' : '+'}${fmt$(pending)}</span>
+          <span style="font-weight:700;color:${labelColor};font-size:0.82rem">${pendingSign}${fmt$(Math.abs(pending))}</span>
         </div>
         <table style="width:100%;border-collapse:collapse">${txnRows}</table>
       </div>`;
@@ -1870,15 +1871,15 @@ function buildCard(c, idx) {
         <div class="balance-grid">
           <div class="bal-cell cleared">
             <div class="bal-cell-label">Cleared</div>
-            <div class="bal-cell-val">${fmt$(c.balance)}</div>
+            <div class="bal-cell-val">${fmt$(-(c.balance||0))}</div>
           </div>
-          <div class="bal-cell ${(c.pending||0) < 0 ? 'pending-payment' : 'pending-cell'}">
-            <div class="bal-cell-label">${(c.pending||0) < 0 ? 'Pending Pmt' : 'Pending'}</div>
-            <div class="bal-cell-val">${fmt$(c.pending||0)}</div>
+          <div class="bal-cell ${(c.pending||0) < 0 ? 'pending-payment' : 'pending-cell'}" style="color:${(c.pending||0)>0?'#cc2222':(c.pending||0)<0?'#2d6a3f':''}">
+            <div class="bal-cell-label" style="color:${(c.pending||0)>0?'#cc2222':(c.pending||0)<0?'#2d6a3f':''}">${(c.pending||0) < 0 ? 'Pending Pmt' : 'Pending'}</div>
+            <div class="bal-cell-val" style="color:${(c.pending||0)>0?'#cc2222':(c.pending||0)<0?'#2d6a3f':''}">${(c.pending||0)>0?'-':(c.pending||0)<0?'+':''}${fmt$(Math.abs(c.pending||0))}</div>
           </div>
           <div class="bal-cell working" style="position:relative">
             <div class="bal-cell-label">Working Balance</div>
-            <div class="bal-cell-val">${fmt$(working)}</div>
+            <div class="bal-cell-val">${fmt$(-working)}</div>
 
           </div>
         </div>
@@ -1965,7 +1966,7 @@ function buildWalletCard(c, idx) {
         </div>
         <div class="bal-cell ${pending < 0 ? 'pending-payment' : 'pending-cell'}" style="background:${pending < 0 ? 'rgba(204,34,34,0.07)' : pending > 0 ? 'rgba(27,74,45,0.07)' : ''};border-color:${pending < 0 ? 'rgba(204,34,34,0.2)' : pending > 0 ? 'rgba(27,74,45,0.2)' : ''}">
           <div class="bal-cell-label" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : ''}">${pending < 0 ? 'Spent' : 'Pending'}</div>
-          <div class="bal-cell-val" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : ''}">${fmt$(pending)}</div>
+          <div class="bal-cell-val" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : ''}">${pending > 0 ? '+' : pending < 0 ? '-' : ''}${fmt$(Math.abs(pending))}</div>
         </div>
         <div class="bal-cell working" style="position:relative">
           <div class="bal-cell-label">Working Balance</div>
@@ -2109,9 +2110,9 @@ function updateCOA() {
       const working = (c.balance||0) + (c.pending||0);
       return `<tr style="border-bottom:1px solid #e8e4dc">
         <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">${c.name}${c.paydown?'<span style="font-size:0.55rem;color:#8a6e2e;margin-left:5px">↓</span>':''}${!c.includeInTotals?'<span style="font-size:0.55rem;color:#a09880;margin-left:5px">excl.</span>':''}${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
-        <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714">${fmt$(c.balance||0)}</td>
-        <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)>0?'#cc2222':'#2d6a3f'}">${(c.pending||0)>0?'+':((c.pending||0)<0?'-':'')}${fmt$(Math.abs(c.pending||0))}</td>
-        <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714;font-weight:600">${fmt$(working)}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714">${fmt$(-(c.balance||0))}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)>0?'#cc2222':'#2d6a3f'}">${(c.pending||0)>0?'-':((c.pending||0)<0?'+':'')}${fmt$(Math.abs(c.pending||0))}</td>
+        <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714;font-weight:600">${fmt$(-working)}</td>
         <td class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;color:#6b6358">${c.npsl?'NPSL':c.limit?'$'+c.limit.toLocaleString():'—'}</td>
         <td class="coa-limit-util" style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:${utilColor}">${pct===null?'N/A':pct.toFixed(2)+'%'}</td>
       </tr>`;
