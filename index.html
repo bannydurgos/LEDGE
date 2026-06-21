@@ -114,7 +114,7 @@
   .card-body { padding: 0.6rem 1rem; display: flex; flex-direction: column; }
 
   .card-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 0.65rem; gap: 0.4rem; }
-  .card-name { font-family: 'Libre Baskerville', serif; font-size: 0.95rem; color: #1a1714; line-height: 1.2; letter-spacing: 0.01em; }
+  .card-name { font-family: 'Libre Baskerville', serif; font-size: 0.95rem; color: #1a1714; line-height: 1.2; letter-spacing: 0.01em; padding: 0 30px; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .card-meta { font-size: 0.65rem; color: #6b6358; margin-top: 3px; font-weight: 400; letter-spacing: 0.02em; }
   .card-actions { display: flex; gap: 5px; flex-shrink: 0; }
   .icon-btn { background: #f0ece4; border: 1px solid #c8bfb0; border-radius: 0; color: #4a4238; cursor: pointer; font-size: 0.65rem; padding: 3px 7px; font-family: 'IBM Plex Mono', monospace; font-weight: 500; transition: all 0.15s; letter-spacing: 0.03em; }
@@ -284,6 +284,9 @@
   .no-anim .card { animation: none; }
   .quick-log-fab { position:fixed; bottom:1.5rem; left:1.5rem; width:52px; height:52px; background:#1a1714; border:none; border-radius:0; color:#f4f1ec; font-size:1.8rem; line-height:52px; text-align:center; cursor:pointer; z-index:300; box-shadow:4px 4px 0 #8a6e2e; font-family:'Libre Baskerville',serif; transition:background 0.15s; }
   .quick-log-fab:hover { background:#8a6e2e; }
+  #chart-of-accounts td, #cash-chart-of-accounts td { font-weight:700 !important; }
+  .coa-limit-util { display: none; }
+  #chart-of-accounts.coa-expanded .coa-limit-util { display: table-cell; }
   @media (min-width:701px) { .quick-log-fab { display:none; } .quick-log-desktop { display:block !important; } #mobile-search-bar { display:none !important; } #undo-btn-mobile, #redo-btn-mobile { display:none !important; } }
   @media (min-width:701px) and (max-width:1150px) {
     #search-bar-desktop { width: 110px !important; }
@@ -573,11 +576,14 @@
   </div>
 </div>
 
-<div id="chart-of-accounts" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+<div id="chart-of-accounts" onclick="if(event.target===this){this.style.display='none';this.classList.remove('coa-expanded');document.getElementById('coa-toggle-btn').textContent='▸ Limit / Util';}" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
   <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:680px;max-height:85vh;overflow-y:auto;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem">
       <h2 style="font-family:'Libre Baskerville',serif;font-size:1.1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0">Chart of Accounts</h2>
-      <button onclick="document.getElementById('chart-of-accounts').style.display='none'" style="background:none;border:none;font-size:1rem;color:#6b6358;cursor:pointer">✕</button>
+      <div style="display:flex;align-items:center;gap:0.75rem">
+        <button id="coa-toggle-btn" onclick="(function(){var el=document.getElementById('chart-of-accounts');var expanded=el.classList.toggle('coa-expanded');document.getElementById('coa-toggle-btn').textContent=expanded?'▾ Limit / Util':'▸ Limit / Util';})()" style="background:none;border:none;font-size:0.65rem;color:#6b6358;cursor:pointer;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:0.05em;padding:0">▸ Limit / Util</button>
+        <button onclick="(function(){var el=document.getElementById('chart-of-accounts');el.style.display='none';el.classList.remove('coa-expanded');document.getElementById('coa-toggle-btn').textContent='▸ Limit / Util';})()" style="background:none;border:none;font-size:1rem;color:#6b6358;cursor:pointer">✕</button>
+      </div>
     </div>
     <table style="width:100%;border-collapse:collapse;font-size:0.72rem">
       <thead>
@@ -1831,7 +1837,7 @@ function buildCard(c, idx) {
         <button class="icon-btn del" style="position:absolute;top:10px;right:10px;z-index:2" onclick="event.stopPropagation();cardAction('${c.id}')">✕</button>
         <div class="card-header" style="flex-direction:column;align-items:center;gap:0.5rem">
           <div style="text-align:center;width:100%">
-            <div class="card-name" onclick="event.stopPropagation();toggleCardInfo('${c.id}')" ondblclick="event.stopPropagation();document.getElementById('card-info-${c.id}').style.display='none';quickRenameCard('${c.id}')" style="cursor:pointer">
+            <div class="card-name" title="${c.name}" onclick="event.stopPropagation();toggleCardInfo('${c.id}')" ondblclick="event.stopPropagation();document.getElementById('card-info-${c.id}').style.display='none';quickRenameCard('${c.id}')" style="cursor:pointer">
               ${c.name}
             </div>
             <div id="card-info-${c.id}" onclick="event.stopPropagation()" style="display:none;position:absolute;top:38px;left:50%;transform:translateX(-50%);width:200px;background:#ffffff;border:1.5px solid #1a1714;padding:0.5rem 0.65rem;font-size:0.65rem;color:#6b6358;line-height:1.8;z-index:50;box-shadow:4px 4px 0 #8a6e2e">
@@ -1951,7 +1957,7 @@ function buildWalletCard(c, idx) {
       <button class="icon-btn del" style="position:absolute;top:10px;right:10px;z-index:2" onclick="event.stopPropagation();cardAction('${c.id}')">✕</button>
       <div class="card-header" style="flex-direction:column;align-items:center;gap:0.5rem">
         <div style="text-align:center;width:100%">
-          <div class="card-name" ondblclick="event.stopPropagation();quickRenameCard('${c.id}')" style="font-family:'Libre Baskerville',serif;font-size:0.95rem;color:#1a1714;letter-spacing:0.01em;cursor:pointer">${c.name}</div>
+          <div class="card-name" title="${c.name}" ondblclick="event.stopPropagation();quickRenameCard('${c.id}')" style="font-family:'Libre Baskerville',serif;font-size:0.95rem;color:#1a1714;letter-spacing:0.01em;cursor:pointer">${c.name}</div>
         </div>
         <div class="card-actions" style="align-items:center;width:100%;justify-content:center">
           <button class="icon-btn" title="Edit" onclick="event.stopPropagation();openEditWallet('${c.id}')" style="padding:3px 6px;line-height:1"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
@@ -2061,7 +2067,7 @@ function updateAllSummary() {
   const allStatStyle = 'flex:1 1 calc(50% - 4px);min-width:120px;box-sizing:border-box;border:1.5px solid #1a1714';
   el.innerHTML = `
     <div class="stat" style="${allStatStyle}"><div class="stat-label">Cash</div><div class="stat-value">${fmt$(totalCash)}${wallets.length > 0 ? `<div class="stat-sub" onclick="event.stopPropagation();openCashCOA()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${wallets.length} account${wallets.length>1?'s':''}</div>` : ''}</div></div>
-    <div class="stat" style="${allStatStyle}"><div class="stat-label">Credit</div><div class="stat-value" style="${totalWorking>0?'color:#cc2222':''}">${fmt$(-totalWorking)}${creditCards.length > 0 ? `<div class="stat-sub" onclick="event.stopPropagation();document.getElementById('chart-of-accounts').style.display='flex'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} card${creditCards.length>1?'s':''}</div>` : ''}</div></div>
+    <div class="stat" style="${allStatStyle}"><div class="stat-label">Credit</div><div class="stat-value" style="${totalWorking>0?'color:#cc2222':''}">${fmt$(-totalWorking)}${creditCards.length > 0 ? `<div class="stat-sub" onclick="event.stopPropagation();(function(){var _c=document.getElementById('chart-of-accounts');_c.classList.remove('coa-expanded');var _b=document.getElementById('coa-toggle-btn');if(_b)_b.textContent='▸ Limit / Util';_c.style.display='flex';})()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} card${creditCards.length>1?'s':''}</div>` : ''}</div></div>
   `;
 }
 
@@ -2086,7 +2092,7 @@ function updateSummary() {
   const fmtK = v => Math.abs(v)>=1000?`$${(v/1000).toFixed(1)}k`:`$${v.toFixed(2)}`;
   const statStyle = 'flex:0 0 calc(33.333% - 6px);min-width:0;box-sizing:border-box;border:1.5px solid #1a1714';
   document.getElementById('summary').innerHTML = `
-    <div class="stat" style="${statStyle}"><div class="stat-label">working balance</div><div class="stat-value" style="${totalWorking>0?'color:#cc2222':''}">${fmt$(-totalWorking)}<div class="stat-sub" onclick="event.stopPropagation();document.getElementById('chart-of-accounts').style.display='flex'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} cards</div></div></div>
+    <div class="stat" style="${statStyle}"><div class="stat-label">working balance</div><div class="stat-value" style="${totalWorking>0?'color:#cc2222':''}">${fmt$(-totalWorking)}<div class="stat-sub" onclick="event.stopPropagation();(function(){var _c=document.getElementById('chart-of-accounts');_c.classList.remove('coa-expanded');var _b=document.getElementById('coa-toggle-btn');if(_b)_b.textContent='▸ Limit / Util';_c.style.display='flex';})()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${creditCards.length} cards</div></div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">total limit</div><div class="stat-value" style="display:flex;flex-direction:column;align-items:center">
       <span id="limit-eye" onclick="(function(){document.getElementById('limit-eye').style.display='none';document.getElementById('limit-val').style.display='inline';})()\" style="cursor:pointer;color:#8a7f6a;user-select:none;line-height:1">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
