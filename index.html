@@ -1167,7 +1167,7 @@ function openPendingBreakdown(type) {
   } else {
     body.innerHTML = allPending.map(c => {
       const pending = c.pending||0;
-      const pendingTxns = (c.transactions||[]).filter(t => !t.cleared);
+      const pendingTxns = (c.transactions||[]).filter(t => !t.cleared).sort((a,b) => (b.date||'') < (a.date||'') ? -1 : (b.date||'') > (a.date||'') ? 1 : 0);
       const txnRows = pendingTxns.length ? pendingTxns.map(t => {
         const color = c.wallet ? (t.amt === 0 ? '#1a1714' : t.amt < 0 ? '#cc2222' : '#1b4a2d') : (t.amt === 0 ? '#1a1714' : t.amt > 0 ? '#cc2222' : '#1b4a2d');
         const sign = c.wallet ? (t.amt > 0 ? '+' : t.amt < 0 ? '-' : '') : (t.amt > 0 ? '-' : t.amt < 0 ? '+' : '');
