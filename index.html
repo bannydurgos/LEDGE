@@ -1173,29 +1173,44 @@ function openPendingBreakdown(type) {
   } else {
     body.innerHTML = allPending.map(c => {
       const pending = c.pending||0;
+      const cleared = +(c.balance||0).toFixed(2);
       const pendingTxns = (c.transactions||[]).filter(t => !t.cleared).sort((a,b) => (b.date||'') < (a.date||'') ? -1 : (b.date||'') > (a.date||'') ? 1 : 0);
       const txnRows = pendingTxns.length ? pendingTxns.map(t => {
         const color = c.wallet ? (t.amt === 0 ? '#1a1714' : t.amt < 0 ? '#cc2222' : '#1b4a2d') : (t.amt === 0 ? '#1a1714' : t.amt > 0 ? '#cc2222' : '#1b4a2d');
         const sign = c.wallet ? (t.amt > 0 ? '+' : t.amt < 0 ? '-' : '') : (t.amt > 0 ? '-' : t.amt < 0 ? '+' : '');
         const d = t.date ? t.date : '';
         return `<tr style="border-bottom:1px solid #f0ece4">
-          <td style="padding:0.28rem 0.5rem;color:#8a7f6a;font-size:0.6rem;white-space:nowrap">${d}</td>
-          <td style="padding:0.28rem 0.5rem;color:#1a1714;font-size:0.68rem;min-width:0;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td>
-          <td style="padding:0.28rem 0.5rem;text-align:right;font-weight:600;color:${color};font-size:0.72rem;white-space:nowrap">${sign}${fmt$(Math.abs(t.amt))}</td>
-          <td style="padding:0.28rem 0.5rem;text-align:right">
+          <td style="padding:0.28rem 0.4rem 0.28rem 0;color:#8a7f6a;font-size:0.6rem;white-space:nowrap;width:72px">${d}</td>
+          <td style="padding:0.28rem 0.4rem;color:#1a1714;font-size:0.68rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td>
+          <td style="padding:0.28rem 0.4rem;text-align:right;font-weight:600;color:${color};font-size:0.72rem;white-space:nowrap;width:82px">${sign}${fmt$(Math.abs(t.amt))}</td>
+          <td style="padding:0.28rem 0 0.28rem 0.4rem;text-align:right;width:28px">
             <button onclick="clearTxnFromBreakdown('${c.id}','${t.id}','${c.wallet?'cash':'credit'}')" style="background:none;border:1px solid #d8d0c4;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;font-weight:600;padding:2px 7px;cursor:pointer;color:#6b6358;transition:all 0.15s" onmouseover="this.style.background='#1a1714';this.style.color='#fff';this.style.borderColor='#1a1714'" onmouseout="this.style.background='none';this.style.color='#6b6358';this.style.borderColor='#d8d0c4'">C</button>
           </td>
         </tr>`;
-      }).join('') : `<tr><td colspan="4" style="padding:0.3rem 0.5rem;color:#9a9080;font-size:0.65rem;font-style:italic">No individual transactions recorded</td></tr>`;
+      }).join('') : `<tr><td colspan="4" style="padding:0.3rem 0;color:#9a9080;font-size:0.65rem;font-style:italic">No individual transactions recorded</td></tr>`;
       const labelColor = c.wallet ? (pending === 0 ? '#1a1714' : pending > 0 ? '#2d6a3f' : '#cc2222') : (pending === 0 ? '#1a1714' : pending < 0 ? '#047857' : '#cc2222');
       const pendingSign = c.wallet ? (pending > 0 ? '+' : pending < 0 ? '-' : '') : (pending > 0 ? '-' : pending < 0 ? '+' : '');
+      const clearedColor = c.wallet ? (cleared === 0 ? '#1a1714' : cleared > 0 ? '#2d6a3f' : '#cc2222') : (cleared === 0 ? '#1a1714' : cleared < 0 ? '#047857' : '#cc2222');
+      const clearedSign = c.wallet ? (cleared > 0 ? '+' : cleared < 0 ? '-' : '') : (cleared > 0 ? '-' : cleared < 0 ? '+' : '');
       const typeTag = c.wallet ? '<span style="font-size:0.55rem;color:#6b6358;margin-left:6px;text-transform:uppercase;letter-spacing:0.05em">cash</span>' : '';
       return `<div style="margin-bottom:1rem;border:1.5px solid #d8d0c4;padding:0.75rem">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+        <div style="margin-bottom:0.5rem">
           <span style="font-weight:600;color:#1a1714;font-size:0.82rem">${c.name}${typeTag}</span>
-          <span style="font-weight:700;color:${labelColor};font-size:0.82rem">${pendingSign}${fmt$(Math.abs(pending))}</span>
         </div>
-        <table style="width:100%;border-collapse:collapse">${txnRows}</table>
+        <table style="width:100%;border-collapse:collapse;table-layout:fixed">
+          <colgroup><col style="width:72px"><col><col style="width:82px"><col style="width:28px"></colgroup>
+          ${txnRows}
+        </table>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.25rem;margin-top:0.6rem;padding-top:0.5rem;border-top:1.5px solid #d8d0c4">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.1rem 0">
+            <span style="font-size:0.58rem;color:#8a7f6a;text-transform:uppercase;letter-spacing:0.05em">cleared</span>
+            <span style="font-size:0.72rem;font-weight:600;color:${clearedColor}">${clearedSign}${fmt$(Math.abs(cleared))}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.1rem 0">
+            <span style="font-size:0.58rem;color:#8a7f6a;text-transform:uppercase;letter-spacing:0.05em">pending</span>
+            <span style="font-size:0.72rem;font-weight:700;color:${labelColor}">${pendingSign}${fmt$(Math.abs(pending))}</span>
+          </div>
+        </div>
       </div>`;
     }).join('');
   }
