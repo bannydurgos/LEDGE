@@ -1192,6 +1192,8 @@ function openPendingBreakdown(type) {
       const pendingSign = c.wallet ? (pending > 0 ? '+' : pending < 0 ? '-' : '') : (pending > 0 ? '-' : pending < 0 ? '+' : '');
       const clearedColor = c.wallet ? (cleared === 0 ? '#1a1714' : cleared > 0 ? '#2d6a3f' : '#cc2222') : (cleared === 0 ? '#1a1714' : cleared < 0 ? '#047857' : '#cc2222');
       const clearedSign = c.wallet ? (cleared > 0 ? '+' : cleared < 0 ? '-' : '') : (cleared > 0 ? '-' : cleared < 0 ? '+' : '');
+      const clearedBg = clearedColor === '#1a1714' ? '#f0ece4' : clearedColor === '#2d6a3f' || clearedColor === '#047857' ? '#dff0e6' : '#fde8e8';
+      const pendingBg = labelColor === '#1a1714' ? '#f0ece4' : labelColor === '#2d6a3f' || labelColor === '#047857' ? '#dff0e6' : '#fde8e8';
       const typeTag = c.wallet ? '<span style="font-size:0.55rem;color:#6b6358;margin-left:6px;text-transform:uppercase;letter-spacing:0.05em">cash</span>' : '';
       return `<div style="margin-bottom:1rem;border:1.5px solid #d8d0c4;padding:0.75rem">
         <div style="margin-bottom:0.5rem">
@@ -1201,14 +1203,14 @@ function openPendingBreakdown(type) {
           <colgroup><col style="width:72px"><col><col style="width:82px"><col style="width:28px"></colgroup>
           ${txnRows}
         </table>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.25rem;margin-top:0.6rem;padding-top:0.5rem;border-top:1.5px solid #d8d0c4">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.1rem 0">
-            <span style="font-size:0.58rem;color:#8a7f6a;text-transform:uppercase;letter-spacing:0.05em">cleared</span>
-            <span style="font-size:0.72rem;font-weight:600;color:${clearedColor}">${clearedSign}${fmt$(Math.abs(cleared))}</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.6rem;padding-top:0.5rem;border-top:1.5px solid #d8d0c4">
+          <div style="display:flex;align-items:center">
+            <span style="font-size:0.58rem;color:#8a7f6a;text-transform:uppercase;letter-spacing:0.05em;width:72px;flex-shrink:0">cleared</span>
+            <span style="font-size:0.68rem;font-weight:600;color:${clearedColor};background:${clearedBg};padding:2px 9px;border-radius:9999px">${clearedSign}${fmt$(Math.abs(cleared))}</span>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0.1rem 0">
+          <div style="display:flex;align-items:center;gap:0.45rem;padding-right:28px">
             <span style="font-size:0.58rem;color:#8a7f6a;text-transform:uppercase;letter-spacing:0.05em">pending</span>
-            <span style="font-size:0.72rem;font-weight:700;color:${labelColor}">${pendingSign}${fmt$(Math.abs(pending))}</span>
+            <span style="font-size:0.72rem;font-weight:700;color:${labelColor};background:${pendingBg};padding:2px 9px;border-radius:9999px">${pendingSign}${fmt$(Math.abs(pending))}</span>
           </div>
         </div>
       </div>`;
