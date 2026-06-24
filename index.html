@@ -323,7 +323,9 @@
     .coa-limit-util { display: none !important; }
     input, select, textarea { font-size: 16px !important; }
     #sort-select-mobile, #search-bar, .stmt-input, .spend-input-wrap input, .spend-section > input { font-size: 0.72rem !important; }
-    #chart-of-accounts > div { max-height: none !important; overflow-y: visible !important; }
+    #chart-of-accounts, #cash-chart-of-accounts { align-items: flex-start !important; overflow-y: auto !important; }
+    #chart-of-accounts > div, #cash-chart-of-accounts > div { max-height: none; box-shadow: 4px 4px 0 #8a6e2e !important; }
+    #chart-of-accounts td, #chart-of-accounts th, #cash-chart-of-accounts td, #cash-chart-of-accounts th { padding-left: 0.25rem !important; padding-right: 0.25rem !important; }
     .cards-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
   }
 /* AUTH */
