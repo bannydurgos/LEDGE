@@ -1167,8 +1167,8 @@ function openAutopayBreakdown() {
   document.getElementById('autopay-breakdown').style.display = 'flex';
 }
 
-function openPendingBreakdown(type) {
-  const allPending = cards.filter(c => !c.hidden && (type === 'cash' ? c.wallet : !c.wallet) && ((c.pending||0) !== 0 || (c.transactions||[]).some(t => !t.cleared)));
+function openPendingBreakdown(type, cardId) {
+  const allPending = cards.filter(c => !c.hidden && (type === 'cash' ? c.wallet : !c.wallet) && (cardId ? c.id === cardId : true) && ((c.pending||0) !== 0 || (c.transactions||[]).some(t => !t.cleared)));
   const body = document.getElementById('pending-breakdown-body');
   if (!allPending.length) {
     body.innerHTML = '<div style="color:#6b6358;font-size:0.72rem;text-align:center;padding:1rem">No pending transactions.</div>';
@@ -1186,7 +1186,7 @@ function openPendingBreakdown(type) {
           <td style="padding:0.28rem 0.4rem;color:#1a1714;font-size:0.68rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td>
           <td style="padding:0.28rem 0.4rem;text-align:right;font-weight:600;color:${color};font-size:0.72rem;white-space:nowrap;width:82px">${sign}${fmt$(Math.abs(t.amt))}</td>
           <td style="padding:0.28rem 0 0.28rem 0.4rem;text-align:right;width:28px">
-            <button onclick="clearTxnFromBreakdown('${c.id}','${t.id}','${c.wallet?'cash':'credit'}')" style="background:none;border:1px solid #d8d0c4;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;font-weight:600;padding:2px 7px;cursor:pointer;color:#6b6358;transition:all 0.15s" onmouseover="this.style.background='#1a1714';this.style.color='#fff';this.style.borderColor='#1a1714'" onmouseout="this.style.background='none';this.style.color='#6b6358';this.style.borderColor='#d8d0c4'">C</button>
+            <button onclick="clearTxnFromBreakdown('${c.id}','${t.id}','${c.wallet?'cash':'credit'}',${cardId?`'${cardId}'`:'null'})" style="background:none;border:1px solid #d8d0c4;font-family:'IBM Plex Mono',monospace;font-size:0.6rem;font-weight:600;padding:2px 7px;cursor:pointer;color:#6b6358;transition:all 0.15s" onmouseover="this.style.background='#1a1714';this.style.color='#fff';this.style.borderColor='#1a1714'" onmouseout="this.style.background='none';this.style.color='#6b6358';this.style.borderColor='#d8d0c4'">C</button>
           </td>
         </tr>`;
       }).join('') : `<tr><td colspan="4" style="padding:0.3rem 0;color:#9a9080;font-size:0.65rem;font-style:italic">No individual transactions recorded</td></tr>`;
@@ -1222,12 +1222,14 @@ function openPendingBreakdown(type) {
 }
 
 let _pendingBreakdownType = 'credit';
+let _pendingBreakdownCardId = null;
 
-function clearTxnFromBreakdown(cardId, txnId, type) {
+function clearTxnFromBreakdown(cardId, txnId, type, fromCardId) {
   _pendingBreakdownType = type;
+  _pendingBreakdownCardId = fromCardId || null;
   clearTxn(cardId, txnId);
   updateSummary();
-  openPendingBreakdown(type);
+  openPendingBreakdown(type, _pendingBreakdownCardId);
 }
 
 function updateStmtBal(id, val) {
@@ -1898,9 +1900,9 @@ function buildCard(c, idx) {
             <div class="bal-cell-label">Cleared</div>
             <div class="bal-cell-val">${fmt$(-(c.balance||0))}</div>
           </div>
-          <div class="bal-cell ${(c.pending||0) < 0 ? 'pending-payment' : 'pending-cell'}" style="color:${(c.pending||0)>0?'#cc2222':(c.pending||0)<0?'#2d6a3f':''}">
+          <div class="bal-cell ${(c.pending||0) < 0 ? 'pending-payment' : 'pending-cell'}" style="color:${(c.pending||0)>0?'#cc2222':(c.pending||0)<0?'#2d6a3f':''};cursor:pointer" onclick="event.stopPropagation();openPendingBreakdown('credit','${c.id}')">
             <div class="bal-cell-label" style="color:${(c.pending||0)>0?'#cc2222':(c.pending||0)<0?'#2d6a3f':''}">${(c.pending||0) < 0 ? 'Pending Pmt' : 'Pending'}</div>
-            <div class="bal-cell-val" style="color:${(c.pending||0)>0?'#cc2222':(c.pending||0)<0?'#2d6a3f':''}">${(c.pending||0)>0?'-':(c.pending||0)<0?'+':''}${fmt$(Math.abs(c.pending||0))}</div>
+            <div class="bal-cell-val" style="color:${(c.pending||0)>0?'#cc2222':(c.pending||0)<0?'#2d6a3f':''}; text-decoration:underline dotted;text-underline-offset:3px">${(c.pending||0)>0?'-':(c.pending||0)<0?'+':''}${fmt$(Math.abs(c.pending||0))}</div>
           </div>
           <div class="bal-cell working" style="position:relative">
             <div class="bal-cell-label">Working Balance</div>
@@ -1989,9 +1991,9 @@ function buildWalletCard(c, idx) {
           <div class="bal-cell-label">Cleared</div>
           <div class="bal-cell-val">${fmt$(balance)}</div>
         </div>
-        <div class="bal-cell ${pending < 0 ? 'pending-payment' : 'pending-cell'}" style="background:${pending < 0 ? 'rgba(204,34,34,0.07)' : pending > 0 ? 'rgba(27,74,45,0.07)' : ''};border-color:${pending < 0 ? 'rgba(204,34,34,0.2)' : pending > 0 ? 'rgba(27,74,45,0.2)' : ''}">
+        <div class="bal-cell ${pending < 0 ? 'pending-payment' : 'pending-cell'}" style="background:${pending < 0 ? 'rgba(204,34,34,0.07)' : pending > 0 ? 'rgba(27,74,45,0.07)' : ''};border-color:${pending < 0 ? 'rgba(204,34,34,0.2)' : pending > 0 ? 'rgba(27,74,45,0.2)' : ''};cursor:pointer" onclick="event.stopPropagation();openPendingBreakdown('cash','${c.id}')">
           <div class="bal-cell-label" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : ''}">${pending < 0 ? 'Spent' : 'Pending'}</div>
-          <div class="bal-cell-val" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : ''}">${pending > 0 ? '+' : pending < 0 ? '-' : ''}${fmt$(Math.abs(pending))}</div>
+          <div class="bal-cell-val" style="color:${pending < 0 ? '#cc2222' : pending > 0 ? '#1b4a2d' : ''};text-decoration:underline dotted;text-underline-offset:3px">${pending > 0 ? '+' : pending < 0 ? '-' : ''}${fmt$(Math.abs(pending))}</div>
         </div>
         <div class="bal-cell working" style="position:relative">
           <div class="bal-cell-label">Working Balance</div>
