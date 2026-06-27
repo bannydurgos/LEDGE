@@ -1831,10 +1831,12 @@ function buildCard(c, idx) {
     const barColor = c.npsl?'var(--c2)':pct>75?'var(--c5)':pct>40?'var(--c4)':`var(--${color})`;
     const apDays = daysUntilDay(c.autopay);
     const closingDays = daysUntilDay(c.closing);
-    // Red: day before or on closing date; Blue: day before or on autopay date; closing takes priority
-    const closingAlert = closingDays !== null && closingDays <= 1 && closingDays >= 0;
-    const autopayAlert = !closingAlert && apDays !== null && apDays <= 1 && apDays >= 0;
-    const cardClass = closingAlert ? 'closing-alert' : autopayAlert ? 'autopay-alert' : '';
+    // Closing: red border always; stripe pattern day before, solid day of. Same for autopay in blue. Closing takes priority.
+    const closingAlert = closingDays !== null && closingDays === 0;
+    const closingAlertSoon = !closingAlert && closingDays !== null && closingDays === 1;
+    const autopayAlert = !closingAlert && !closingAlertSoon && apDays !== null && apDays === 0;
+    const autopayAlertSoon = !closingAlert && !closingAlertSoon && !autopayAlert && apDays !== null && apDays === 1;
+    const cardClass = (closingAlert || closingAlertSoon) ? 'closing-alert' : (autopayAlert || autopayAlertSoon) ? 'autopay-alert' : '';
     const badgeClass = apDays===null?'':apDays<=3?'urgent':apDays<=7?'soon':'ok';
     const badgeText = apDays===null?'':apDays===0?'autopay today':`${apDays}d`;
     const utilLabel = c.npsl?'No preset limit':c.limit?`${pct.toFixed(2)}% of ${fmtK(c.limit)}`:'no limit set';
@@ -1844,12 +1846,14 @@ function buildCard(c, idx) {
 
     const utilBg = c.npsl ? '' : !c.limit ? '' : pct >= 30 ? 'rgba(204,34,34,0.08)' : pct >= 20 ? 'rgba(196,100,20,0.12)' : pct >= 10 ? 'rgba(196,165,20,0.1)' : 'rgba(30,120,60,0.1)';
     const utilStripe = c.npsl ? 'rgba(0,0,0,0.04)' : !c.limit ? 'rgba(0,0,0,0.04)' : pct >= 30 ? 'rgba(204,34,34,0.12)' : pct >= 20 ? 'rgba(196,100,20,0.15)' : pct >= 10 ? 'rgba(196,165,20,0.15)' : 'rgba(30,120,60,0.12)';
-    const paydownBg = closingAlert
-      ? `repeating-linear-gradient(45deg, rgba(255,240,240,1), rgba(255,240,240,1) 6px, rgba(204,34,34,0.15) 6px, rgba(204,34,34,0.15) 12px)`
-      : autopayAlert
-      ? `repeating-linear-gradient(45deg, rgba(240,245,255,1), rgba(240,245,255,1) 6px, rgba(34,85,204,0.12) 6px, rgba(34,85,204,0.12) 12px)`
+    const closingStripe = `repeating-linear-gradient(45deg, rgba(255,240,240,1), rgba(255,240,240,1) 6px, rgba(204,34,34,0.15) 6px, rgba(204,34,34,0.15) 12px)`;
+    const autopayStripe = `repeating-linear-gradient(45deg, rgba(240,245,255,1), rgba(240,245,255,1) 6px, rgba(34,85,204,0.12) 6px, rgba(34,85,204,0.12) 12px)`;
+    const paydownBg = (closingAlert || closingAlertSoon)
+      ? closingStripe
+      : (autopayAlert || autopayAlertSoon)
+      ? autopayStripe
       : `repeating-linear-gradient(45deg, transparent, transparent 6px, ${utilStripe} 6px, ${utilStripe} 12px)`;
-    const solidBg = closingAlert ? '#fff0f0' : autopayAlert ? '#f0f4ff' : utilBg;
+    const solidBg = closingAlert ? '#fff0f0' : closingAlertSoon ? closingStripe : autopayAlert ? '#f0f4ff' : autopayAlertSoon ? autopayStripe : utilBg;
     return `<div class="card ${cardClass}" data-id="${c.id}" style="animation-delay:${idx*0.04}s;${c.paydown?`background:${paydownBg};`:solidBg?`background:${solidBg};`:''}">
       <div class="card-stripe" style="background:var(--${color})"></div>
       <div class="card-body">
@@ -1872,14 +1876,13 @@ function buildCard(c, idx) {
                   <input class="stmt-input" type="number" value="${(c.stmtBal||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
                     style="width:80px;text-align:right;box-sizing:border-box"
                     onclick="event.stopPropagation()"
-                    onchange="updateStmtBal('${c.id}', this.value)"
-                    onblur="updateStmtBal('${c.id}', this.value)" />
+                    onblur="updateStmtBal('${c.id}', this.value)"
+                    onkeydown="if(event.key==='Enter'){updateStmtBal('${c.id}', this.value);this.blur();}" />
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:center">
                   <span style="color:#a09880">AP Amt</span>
                   <input type="number" class="stmt-input" style="width:80px;text-align:right;box-sizing:border-box" value="${(c.autopayAmt||0).toFixed(2)}" min="0" step="0.01" placeholder="0.00"
                     onclick="event.stopPropagation()"
-                    onchange="updateCustomAutopay('${c.id}', this.value)"
                     onblur="updateCustomAutopay('${c.id}', this.value)"
                     onkeydown="if(event.key==='Enter'){updateCustomAutopay('${c.id}', this.value);this.blur();}" />
                 </div>
@@ -2064,7 +2067,13 @@ function renderCard(id) {
   const c = cards.find(c => c.id === id);
   const txnListBody = el.querySelector('.txn-list-body');
   const savedScroll = txnListBody ? txnListBody.scrollTop : 0;
+  const infoEl = document.getElementById('card-info-' + id);
+  const infoWasOpen = infoEl && infoEl.style.display !== 'none';
   el.outerHTML = buildCard(c, idx);
+  if (infoWasOpen) {
+    const newInfoEl = document.getElementById('card-info-' + id);
+    if (newInfoEl) newInfoEl.style.display = 'block';
+  }
   updateSummary();
   updateCashSummary();
   updateAllSummary();
