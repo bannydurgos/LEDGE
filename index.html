@@ -108,8 +108,8 @@
   .cards-grid { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
   .card { background: #ffffff; border-radius: 0; box-shadow: none; overflow: hidden; user-select: none; transition: box-shadow 0.2s, transform 0.15s; border: 1.5px solid #1a1714; animation: fadeUp 0.3s ease both; display: flex; flex-direction: column; position: relative; }
   .card:hover { box-shadow: 4px 4px 0 #8a6e2e; border-color: #8a6e2e; }
-.card.closing-alert { border-color: #cc2222 !important; border-width: 2.5px !important; box-shadow: 4px 4px 0 #cc2222 !important; }
-  .card.autopay-alert { border-color: #2255cc !important; border-width: 2.5px !important; box-shadow: 4px 4px 0 #2255cc !important; }
+.card.closing-alert { border-color: #cc9900 !important; border-width: 2.5px !important; box-shadow: 4px 4px 0 #cc9900 !important; }
+  .card.autopay-alert { border-color: #cc2222 !important; border-width: 2.5px !important; box-shadow: 4px 4px 0 #cc2222 !important; }
   .card-stripe { display: none; }
   .card-body { padding: 0.6rem 1rem; display: flex; flex-direction: column; }
 
@@ -1846,14 +1846,14 @@ function buildCard(c, idx) {
 
     const utilBg = c.npsl ? '' : !c.limit ? '' : pct >= 30 ? 'rgba(204,34,34,0.08)' : pct >= 20 ? 'rgba(196,100,20,0.12)' : pct >= 10 ? 'rgba(196,165,20,0.1)' : 'rgba(30,120,60,0.1)';
     const utilStripe = c.npsl ? 'rgba(0,0,0,0.04)' : !c.limit ? 'rgba(0,0,0,0.04)' : pct >= 30 ? 'rgba(204,34,34,0.12)' : pct >= 20 ? 'rgba(196,100,20,0.15)' : pct >= 10 ? 'rgba(196,165,20,0.15)' : 'rgba(30,120,60,0.12)';
-    const closingStripe = `repeating-linear-gradient(45deg, rgba(255,240,240,1), rgba(255,240,240,1) 6px, rgba(204,34,34,0.15) 6px, rgba(204,34,34,0.15) 12px)`;
-    const autopayStripe = `repeating-linear-gradient(45deg, rgba(240,245,255,1), rgba(240,245,255,1) 6px, rgba(34,85,204,0.12) 6px, rgba(34,85,204,0.12) 12px)`;
+    const closingStripe = `repeating-linear-gradient(45deg, rgba(255,250,230,1), rgba(255,250,230,1) 6px, rgba(204,153,0,0.15) 6px, rgba(204,153,0,0.15) 12px)`;
+    const autopayStripe = `repeating-linear-gradient(45deg, rgba(255,240,240,1), rgba(255,240,240,1) 6px, rgba(204,34,34,0.15) 6px, rgba(204,34,34,0.15) 12px)`;
     const paydownBg = (closingAlert || closingAlertSoon)
       ? closingStripe
       : (autopayAlert || autopayAlertSoon)
       ? autopayStripe
       : `repeating-linear-gradient(45deg, transparent, transparent 6px, ${utilStripe} 6px, ${utilStripe} 12px)`;
-    const solidBg = closingAlert ? '#fff0f0' : closingAlertSoon ? closingStripe : autopayAlert ? '#f0f4ff' : autopayAlertSoon ? autopayStripe : utilBg;
+    const solidBg = closingAlert ? '#fffbe6' :closingAlertSoon ? closingStripe : autopayAlert ? '#fff0f0' : autopayAlertSoon ? autopayStripe : utilBg;
     return `<div class="card ${cardClass}" data-id="${c.id}" style="animation-delay:${idx*0.04}s;${c.paydown?`background:${paydownBg};`:solidBg?`background:${solidBg};`:''}">
       <div class="card-stripe" style="background:var(--${color})"></div>
       <div class="card-body">
