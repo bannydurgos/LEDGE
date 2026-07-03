@@ -1176,7 +1176,7 @@ function openPendingBreakdown(type, cardId) {
     body.innerHTML = allPending.map(c => {
       const pending = c.pending||0;
       const cleared = +(c.balance||0).toFixed(2);
-      const pendingTxns = (c.transactions||[]).filter(t => !t.cleared).sort((a,b) => (b.date||'') < (a.date||'') ? -1 : (b.date||'') > (a.date||'') ? 1 : 0);
+      const pendingTxns = (c.transactions||[]).filter(t => !t.cleared).sort((a,b) => b.id > a.id ? 1 : -1);
       const txnRows = pendingTxns.length ? pendingTxns.map(t => {
         const color = c.wallet ? (t.amt === 0 ? '#1a1714' : t.amt < 0 ? '#cc2222' : '#1b4a2d') : (t.amt === 0 ? '#1a1714' : t.amt > 0 ? '#cc2222' : '#1b4a2d');
         const sign = c.wallet ? (t.amt > 0 ? '+' : t.amt < 0 ? '-' : '') : (t.amt > 0 ? '-' : t.amt < 0 ? '+' : '');
@@ -1295,6 +1295,7 @@ function clearTxn(cardId, txnId) {
     const newBalance = +((c.balance||0) + (cleared ? cleared.amt : 0)).toFixed(2);
     return {...c, transactions: txns, pending: newPending, balance: newBalance};
   });
+  archiveOldTransactions();
   persist(); renderCard(cardId);
 }
 
@@ -1380,7 +1381,7 @@ document.addEventListener('touchstart', dismissTxnPopup);
 
 function openEditTxn(cardId, txnId) {
   const card = cards.find(c => c.id === cardId);
-  const txn = card ? (card.transactions||[]).find(t => t.id === txnId) : null;
+  const txn = card ? ((card.transactions||[]).find(t => t.id === txnId) || (card.txnArchive||[]).find(t => t.id === txnId)) : null;
   if (!txn) return;
   document.getElementById('edit-txn-card-id').value = cardId;
   document.getElementById('edit-txn-id').value = txnId;
@@ -1403,22 +1404,35 @@ function saveEditTxn() {
   const dateObj = new Date(newDateIso + 'T00:00:00');
   const newDisplayDate = dateObj.toLocaleDateString('en-US', {month:'short', day:'numeric'});
   const newMonth = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}`;
+  let editedFromArchive = false;
   cards = cards.map(c => {
     if (c.id !== cardId) return c;
     const oldTxn = (c.transactions||[]).find(t => t.id === txnId);
-    if (!oldTxn) return c;
-    const txns = c.transactions.map(t => t.id === txnId
-      ? {...t, amt: +newAmt.toFixed(2), date: newDisplayDate, month: newMonth, note: newNote}
-      : t);
-    const newPending = parseFloat(txns.filter(t=>!t.cleared).reduce((s,t)=>s+t.amt,0).toFixed(2));
-    const newBalance = oldTxn.cleared
-      ? +((c.balance||0) - oldTxn.amt + +newAmt.toFixed(2)).toFixed(2)
-      : c.balance;
-    return {...c, transactions: txns, pending: newPending, balance: newBalance};
+    if (oldTxn) {
+      const txns = c.transactions.map(t => t.id === txnId
+        ? {...t, amt: +newAmt.toFixed(2), date: newDisplayDate, month: newMonth, note: newNote}
+        : t);
+      const newPending = parseFloat(txns.filter(t=>!t.cleared).reduce((s,t)=>s+t.amt,0).toFixed(2));
+      const newBalance = oldTxn.cleared
+        ? +((c.balance||0) - oldTxn.amt + +newAmt.toFixed(2)).toFixed(2)
+        : c.balance;
+      return {...c, transactions: txns, pending: newPending, balance: newBalance};
+    }
+    const oldArchiveTxn = (c.txnArchive||[]).find(t => t.id === txnId);
+    if (oldArchiveTxn) {
+      editedFromArchive = true;
+      const archive = c.txnArchive.map(t => t.id === txnId
+        ? {...t, amt: +newAmt.toFixed(2), date: newDisplayDate, month: newMonth, note: newNote}
+        : t);
+      const newBalance = +((c.balance||0) - oldArchiveTxn.amt + +newAmt.toFixed(2)).toFixed(2);
+      return {...c, txnArchive: archive, balance: newBalance};
+    }
+    return c;
   });
   persist();
   renderCard(cardId);
   document.getElementById('edit-txn-overlay').style.display = 'none';
+  if (editedFromArchive) openHistory(cardId);
 }
 
 function confirmClearPending(id) {
@@ -1611,16 +1625,20 @@ function openHistory(id) {
   const c = cards.find(x => x.id === id);
   if (!c) return;
   document.getElementById('history-modal-title').textContent = c.name + ' · History';
-  const archive = [...(c.txnArchive||[])];
+  const _now = new Date();
+  const thisMonth = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}`;
+  const clearedThisMonth = (c.transactions||[]).filter(t => t.cleared);
+  const archive = [...clearedThisMonth, ...(c.txnArchive||[])];
   const byMonth = {};
   archive.forEach(t => {
     const m = t.month || 'Unknown';
     if (!byMonth[m]) byMonth[m] = [];
     byMonth[m].push(t);
   });
+  Object.keys(byMonth).forEach(m => byMonth[m].sort((a, b) => b.id > a.id ? 1 : -1));
   const months = Object.keys(byMonth).sort().reverse();
   if (months.length === 0) {
-    document.getElementById('history-modal-body').innerHTML = '<div style="font-size:0.75rem;color:#8a7f6a;padding:1.5rem;text-align:center;font-style:italic">No history yet — transactions from past months will appear here.</div>';
+    document.getElementById('history-modal-body').innerHTML = '<div style="font-size:0.75rem;color:#8a7f6a;padding:1.5rem;text-align:center;font-style:italic">No history yet — cleared transactions will appear here.</div>';
   } else {
     document.getElementById('history-modal-body').innerHTML = months.map((m, i) => {
       const [mYear, mMon] = m.split('-').map(Number);
@@ -1639,9 +1657,12 @@ function openHistory(id) {
           </div>
         </div>
         <div id="${bodyId}" style="display:${isOpen?'block':'none'};padding:4px 10px 6px">
-          ${txns.map(t => `<div style="display:flex;justify-content:space-between;align-items:baseline;padding:3px 0;font-size:0.75rem;border-bottom:1px solid #f0ece4">
+          ${txns.map(t => `<div style="display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:0.75rem;border-bottom:1px solid #f0ece4">
             <span style="color:#8a7f6a">${t.date}${t.note ? `<span style="color:#b0a898;font-style:italic;margin-left:6px">${t.note}</span>` : ''}</span>
-            <span style="font-weight:600;color:${c.wallet?(t.amt===0?'#1a1714':t.amt>0?'#1b4a2d':'#cc2222'):(t.amt===0?'#1a1714':t.amt>0?'#cc2222':'#1b4a2d')}">${c.wallet?(t.amt>0?'+':''):(t.amt>0?'-':'+')}${fmt$(c.wallet?t.amt:Math.abs(t.amt))}</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-weight:600;color:${c.wallet?(t.amt===0?'#1a1714':t.amt>0?'#1b4a2d':'#cc2222'):(t.amt===0?'#1a1714':t.amt>0?'#cc2222':'#1b4a2d')}">${c.wallet?(t.amt>0?'+':''):(t.amt>0?'-':'+')}${fmt$(c.wallet?t.amt:Math.abs(t.amt))}</span>
+              <button onclick="document.getElementById('history-modal-overlay').classList.remove('open');openEditTxn('${id}','${t.id}')" style="background:none;border:1px solid #d8d0c4;font-family:'IBM Plex Mono',monospace;font-size:0.55rem;padding:1px 5px;cursor:pointer;color:#6b6358" onmouseover="this.style.background='#1a1714';this.style.color='#fff';this.style.borderColor='#1a1714'" onmouseout="this.style.background='none';this.style.color='#6b6358';this.style.borderColor='#d8d0c4'">edit</button>
+            </div>
           </div>`).join('')}
         </div>
       </div>`;
@@ -1787,7 +1808,12 @@ function render() {
     if (viewMode === 'credit') return !c.wallet;
     if (viewMode === 'cash') return !!c.wallet;
     return true;
-  }).filter(c => !searchQuery || (c.name || '').toLowerCase().includes(searchQuery));
+  }).filter(c => {
+    if (!searchQuery) return true;
+    if ((c.name || '').toLowerCase().includes(searchQuery)) return true;
+    const allTxns = [...(c.transactions || []), ...(c.txnArchive || [])];
+    return allTxns.some(t => (t.note || '').toLowerCase().includes(searchQuery));
+  });
   const sortedCards = sortMode === 'closing'
     ? [...visibleCards].sort((a, b) => closingDayNum(a) - closingDayNum(b))
     : sortMode === 'autopay'
