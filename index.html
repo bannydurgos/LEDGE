@@ -1946,13 +1946,13 @@ function buildCard(c, idx) {
 
         <div class="spend-section">
           <div class="spend-input-wrap" style="margin-bottom:5px">
-            <input type="number" id="sinp-in-${c.id}" placeholder="inflow" step="0.01" min="0" class="inflow-input"
-              onclick="event.stopPropagation()"
-              oninput="document.getElementById('sinp-out-${c.id}').value=''"
-              onkeydown="if(event.key==='Enter')addCharge('${c.id}')" />
             <input type="number" id="sinp-out-${c.id}" placeholder="outflow" step="0.01" min="0" class="outflow-input"
               onclick="event.stopPropagation()"
               oninput="document.getElementById('sinp-in-${c.id}').value=''"
+              onkeydown="if(event.key==='Enter')addCharge('${c.id}')" />
+            <input type="number" id="sinp-in-${c.id}" placeholder="inflow" step="0.01" min="0" class="inflow-input"
+              onclick="event.stopPropagation()"
+              oninput="document.getElementById('sinp-out-${c.id}').value=''"
               onkeydown="if(event.key==='Enter')addCharge('${c.id}')" />
             <button onclick="event.stopPropagation();addCharge('${c.id}')">+ log</button>
           </div>
@@ -2031,13 +2031,13 @@ function buildWalletCard(c, idx) {
       </div>
       <div class="spend-section">
         <div class="spend-input-wrap" style="margin-bottom:5px">
-          <input type="number" id="sinp-in-${c.id}" placeholder="inflow" step="0.01" min="0" class="inflow-input"
-            onclick="event.stopPropagation()"
-            oninput="document.getElementById('sinp-out-${c.id}').value=''"
-            onkeydown="if(event.key==='Enter')addCharge('${c.id}')" />
           <input type="number" id="sinp-out-${c.id}" placeholder="outflow" step="0.01" min="0" class="outflow-input"
             onclick="event.stopPropagation()"
             oninput="document.getElementById('sinp-in-${c.id}').value=''"
+            onkeydown="if(event.key==='Enter')addCharge('${c.id}')" />
+          <input type="number" id="sinp-in-${c.id}" placeholder="inflow" step="0.01" min="0" class="inflow-input"
+            onclick="event.stopPropagation()"
+            oninput="document.getElementById('sinp-out-${c.id}').value=''"
             onkeydown="if(event.key==='Enter')addCharge('${c.id}')" />
           <button onclick="event.stopPropagation();addCharge('${c.id}')">+ log</button>
         </div>
