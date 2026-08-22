@@ -613,6 +613,16 @@
   </div>
 </div>
 
+<div id="cleared-breakdown" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
+  <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:520px;max-height:85vh;overflow-y:auto;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem">
+      <h2 style="font-family:'Libre Baskerville',serif;font-size:1.1rem;color:#1a1714;text-transform:uppercase;letter-spacing:0.03em;margin:0">Cleared Balances</h2>
+      <button onclick="document.getElementById('cleared-breakdown').style.display='none'" style="background:none;border:none;font-size:1rem;color:#6b6358;cursor:pointer">✕</button>
+    </div>
+    <div id="cleared-breakdown-body"></div>
+  </div>
+</div>
+
 <div id="autopay-breakdown" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:400;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)">
   <div style="background:#ffffff;border:2px solid #1a1714;border-radius:0;padding:1.5rem;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;box-shadow:8px 8px 0 #8a6e2e;font-family:'IBM Plex Mono',monospace">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.25rem">
@@ -1150,7 +1160,7 @@ function openAutopayBreakdown() {
           const badgeClass = apDays === null ? '' : apDays <= 3 ? 'urgent' : apDays <= 7 ? 'soon' : 'ok';
           const badgeText = apDays === null ? '' : apDays === 0 ? 'today' : `${apDays}d`;
           return `<tr style="border-bottom:1px solid #e8e4dc">
-            <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">${c.name}</td>
+            <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px" ondblclick="goToCard('${c.id}','autopay-breakdown')">${c.name}</td>
             <td style="text-align:center;padding:0.35rem 0.5rem;color:#1a1714">${ordinal(c.autopay)}${badgeText ? `<span class="badge ${badgeClass}" style="margin-left:4px">${badgeText}</span>` : ''}</td>
             <td style="text-align:right;padding:0.35rem 0.5rem;color:#1a1714;font-weight:600">${fmt$(effectiveAutopay(c))}</td>
           </tr>`;
@@ -1199,7 +1209,7 @@ function openPendingBreakdown(type, cardId) {
       const typeTag = c.wallet ? '<span style="font-size:0.55rem;color:#6b6358;margin-left:6px;text-transform:uppercase;letter-spacing:0.05em">cash</span>' : '';
       return `<div style="margin-bottom:1rem;border:1.5px solid #d8d0c4;padding:0.75rem">
         <div style="margin-bottom:0.5rem">
-          <span style="font-weight:600;color:#1a1714;font-size:0.82rem">${c.name}${typeTag}</span>
+          <span style="font-weight:600;color:#1a1714;font-size:0.82rem;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px" ondblclick="goToCard('${c.id}','pending-breakdown')">${c.name}${typeTag}</span>
         </div>
         <table style="width:100%;border-collapse:collapse;table-layout:fixed">
           <colgroup><col style="width:72px"><col><col style="width:82px"><col style="width:28px"></colgroup>
@@ -1223,6 +1233,58 @@ function openPendingBreakdown(type, cardId) {
 
 let _pendingBreakdownType = 'credit';
 let _pendingBreakdownCardId = null;
+
+function goToCard(id, modalId) {
+  if (modalId) document.getElementById(modalId).style.display = 'none';
+  const cardEl = document.querySelector('[data-id="' + id + '"]');
+  if (cardEl) {
+    cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const orig = cardEl.style.outline;
+    let count = 0;
+    const flash = () => {
+      if (count >= 6) { cardEl.style.outline = orig; return; }
+      cardEl.style.outline = count % 2 === 0 ? '2.5px solid #8a6e2e' : 'none';
+      count++;
+      setTimeout(flash, 180);
+    };
+    setTimeout(flash, 300);
+  }
+}
+
+function openClearedBreakdown(type) {
+  const filtered = cards.filter(c => !c.hidden && (type === 'cash' ? c.wallet : !c.wallet));
+  const body = document.getElementById('cleared-breakdown-body');
+  if (!filtered.length) {
+    body.innerHTML = '<div style="color:#6b6358;font-size:0.72rem;text-align:center;padding:1rem">No accounts.</div>';
+  } else {
+    body.innerHTML = filtered.map(c => {
+      const cleared = +(c.balance||0).toFixed(2);
+      const clearedColor = c.wallet ? (cleared === 0 ? '#1a1714' : cleared > 0 ? '#2d6a3f' : '#cc2222') : (cleared === 0 ? '#1a1714' : cleared < 0 ? '#047857' : '#cc2222');
+      const clearedSign = c.wallet ? (cleared > 0 ? '+' : cleared < 0 ? '-' : '') : (cleared > 0 ? '-' : cleared < 0 ? '+' : '');
+      const clearedTxns = (c.transactions||[]).filter(t => t.cleared).sort((a,b) => b.id > a.id ? 1 : -1);
+      const txnRows = clearedTxns.length ? clearedTxns.map(t => {
+        const color = c.wallet ? (t.amt === 0 ? '#1a1714' : t.amt < 0 ? '#cc2222' : '#1b4a2d') : (t.amt === 0 ? '#1a1714' : t.amt > 0 ? '#cc2222' : '#1b4a2d');
+        const sign = c.wallet ? (t.amt > 0 ? '+' : t.amt < 0 ? '-' : '') : (t.amt > 0 ? '-' : t.amt < 0 ? '+' : '');
+        return `<tr style="border-bottom:1px solid #f0ece4">
+          <td style="padding:0.28rem 0.4rem 0.28rem 0;color:#8a7f6a;font-size:0.6rem;white-space:nowrap;width:72px">${t.date||''}</td>
+          <td style="padding:0.28rem 0.4rem;color:#1a1714;font-size:0.68rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.note||'—'}</td>
+          <td style="padding:0.28rem 0.4rem;text-align:right;font-weight:600;color:${color};font-size:0.72rem;white-space:nowrap;width:82px">${sign}${fmt$(Math.abs(t.amt))}</td>
+        </tr>`;
+      }).join('') : `<tr><td colspan="3" style="padding:0.3rem 0;color:#9a9080;font-size:0.65rem;font-style:italic">No cleared transactions recorded</td></tr>`;
+      return `<div style="margin-bottom:1rem;border:1.5px solid #d8d0c4;padding:0.75rem">
+        <div style="margin-bottom:0.5rem;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:600;color:#1a1714;font-size:0.82rem;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px" ondblclick="goToCard('${c.id}','cleared-breakdown')">${c.name}</span>
+          <span style="font-size:0.72rem;font-weight:700;color:${clearedColor}">${clearedSign}${fmt$(Math.abs(cleared))}</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;table-layout:fixed">
+          <colgroup><col style="width:72px"><col><col style="width:82px"></colgroup>
+          ${txnRows}
+        </table>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('cleared-breakdown').style.display = 'flex';
+}
 
 function clearTxnFromBreakdown(cardId, txnId, type, fromCardId) {
   _pendingBreakdownType = type;
@@ -2157,6 +2219,7 @@ function updateSummary() {
       <div class="stat-sub" style="position:relative">${excludedNames.length ? `<span onclick="event.stopPropagation();const el=document.getElementById('excl-info');el.style.display=el.style.display==='none'?'block':'none'" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px">${excludedNames.length} excl.</span><div id="excl-info" onclick="event.stopPropagation()" style="display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);white-space:nowrap;background:#ffffff;border:1.5px solid #1a1714;padding:0.4rem 0.6rem;font-size:0.62rem;color:#6b6358;line-height:1.8;z-index:50;box-shadow:4px 4px 0 #8a6e2e">${excludedNames.join('<br>')}</div>` : 'all included'}</div>
     </div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">utilization</div><div class="stat-value">${util}%</div></div>
+    <div class="stat" style="${statStyle}"><div class="stat-label">cleared</div><div class="stat-value" style="${totalCleared>0?'color:#cc2222':''}">${fmt$(-totalCleared)}</div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">pending</div><div class="stat-value" onclick="event.stopPropagation();openPendingBreakdown('credit')" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;${totalPending>0?'color:#cc2222':''}">${fmt$(-totalPending)}</div></div>
     <div class="stat" style="${statStyle}"><div class="stat-label">autopay due</div><div class="stat-value" onclick="event.stopPropagation();openAutopayBreakdown()" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px">${fmt$(totalAP)}</div></div>
   `;
