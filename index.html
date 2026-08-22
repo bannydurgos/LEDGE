@@ -1239,11 +1239,12 @@ function goToCard(id, modalId) {
   const cardEl = document.querySelector('[data-id="' + id + '"]');
   if (cardEl) {
     cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const orig = cardEl.style.outline;
+    const origBg = cardEl.style.background || '';
+    const computedBg = getComputedStyle(cardEl).backgroundColor;
     let count = 0;
     const flash = () => {
-      if (count >= 6) { cardEl.style.outline = orig; return; }
-      cardEl.style.outline = count % 2 === 0 ? '2.5px solid #8a6e2e' : 'none';
+      if (count >= 6) { cardEl.style.background = origBg; return; }
+      cardEl.style.background = count % 2 === 0 ? '#e8d9b0' : (origBg || computedBg);
       count++;
       setTimeout(flash, 180);
     };
@@ -2234,7 +2235,7 @@ function updateCOA() {
       const utilColor = pct === null ? '#a09880' : pct >= 30 ? '#cc2222' : pct >= 20 ? '#c47a2e' : pct >= 10 ? '#8a6e2e' : '#2d6a3f';
       const working = (c.balance||0) + (c.pending||0);
       return `<tr style="border-bottom:1px solid #e8e4dc">
-        <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">${c.name}${c.paydown?'<span style="font-size:0.55rem;color:#8a6e2e;margin-left:5px">↓</span>':''}${!c.includeInTotals?'<span style="font-size:0.55rem;color:#a09880;margin-left:5px">excl.</span>':''}${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
+        <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500"><span ondblclick="(function(){var el=document.getElementById('chart-of-accounts');el.style.display='none';el.classList.remove('coa-expanded');document.getElementById('coa-toggle-btn').textContent='▸ Limit / Util';goToCard('${c.id}');})()" style="cursor:pointer;text-decoration:underline;text-underline-offset:2px;text-decoration-color:#a09880">${c.name}</span>${c.paydown?'<span style="font-size:0.55rem;color:#8a6e2e;margin-left:5px">↓</span>':''}${!c.includeInTotals?'<span style="font-size:0.55rem;color:#a09880;margin-left:5px">excl.</span>':''}${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;color:${-(c.balance||0)>=0?'#2d6a3f':'#1a1714'}">${fmt$(-(c.balance||0))}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;color:${(c.pending||0)<=0?'#2d6a3f':'#1a1714'}">${(c.pending||0)>0?'-':((c.pending||0)<0?'+':'')}${fmt$(Math.abs(c.pending||0))}</td>
         <td style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:${-working>=0?'#2d6a3f':'#1a1714'}">${fmt$(-working)}</td>
@@ -2253,7 +2254,7 @@ function openCashCOA() {
     const pending = c.pending || 0;
     const onHand = confirmed + pending;
     return `<tr style="border-bottom:1px solid #e8e4dc">
-      <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500">${c.name}${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
+      <td style="padding:0.35rem 0.5rem;color:#1a1714;font-weight:500"><span ondblclick="goToCard('${c.id}','cash-chart-of-accounts')" style="cursor:pointer;text-decoration:underline;text-underline-offset:2px;text-decoration-color:#a09880">${c.name}</span>${c.hidden?'<svg style="width:11px;height:11px;vertical-align:middle;margin-left:5px;color:#a09880" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>':''}</td>
       <td style="text-align:right;padding:0.35rem 0.5rem;color:${confirmed>=0?'#2d6a3f':'#1a1714'}">${fmt$(confirmed)}</td>
       <td style="text-align:right;padding:0.35rem 0.5rem;color:${pending>=0?'#2d6a3f':'#1a1714'}">${pending>0?'+':pending<0?'-':''}${fmt$(Math.abs(pending))}</td>
       <td style="text-align:right;padding:0.35rem 0.5rem;font-weight:600;color:${onHand>=0?'#2d6a3f':'#1a1714'}">${fmt$(onHand)}</td>
